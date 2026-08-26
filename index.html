@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Andrea Barduani — Process Automation Portfolio</title>
 <meta name="description" content="Portfolio of 13 Python automation tools covering the full lifecycle of funded training programs: launch, delivery and reporting.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfcf9'/><text x='50' y='70' font-family='Georgia,serif' font-size='54' text-anchor='middle' fill='%230d5794'>AB</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfcf9'/><text x='50' y='70' font-family='Arial,sans-serif' font-size='54' text-anchor='middle' fill='%230d5794'>AB</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #26231f;
@@ -19,21 +22,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     color: var(--ink);
     background: var(--bg);
-    line-height: 1.65;
+    line-height: 1.62;
     font-size: 16.5px;
+    -webkit-font-smoothing: antialiased;
   }
   .wrap { max-width: 860px; margin: 0 auto; padding: 0 22px; }
-  h1, h2, h3, h4 { font-family: Georgia, "Times New Roman", "Segoe UI", serif; font-weight: 700; letter-spacing: -.005em; }
+  h1, h2, h3, h4 { font-weight: 700; letter-spacing: -.018em; line-height: 1.25; }
   a { color: var(--accent); }
   a:hover { color: var(--accent-dark); }
 
   /* ---------- Header ---------- */
   header { border-bottom: 1px solid var(--line); background: var(--bg); }
   .nav { display: flex; align-items: baseline; justify-content: space-between; padding: 18px 0; }
-  .nav .brand { font-family: Georgia, serif; font-size: 1.15rem; color: var(--ink); text-decoration: none; font-weight: 700; }
+  .nav .brand { font-size: 1.1rem; color: var(--ink); text-decoration: none; font-weight: 700; letter-spacing: -.01em; }
   .nav ul { display: flex; gap: 22px; list-style: none; }
   .nav a { color: var(--ink-soft); text-decoration: none; font-size: .92rem; }
   .nav a:hover { color: var(--accent); text-decoration: underline; }
@@ -59,7 +63,7 @@
   .stats .grid { display: grid; grid-template-columns: repeat(4, 1fr); }
   .stat { padding: 22px 8px; text-align: center; border-left: 1px solid var(--line); }
   .stat:first-child { border-left: none; }
-  .stat b { display: block; font-family: Georgia, serif; font-size: 1.7rem; font-weight: 700; }
+  .stat b { display: block; font-size: 1.65rem; font-weight: 800; letter-spacing: -.02em; }
   .stat span { font-size: .8rem; color: var(--ink-soft); }
   @media (max-width: 640px) {
     .stats .grid { grid-template-columns: repeat(2, 1fr); }
@@ -109,7 +113,7 @@
   .about p { color: var(--ink-soft); margin-bottom: 14px; }
   .principles { list-style: none; }
   .principles li { padding: 12px 0; border-top: 1px solid var(--line); font-size: .9rem; }
-  .principles li b { display: block; font-size: .95rem; font-family: Georgia, serif; }
+  .principles li b { display: block; font-size: .95rem; font-weight: 600; }
   .principles li span { color: var(--ink-soft); }
 
   /* ---------- Footer ---------- */
