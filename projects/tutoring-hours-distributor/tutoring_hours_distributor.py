@@ -1,35 +1,36 @@
 # -*- coding: utf-8 -*-
 """
-Distribuzione ore di tutoraggio (programma tirocini) su più mesi — VERSIONE 3
+Tutoring hours distribution (internship programme) over multiple months — VERSION 3
 =========================================================================
 
-CORREZIONI RISPETTO ALLA VERSIONE 2 (bug "ore tutte concentrate")
+FIXES COMPARED TO VERSION 2 (bug "hours all concentrated in one month")
 ----------------------------------------------------------------
-1) PARTENZA SEMPRE DALL'INIZIO DEL TIROCINIO.
-   In v2 il mese di partenza era preso da dove le ore erano SEGNATE nel
-   timesheet (min(mesi_grezzi)). Se quel mese cadeva verso la FINE del
-   tirocinio, la finestra partenza->fine risultava strettissima e tutte le
-   ore venivano compresse lì (via RIDISTRIBUISCI_ECCEDENZE) invece di
-   spalmarsi sui mesi. Ora si parte SEMPRE da data_inizio del tirocinio.
+1) ALWAYS START FROM THE INTERNSHIP START DATE.
+   In v2 the starting month was taken from where the hours were MARKED in
+   the timesheet (min(mesi_grezzi)). If that month fell towards the END of
+   the internship, the start->end window was extremely narrow and all the
+   hours got compressed there (via RIDISTRIBUISCI_ECCEDENZE) instead of
+   being spread over the months. Now it ALWAYS starts from the internship
+   data_inizio.
 
-2) DISTRIBUZIONE AVAILABILITY-AWARE.
-   In v2 distribuisci_mesi assegnava a ogni mese una quota fissa
-   min(MAX_ORE_MESE, rimanenti) SENZA sapere se quel mese aveva slot liberi:
-   la verifica dell'occupazione (occupazione_mese) avveniva solo DOPO, in
-   proponi_slot_mese. Così un mese già saturo di altre attività riceveva
-   comunque la quota, le ore diventavano "non collocabili" e NON migravano
-   sui mesi più liberi. Ora distribuisci_mesi colloca davvero solo ciò che
-   ENTRA negli slot liberi (chiamando proponi_slot_mese durante la
-   distribuzione) e il flusso prosegue sui mesi successivi.
+2) AVAILABILITY-AWARE DISTRIBUTION.
+   In v2 distribuisci_mesi assigned each month a fixed quota
+   min(MAX_ORE_MESE, rimanenti) WITHOUT knowing whether that month had free
+   slots: the occupancy check (occupazione_mese) happened only AFTERWARDS,
+   in proponi_slot_mese. So a month already saturated with other activities
+   still received the quota, the hours became "unplaceable" and did NOT
+   migrate to the freer months. Now distribuisci_mesi truly places only
+   what FITS in the free slots (by calling proponi_slot_mese during the
+   distribution) and the flow continues on the following months.
 
-TETTO MENSILE: MAX_ORE_MESE = 4 (invariato).
+MONTHLY CAP: MAX_ORE_MESE = 4 (unchanged).
 
-WORKFLOW (invariato, in due passaggi):
-   - 1° lancio: usa la "Proposta" per correggere A MANO il timesheet vero
-     (lo script non modifica mai i file originali).
-   - Rilancia pure dopo la correzione per verificare.
+WORKFLOW (unchanged, two passes):
+   - 1st run: use the "Proposta" to MANUALLY correct the real timesheet
+     (the script never modifies the original files).
+   - Feel free to run it again after the correction to verify.
 
-INSTALLAZIONE LIBRERIE (una volta sola, da PowerShell):
+LIBRARY INSTALLATION (once only, from PowerShell):
     py -m pip install openpyxl python-docx --user
 """
 
@@ -43,36 +44,36 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter, column_index_from_string
 
 # ============================================================
-# CONFIG — adatta questi valori alla struttura reale dei tuoi file
+# CONFIG — adapt these values to the real structure of your files
 # ============================================================
 
-# --- FILE TIMESHEET (si apre solo in lettura) ---
+# --- TIMESHEET FILE (opened read-only) ---
 TIMESHEET_PATH = "timesheet_tutor.xlsx"
 TIMESHEET_SHEET = "imputazione ore"
 
-TS_HEADER_GIORNI_ROW = 1   # riga con i numeri dei giorni (1, 2, 3, ...)
-TS_HEADER_SLOT_ROW = 2     # riga con le fasce orarie ("08-09", "09-10", ...)
-TS_DATA_START_ROW = 3      # prima riga di dati (sotto le intestazioni)
+TS_HEADER_GIORNI_ROW = 1   # row with the day numbers (1, 2, 3, ...)
+TS_HEADER_SLOT_ROW = 2     # row with the time slots ("08-09", "09-10", ...)
+TS_DATA_START_ROW = 3      # first data row (below the headers)
 
-COL_TS_MESE = "A"       # colonna "MESE E ANNO"
-COL_TS_PROGETTO = "B"   # colonna "Progetto"
-COL_TS_MANSIONE = "C"   # colonna "Mansione"
-COL_TS_TOTALE = "D"     # colonna "TOTALE H MENSILI"
+COL_TS_MESE = "A"       # column "MESE E ANNO"
+COL_TS_PROGETTO = "B"   # column "Progetto"
+COL_TS_MANSIONE = "C"   # column "Mansione"
+COL_TS_TOTALE = "D"     # column "TOTALE H MENSILI"
 
-# Nomi estratti da "Tirocinio ..." che NON sono tirocinanti (righe generiche
-# tipo "Tutoraggio Tirocinio Ente Attuatore"): vengono ignorati senza errori.
+# Names extracted from "Tirocinio ..." that are NOT trainees (generic rows
+# like "Tutoraggio Tirocinio Ente Attuatore"): silently ignored.
 NOMI_DA_IGNORARE = {"ente attuatore"}
 
-# Soglia di somiglianza (0-1) per l'abbinamento approssimato dei nomi.
+# Similarity threshold (0-1) for fuzzy name matching.
 SOGLIA_FUZZY = 0.65
 
-# Fasce orarie da NON usare per le proposte: range esclusi [inizio, fine).
+# Time slots NOT to be used for proposals: excluded ranges [start, end).
 ORARI_ESCLUSI = [(8, 9), (13, 14), (18, 20)]
 
 ESCLUDI_WEEKEND = True
-UNITA_BASE = 0.5  # ogni mezza cella vale 0,5 ore
+UNITA_BASE = 0.5  # each half cell is worth 0.5 hours
 
-# --- FILE DEI TIROCINI (solo lettura; il "grezzo" è una copia modificata) ---
+# --- INTERNSHIPS FILE (read-only; the "grezzo" is a modified copy) ---
 FILE_TIROCINI_PATH = "file_tirocini.xlsx"
 FILE_TIROCINI_SHEET = None
 
@@ -92,24 +93,24 @@ MESE_PRIMA_COLONNA = 7
 MAX_ORE_MESE = 4
 RISPETTA_DATA_FINE = True
 
-# Se True e i mesi disponibili non bastano con MAX_ORE_MESE, le ore residue
-# vengono comunque collocate nei mesi disponibili (superando il tetto),
-# con segnalazione nel report. Se False, restano "non distribuite".
+# If True and the available months are not enough with MAX_ORE_MESE, the
+# leftover hours are still placed in the available months (exceeding the
+# cap), with a warning in the report. If False, they stay "undistributed".
 RIDISTRIBUISCI_ECCEDENZE = True
 
-# --- OUTPUT (solo due file) ---
+# --- OUTPUT (only two files) ---
 CARTELLA_OUTPUT = "output"
 OUTPUT_PROPOSTA_XLSX = CARTELLA_OUTPUT + r"\Proposta ore tutoraggio.xlsx"
 OUTPUT_REPORT_DOCX = CARTELLA_OUTPUT + r"\Report ore tutoraggio.docx"
 
-# File "grezzo": copia del file tirocini con le ore mese per mese COSÌ COME
-# STANNO ORA nel timesheet (al primo lancio: tutte concentrate in un solo
-# mese). Metti False se non ti serve.
+# "Grezzo" file: copy of the internships file with the month-by-month hours
+# EXACTLY AS THEY ARE NOW in the timesheet (on first run: all concentrated
+# in a single month). Set to False if you don't need it.
 GENERA_FILE_GREZZO = True
 OUTPUT_PATH_GREZZO = CARTELLA_OUTPUT + r"\File tirocini - grezzo.xlsx"
 
 # ============================================================
-# COSTANTI / REGEX
+# CONSTANTS / REGEX
 # ============================================================
 
 RE_TIROCINIO = re.compile(r"tirocinio[\s:\-]+(.+)", re.IGNORECASE)
@@ -117,7 +118,7 @@ RE_SLOT = re.compile(r"^(\d{1,2})\s*-\s*(\d{1,2})$")
 RE_DATA_NEL_TESTO = re.compile(r"(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})")
 
 # ============================================================
-# FUNZIONI DI SUPPORTO GENERICHE
+# GENERIC HELPER FUNCTIONS
 # ============================================================
 
 def normalizza_testo(s):
@@ -141,8 +142,8 @@ def parse_mese_anno(valore):
 
 
 def parse_data_generica(valore):
-    """Accetta datetime/date oppure testo contenente una data gg/mm/aaaa
-    (es. 'proroga 16/4/2026', 'INTERROTTO 9/01/2026'). Ritorna date o None."""
+    """Accepts datetime/date or text containing a dd/mm/yyyy date
+    (e.g. 'proroga 16/4/2026', 'INTERROTTO 9/01/2026'). Returns date or None."""
     if isinstance(valore, datetime):
         return valore.date()
     if isinstance(valore, date):
@@ -178,18 +179,18 @@ def slot_escluso(slot_label):
 
 
 # ============================================================
-# RILEVAMENTO AUTOMATICO DELLA GRIGLIA ORARIA DEL TIMESHEET
+# AUTOMATIC DETECTION OF THE TIMESHEET TIME GRID
 # ============================================================
 
 def rileva_griglia(ws_ts):
-    """Legge la riga delle fasce orarie (TS_HEADER_SLOT_ROW) e ricostruisce
-    la geometria reale della griglia:
-      - prima colonna del giorno 1;
-      - elenco fasce del giorno con, per ciascuna, QUANTE colonne occupa
-        (nel file reale: 2 colonne da 0,5h ciascuna);
-      - passo (numero colonne) tra un giorno e il successivo;
-      - numero massimo di giorni presenti nel foglio.
-    Ritorna un dizionario con queste informazioni."""
+    """Reads the time-slot row (TS_HEADER_SLOT_ROW) and reconstructs the
+    real geometry of the grid:
+      - first column of day 1;
+      - list of the day's slots with, for each, HOW MANY columns it spans
+        (in the real file: 2 columns of 0.5h each);
+      - step (number of columns) between one day and the next;
+      - maximum number of days present in the sheet.
+    Returns a dictionary with this information."""
     colonne_slot = []  # (col_idx, label)
     for c in range(1, ws_ts.max_column + 1):
         v = ws_ts.cell(row=TS_HEADER_SLOT_ROW, column=c).value
@@ -200,18 +201,18 @@ def rileva_griglia(ws_ts):
             colonne_slot.append((c, s))
     if not colonne_slot:
         raise RuntimeError(
-            "Impossibile rilevare la griglia oraria: nessuna intestazione "
-            f"tipo '08-09' trovata alla riga {TS_HEADER_SLOT_ROW} del timesheet."
+            "Unable to detect the time grid: no header like '08-09' found "
+            f"at row {TS_HEADER_SLOT_ROW} of the timesheet."
         )
 
     prima_col = colonne_slot[0][0]
     prima_label = colonne_slot[0][1]
 
-    # Il giorno 2 inizia alla seconda occorrenza della prima fascia.
+    # Day 2 starts at the second occurrence of the first slot.
     successive = [c for c, lab in colonne_slot[1:] if lab == prima_label]
     passo_giorno = (successive[0] - prima_col) if successive else (ws_ts.max_column - prima_col + 1)
 
-    # Fasce del giorno 1, con larghezza in colonne di ciascuna.
+    # Slots of day 1, with the column width of each.
     fasce_giorno1 = [(c, lab) for c, lab in colonne_slot if c < prima_col + passo_giorno]
     slot_info = []  # [{label, offset, larghezza}]
     for i, (c, lab) in enumerate(fasce_giorno1):
@@ -229,14 +230,14 @@ def rileva_griglia(ws_ts):
 
 
 def celle_slot(griglia, giorno, slot):
-    """Ritorna gli indici di TUTTE le colonne (mezze celle) di una fascia
-    oraria in un dato giorno."""
+    """Returns the indices of ALL the columns (half cells) of a time slot
+    on a given day."""
     base = griglia["prima_col"] + (giorno - 1) * griglia["passo_giorno"] + slot["offset"]
     return list(range(base, base + slot["larghezza"]))
 
 
 # ============================================================
-# LETTURA TIMESHEET
+# TIMESHEET READING
 # ============================================================
 
 def estrai_tutoraggi(ws_ts, report):
@@ -281,11 +282,11 @@ def estrai_tutoraggi(ws_ts, report):
 
 
 def occupazione_mese(ws_ts, griglia, anno, mese, righe_da_ignorare):
-    """Insieme delle mezze celle (giorno, col_assoluta) già occupate nel mese,
-    considerando TUTTE le righe/progetti di quel mese, TRANNE le righe dei
-    tutoraggi che stiamo ridistribuendo (righe_da_ignorare): quelle ore
-    verranno tolte dal timesheet, quindi le loro celle sono da considerare
-    libere."""
+    """Set of the half cells (day, col_assoluta) already occupied in the
+    month, considering ALL the rows/projects of that month, EXCEPT the rows
+    of the tutoring entries we are redistributing (righe_da_ignorare): those
+    hours will be removed from the timesheet, so their cells are to be
+    considered free."""
     col_mese = column_index_from_string(COL_TS_MESE)
     occupate = set()
     for riga in range(TS_DATA_START_ROW, ws_ts.max_row + 1):
@@ -310,7 +311,7 @@ def occupazione_mese(ws_ts, griglia, anno, mese, righe_da_ignorare):
 
 
 # ============================================================
-# FILE TIROCINI
+# INTERNSHIPS FILE
 # ============================================================
 
 def costruisci_mappa_mesi(ws_tir):
@@ -347,33 +348,34 @@ def trova_riga_tirocinante(ws_tir, nome_norm):
 
 
 # ============================================================
-# DISTRIBUZIONE  (VERSIONE 3 — availability-aware)
+# DISTRIBUTION  (VERSION 3 — availability-aware)
 # ============================================================
 
 def distribuisci_mesi(ore_totali, mesi_finestra, capacita_mese):
-    """Distribuisce ore_totali sui mesi di 'mesi_finestra' in modo
-    AVAILABILITY-AWARE: le ore vengono collocate SOLO dove ci sono slot
-    realmente liberi (verifica occupazione_mese tramite il callback).
+    """Distributes ore_totali over the months of 'mesi_finestra' in an
+    AVAILABILITY-AWARE way: hours are placed ONLY where there are actually
+    free slots (checks occupazione_mese through the callback).
 
-    1a passata: fino a MAX_ORE_MESE per mese.
-    2a passata (se RIDISTRIBUISCI_ECCEDENZE e restano ore): ripassa i mesi
-    senza tetto. Se un mese è saturo di altre attività lì se ne collocano
-    meno (o zero) e il flusso prosegue sui mesi successivi.
+    1st pass: up to MAX_ORE_MESE per month.
+    2nd pass (if RIDISTRIBUISCI_ECCEDENZE and hours remain): goes over the
+    months again with no cap. If a month is saturated with other activities,
+    fewer (or zero) hours go there and the flow continues on the following
+    months.
 
     Args:
-        ore_totali: ore da distribuire.
-        mesi_finestra: lista di dict {anno, mese} già limitata all'intervallo
-            inizio/fine tirocinio, nell'ordine da riempire.
+        ore_totali: hours to distribute.
+        mesi_finestra: list of dicts {anno, mese} already limited to the
+            internship start/end interval, in the order to fill.
         capacita_mese(anno, mese, tetto) -> (proposte, ore_mancanti):
-            callback che colloca fino a `tetto` ore negli slot liberi del mese.
-            NOTA: il callback muta internamente il set di occupazione (cache),
-            così slot già usati in un mese non vengono ripresi.
+            callback that places up to `tetto` hours in the month's free slots.
+            NOTE: the callback internally mutates the occupancy set (cache),
+            so slots already used in a month are not taken again.
 
-    Ritorna (allocazioni, ore_non_distribuite, eccedenza_ridistribuita) con
-    allocazioni = [{anno, mese, ore, proposte}] in ordine di mese.
+    Returns (allocazioni, ore_non_distribuite, eccedenza_ridistribuita) with
+    allocazioni = [{anno, mese, ore, proposte}] in month order.
     """
     allocazioni = []
-    alloc_idx = {}            # (anno, mese) -> posizione in allocazioni
+    alloc_idx = {}            # (anno, mese) -> position in allocazioni
     rimanenti = ore_totali
 
     def colloca(m, tetto):
@@ -391,13 +393,13 @@ def distribuisci_mesi(ore_totali, mesi_finestra, capacita_mese):
         voce["proposte"].extend(proposte)
         return placed
 
-    # 1a passata: tetto MAX_ORE_MESE, mese per mese.
+    # 1st pass: MAX_ORE_MESE cap, month by month.
     for m in mesi_finestra:
         if rimanenti <= 1e-9:
             break
         rimanenti -= colloca(m, min(MAX_ORE_MESE, rimanenti))
 
-    # 2a passata (eccedenza): ripassa tutto senza tetto.
+    # 2nd pass (excess): goes over everything again with no cap.
     eccedenza = 0.0
     if rimanenti > 1e-9 and RIDISTRIBUISCI_ECCEDENZE:
         eccedenza = rimanenti
@@ -410,12 +412,13 @@ def distribuisci_mesi(ore_totali, mesi_finestra, capacita_mese):
 
 
 def proponi_slot_mese(occupate, griglia, anno, mese, ore_necessarie, giorno_min, giorno_max):
-    """Propone mezze celle libere nel mese. Ritorna (proposte, ore_mancanti):
+    """Proposes free half cells in the month. Returns (proposte, ore_mancanti):
     proposte = [(giorno, slot_label, col_assoluta)].
 
-    NOTA: muta il set 'occupate' (aggiungendo le celle proposte). È voluto:
-    garantisce che più chiamate nello stesso mese (anche di tirocinanti
-    diversi) non si sovrappongano, perché 'occupate' è condiviso via cache."""
+    NOTE: mutates the 'occupate' set (adding the proposed cells). This is
+    intentional: it guarantees that multiple calls in the same month (even
+    for different trainees) do not overlap, because 'occupate' is shared
+    via cache."""
     ultimo_giorno = calendar.monthrange(anno, mese)[1]
     giorno_max = min(giorno_max, ultimo_giorno, griglia["num_giorni"])
     celle_necessarie = round(ore_necessarie / UNITA_BASE)
@@ -442,7 +445,7 @@ def proponi_slot_mese(occupate, griglia, anno, mese, ore_necessarie, giorno_min,
 
 
 def descrivi_proposte(proposte):
-    """Raggruppa le mezze celle in testo leggibile: 'gg 03: 09-10, 10-11 (½)'."""
+    """Groups the half cells into readable text: 'gg 03: 09-10, 10-11 (½)'."""
     per_giorno = {}
     for g, lab, _col in proposte:
         per_giorno.setdefault(g, {}).setdefault(lab, 0)
@@ -458,13 +461,13 @@ def descrivi_proposte(proposte):
 
 
 # ============================================================
-# REPORT (raccoglitore + scrittura Word o txt)
+# REPORT (collector + Word or txt writing)
 # ============================================================
 
 class Report:
     def __init__(self):
-        self.sezioni = []     # per tirocinante: dict
-        self.avvisi = []      # stringhe generali
+        self.sezioni = []     # per trainee: dict
+        self.avvisi = []      # general strings
         self.errori = []
 
     def avviso(self, testo):
@@ -572,14 +575,14 @@ def scrivi_report_txt(report, percorso, data_riferimento):
 
 
 # ============================================================
-# OUTPUT EXCEL "PROPOSTA" CON LAYOUT IDENTICO AL TIMESHEET
+# EXCEL "PROPOSTA" OUTPUT WITH LAYOUT IDENTICAL TO THE TIMESHEET
 # ============================================================
 
 def scrivi_proposta_xlsx(percorso, griglia, ws_ts, righe_proposta):
-    """righe_proposta: lista di dict con
+    """righe_proposta: list of dicts with
        {anno, mese, tirocinante, progetto, mansione, celle: [(giorno, col_assoluta)]}
-    Crea un foglio con la stessa geometria del timesheet: stesse colonne,
-    giorni in riga 1, fasce in riga 2, valori 0,5 evidenziati in giallo."""
+    Creates a sheet with the same geometry as the timesheet: same columns,
+    days in row 1, slots in row 2, 0.5 values highlighted in yellow."""
     wb = Workbook()
     ws = wb.active
     ws.title = "Proposta (come timesheet)"
@@ -590,14 +593,14 @@ def scrivi_proposta_xlsx(percorso, griglia, ws_ts, righe_proposta):
     centro = Alignment(horizontal="center", vertical="center")
     bordo = Border(*[Side(style="thin")] * 4)
 
-    # Intestazioni fisse (copiate dal timesheet)
+    # Fixed headers (copied from the timesheet)
     for col_lettera, testo in [(COL_TS_MESE, "MESE E ANNO"), (COL_TS_PROGETTO, "Progetto"),
                                (COL_TS_MANSIONE, "Mansione"), (COL_TS_TOTALE, "TOTALE H MENSILI")]:
         c = ws.cell(row=TS_HEADER_SLOT_ROW, column=column_index_from_string(col_lettera), value=testo)
         c.font, c.alignment = grassetto, centro
 
-    # Intestazioni della griglia: numeri giorno (riga 1) e fasce (riga 2),
-    # con le stesse colonne del timesheet originale.
+    # Grid headers: day numbers (row 1) and slots (row 2),
+    # with the same columns as the original timesheet.
     max_giorni = griglia["num_giorni"]
     for g in range(1, max_giorni + 1):
         base = griglia["prima_col"] + (g - 1) * griglia["passo_giorno"]
@@ -620,7 +623,7 @@ def scrivi_proposta_xlsx(percorso, griglia, ws_ts, righe_proposta):
                                (COL_TS_MANSIONE, 34), (COL_TS_TOTALE, 10)]:
         ws.column_dimensions[col_lettera].width = width
 
-    # Righe dati: stesso ordine del timesheet (per mese, poi tirocinante)
+    # Data rows: same order as the timesheet (by month, then trainee)
     righe_proposta.sort(key=lambda r: (r["anno"], r["mese"], r["tirocinante"]))
     riga_out = TS_DATA_START_ROW
     for rp in righe_proposta:
@@ -650,20 +653,20 @@ def scrivi_proposta_xlsx(percorso, griglia, ws_ts, righe_proposta):
 def main():
     report = Report()
 
-    print("Leggo il timesheet...")
+    print("Reading the timesheet...")
     wb_ts = load_workbook(TIMESHEET_PATH, data_only=True)
     ws_ts = wb_ts[TIMESHEET_SHEET]
 
     griglia = rileva_griglia(ws_ts)
-    print(f"Griglia rilevata: giorno 1 alla colonna {get_column_letter(griglia['prima_col'])}, "
-          f"{len(griglia['slot_info'])} fasce/giorno, "
-          f"{griglia['slot_info'][0]['larghezza']} mezze celle per fascia, "
-          f"{griglia['passo_giorno']} colonne per giorno, {griglia['num_giorni']} giorni.")
+    print(f"Grid detected: day 1 at column {get_column_letter(griglia['prima_col'])}, "
+          f"{len(griglia['slot_info'])} slots/day, "
+          f"{griglia['slot_info'][0]['larghezza']} half cells per slot, "
+          f"{griglia['passo_giorno']} columns per day, {griglia['num_giorni']} days.")
 
     tutoraggi = estrai_tutoraggi(ws_ts, report)
-    print(f"Trovati {len(tutoraggi)} tirocinanti nel timesheet.\n")
+    print(f"Found {len(tutoraggi)} trainees in the timesheet.\n")
 
-    print("Apro il file dei tirocini...")
+    print("Opening the internships file...")
     wb_tir = load_workbook(FILE_TIROCINI_PATH)
     ws_tir = wb_tir[FILE_TIROCINI_SHEET] if FILE_TIROCINI_SHEET else wb_tir.active
     mappa_mesi = costruisci_mappa_mesi(ws_tir)
@@ -673,7 +676,7 @@ def main():
     col_stato = column_index_from_string(COL_STATO)
     col_nome = column_index_from_string(COL_NOME_TIROCINANTE)
 
-    # Controllo inverso: tirocinanti nel file tirocini senza righe nel timesheet
+    # Reverse check: trainees in the internships file with no rows in the timesheet
     for riga in range(TIROCINI_DATA_START_ROW, ws_tir.max_row + 1):
         v = ws_tir.cell(row=riga, column=col_nome).value
         if v is None:
@@ -687,8 +690,8 @@ def main():
                       "'Tirocinio ...' nel timesheet: controllare Mansione/nome "
                       "(normale se il tirocinio non è ancora iniziato).")
 
-    # Le righe "Tirocinio ..." dei tutoraggi da ridistribuire NON contano
-    # come occupazione: quelle ore verranno tolte dal timesheet.
+    # The "Tirocinio ..." rows of the tutoring entries to redistribute do
+    # NOT count as occupancy: those hours will be removed from the timesheet.
     righe_da_ignorare = set()
     for d in tutoraggi.values():
         righe_da_ignorare |= d.get("righe_ts", set())
@@ -746,12 +749,13 @@ def main():
                         "inizio nel file tirocini: probabile refuso, data fine ignorata.")
             data_fine = None
 
-        # --- Mese di partenza: SEMPRE dall'inizio del tirocinio. ---
-        # BUG RISOLTO (v2): prima la partenza era presa dal mese in cui le ore
-        # erano SEGNATE (min(mesi_grezzi)). Se quel mese cadeva verso la FINE
-        # del tirocinio, la finestra partenza->fine risultava strettissima e
-        # tutte le ore venivano compresse lì (eccedenza) invece di spalmarsi
-        # sui mesi. Ora si parte sempre dall'inizio effettivo del tirocinio.
+        # --- Starting month: ALWAYS from the internship start. ---
+        # BUG FIXED (v2): previously the start was taken from the month in
+        # which the hours were MARKED (min(mesi_grezzi)). If that month fell
+        # towards the END of the internship, the start->end window was
+        # extremely narrow and all the hours got compressed there (excess)
+        # instead of being spread over the months. Now it always starts from
+        # the actual internship start.
         anno_seg, mese_seg = min(mesi_grezzi)
         if data_inizio:
             anno_p, mese_p = data_inizio.year, data_inizio.month
@@ -780,8 +784,8 @@ def main():
 
         mesi_finestra = mappa_mesi[idx_partenza:idx_limite + 1]
 
-        # Limiti di giorno (mese di inizio/fine) + callback che colloca le ore
-        # verificando la REALE occupazione mensile (occupazione_mese).
+        # Day bounds (start/end month) + callback that places the hours
+        # while checking the REAL monthly occupancy (occupazione_mese).
         def giorno_bounds(anno, mese):
             gmin, gmax = 1, calendar.monthrange(anno, mese)[1]
             if data_inizio and (anno, mese) == (data_inizio.year, data_inizio.month):
@@ -792,7 +796,7 @@ def main():
 
         def capacita_mese(anno, mese, tetto):
             gmin, gmax = giorno_bounds(anno, mese)
-            occ = occupazione(anno, mese)   # set in cache (mutato da proponi_slot_mese)
+            occ = occupazione(anno, mese)   # set in cache (mutated by proponi_slot_mese)
             return proponi_slot_mese(occ, griglia, anno, mese, tetto, gmin, gmax)
 
         allocazioni, ore_non_distr, eccedenza = distribuisci_mesi(
@@ -806,7 +810,7 @@ def main():
                         "insufficienti su tutti i mesi del tirocinio.")
 
         righe_mese = []
-        for alloc in allocazioni:              # proposte già pronte (niente doppia chiamata)
+        for alloc in allocazioni:              # proposals already prepared (no double call)
             a, m_, ore_a = alloc["anno"], alloc["mese"], alloc["ore"]
             proposte = alloc["proposte"]
             dettaglio = descrivi_proposte(proposte)
@@ -829,21 +833,21 @@ def main():
             "righe_mese": righe_mese,
         })
 
-    # --- File 1: proposta Excel con layout identico al timesheet ---
+    # --- File 1: Excel proposal with layout identical to the timesheet ---
     scrivi_proposta_xlsx(OUTPUT_PROPOSTA_XLSX, griglia, ws_ts, righe_proposta_xlsx)
-    print(f"File proposta (layout timesheet) salvato in: {OUTPUT_PROPOSTA_XLSX}")
+    print(f"Proposal file (timesheet layout) saved to: {OUTPUT_PROPOSTA_XLSX}")
 
-    # --- File 2: report Word (o txt se python-docx manca) ---
+    # --- File 2: Word report (or txt if python-docx is missing) ---
     oggi = date.today()
     if scrivi_report_docx(report, OUTPUT_REPORT_DOCX, oggi):
-        print(f"Report Word salvato in: {OUTPUT_REPORT_DOCX}")
+        print(f"Word report saved to: {OUTPUT_REPORT_DOCX}")
     else:
         percorso_txt = re.sub(r"\.docx$", ".txt", OUTPUT_REPORT_DOCX)
         scrivi_report_txt(report, percorso_txt, oggi)
-        print("python-docx non installato (py -m pip install python-docx --user): "
-              f"report salvato in formato testo in {percorso_txt}")
+        print("python-docx not installed (py -m pip install python-docx --user): "
+              f"report saved in text format to {percorso_txt}")
 
-    # --- (opzionale) file grezzo come nella vecchia versione ---
+    # --- (optional) grezzo file as in the old version ---
     if GENERA_FILE_GREZZO:
         for nome_norm, dati in tutoraggi.items():
             riga_tir, *_ = trova_riga_tirocinante(ws_tir, nome_norm)
@@ -860,35 +864,35 @@ def main():
                 if col:
                     ws_tir.cell(row=riga_tir, column=col).value = ore
         wb_tir.save(OUTPUT_PATH_GREZZO)
-        print(f"File 'grezzo' salvato in: {OUTPUT_PATH_GREZZO}")
+        print(f"'Grezzo' file saved to: {OUTPUT_PATH_GREZZO}")
 
-    print(f"\nFatto: {len(report.sezioni)} tirocinanti elaborati, "
-          f"{len(report.avvisi)} avvisi, {len(report.errori)} errori.")
+    print(f"\nDone: {len(report.sezioni)} trainees processed, "
+          f"{len(report.avvisi)} warnings, {len(report.errori)} errors.")
 
 
 if __name__ == "__main__":
     try:
         main()
     except PermissionError as e:
-        # File bloccato da Excel/altra app: messaggio chiaro invece del
-        # traceback, così da VS Code (F5) si capisce subito cosa fare.
+        # File locked by Excel/another app: a clear message instead of a
+        # traceback, so from VS Code (F5) it is immediately clear what to do.
         nome_file = str(e).split("'")[-2] if "'" in str(e) else ""
         print("\n" + "=" * 70)
-        print("ERRORE: FILE BLOCCATO")
+        print("ERROR: FILE LOCKED")
         print("=" * 70)
         if nome_file:
-            print(f"Non riesco ad aprire/scrivere il file:\n  {nome_file}")
-        print("\nCausa quasi certa: il file e' aperto in Excel o in un'altra")
-        print("applicazione che lo blocca in lettura/scrittura esclusiva.")
-        print("\n=> Chiudi il file da Excel e rilancia lo script (F5).")
+            print(f"Cannot open/write the file:\n  {nome_file}")
+        print("\nMost likely cause: the file is open in Excel or in another")
+        print("application holding an exclusive read/write lock on it.")
+        print("\n=> Close the file in Excel and run the script again (F5).")
         print("=" * 70)
     except FileNotFoundError as e:
         nome_file = str(e).split("'")[-2] if "'" in str(e) else ""
         print("\n" + "=" * 70)
-        print("ERRORE: FILE NON TROVATO")
+        print("ERROR: FILE NOT FOUND")
         print("=" * 70)
         if nome_file:
-            print(f"Il file non esiste nel percorso specificato:\n  {nome_file}")
-        print("\n=> Controlla i percorsi (TIMESHEET_PATH / FILE_TIROCINI_PATH)")
-        print("   all'inizio dello script.")
+            print(f"The file does not exist at the specified path:\n  {nome_file}")
+        print("\n=> Check the paths (TIMESHEET_PATH / FILE_TIROCINI_PATH)")
+        print("   at the top of the script.")
         print("=" * 70)

@@ -1,35 +1,35 @@
 """
-attendance_register_filler.py - VERSIONE MULTI-AZIENDA / MULTI-LAYOUT
+attendance_register_filler.py - MULTI-COMPANY / MULTI-LAYOUT VERSION
 =============================================================
-Compila il registro PDF delle presenze a partire dai report Excel Piattaforma.
+Fills the PDF attendance register starting from the Platform Excel reports.
 
-Supporta piu' aziende e due layout di registro:
-  - LAYOUT A: Cliente A (3 pagine per sessione: A=allievi 1-25,
-              B=26-57, C=docenti+argomenti). ELENCO ALLIEVI con righe
-              interlacciate.
-  - LAYOUT B: corsi a riga unica (riga unica pulita nell'ELENCO
-              ALLIEVI, orario in formato DALLE/ALLE).
+Supports multiple companies and two register layouts:
+  - LAYOUT A: Cliente A (3 pages per session: A=students 1-25,
+              B=26-57, C=instructors+topics). ELENCO ALLIEVI with
+              interleaved rows.
+  - LAYOUT B: single-row courses (clean single row in the ELENCO
+              ALLIEVI, time in DALLE/ALLE format).
 
-PRINCIPIO ANTI-BUG: la fonte dei nomi e' SEMPRE la pagina ELENCO ALLIEVI
-del PDF che stiamo compilando. Non si usa una cache fissa che potrebbe
-contenere nomi di altra azienda. Lo storage per-azienda (docs/aziende/)
-e' solo un archivio di verifica, mai la fonte attiva.
+ANTI-BUG PRINCIPLE: the source of the names is ALWAYS the ELENCO ALLIEVI
+page of the PDF we are filling in. A fixed cache is never used, as it
+could contain names from another company. The per-company storage
+(docs/aziende/) is only a verification archive, never the active source.
 
-USO:
+USAGE:
     py attendance_register_filler.py               -> input/*.pdf + input/*.xlsx -> output/
     py attendance_register_filler.py --no-open --no-preview
-    py attendance_register_filler.py --archive     -> archivia input in elaborati/<ts>/
+    py attendance_register_filler.py --archive     -> archives input into elaborati/<ts>/
 
-LOGICA:
-1. Rileva il layout (A o B) dalla pagina ELENCO ALLIEVI.
-2. Estrae gli allievi dall'ELENCO ALLIEVI del PDF corrente
+LOGIC:
+1. Detects the layout (A or B) from the ELENCO ALLIEVI page.
+2. Extracts the students from the ELENCO ALLIEVI of the current PDF
    -> {numero: {nome, cf, data, azienda}}.
-3. Rileva l'azienda dalla colonna AZIENDA (fallback: titolo PDF).
-4. Se azienda nuova -> crea docs/aziende/<slug>.json (auto-apprendimento).
-5. Per ogni sessione: data + orario -> trova Excel Piattaforma con stessa data ->
-   per ogni allievo scrive NOME + PRESENTE/ASSENTE.
+3. Detects the company from the AZIENDA column (fallback: PDF title).
+4. If the company is new -> creates docs/aziende/<slug>.json (self-learning).
+5. For each session: date + time -> finds the Platform Excel with the same
+   date -> writes NAME + PRESENTE/ASSENTE for each student.
 
-MATCHING: cognome+nome normalizzato + similarita' fuzzy (>=80%).
+MATCHING: normalized surname+name + fuzzy similarity (>=80%).
 """
 import sys
 import os
@@ -57,7 +57,7 @@ def norm(s: str) -> str:
 
 
 def slugify(s: str) -> str:
-    """Slug per nome file: 'CLIENTE_A S.P.A.' -> 'datamanagement_italia'."""
+    """Slug for the file name: 'CLIENTE_A S.P.A.' -> 'datamanagement_italia'."""
     s = norm(s)
     s = re.sub(r"\b(SPA|S P A|SRL|S R L|SNC|S N C)\b", "", s)
     s = re.sub(r"[^A-Z0-9]+", "_", s)
@@ -79,20 +79,20 @@ INPUT_DIR = BASE / "input"
 OUTPUT_DIR = BASE / "output"
 DOCS_DIR = BASE / "docs"
 AZIENDE_DIR = DOCS_DIR / "aziende"
-REF_CACHE_LEGACY = DOCS_DIR / "reference_list_final.json"  # non piu' usata come fonte
+REF_CACHE_LEGACY = DOCS_DIR / "reference_list_final.json"  # no longer used as a source
 
 CF_RE = re.compile(r"^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$")
 
 
 # ============================ ELENCO ALLIEVI: layout ======================
 def _trova_pagine_elenco(pdf):
-    """Restituisce gli indici (0-based) delle pagine ELENCO ALLIEVI.
+    """Returns the 0-based indices of the ELENCO ALLIEVI pages.
 
-    La pagina iniziale ha l'header 'ELENCO ALLIEVI'; l'elenco puo' continuare
-    sulle pagine successive SENZA header ripetuto. Le pagine di continuazione
-    si riconoscono perche' contengono codici fiscali (CF a 16 char), che non
-    appaiono mai nelle pagine presenze. Ci fermiamo quando una pagina non ha
-    CF (tipicamente la prima pagina presenze/argomenti)."""
+    The first page has the 'ELENCO ALLIEVI' header; the list may continue
+    on the following pages WITHOUT a repeated header. Continuation pages
+    are recognized because they contain tax codes (16-char CF), which
+    never appear on the attendance pages. We stop when a page has no
+    CF (typically the first attendance/topics page)."""
     out = []
     start_idx = None
     for idx, page in enumerate(pdf.pages):
@@ -103,7 +103,7 @@ def _trova_pagine_elenco(pdf):
             break
     if start_idx is None:
         return out
-    # estendi alle pagine successive finche' troviamo CF
+    # extend to the following pages as long as we find CF codes
     for idx in range(start_idx + 1, len(pdf.pages)):
         page = pdf.pages[idx]
         words = page.extract_words()
@@ -116,18 +116,18 @@ def _trova_pagine_elenco(pdf):
 
 
 def rileva_layout(pdf, pagine_elenco_idx):
-    """Restituisce 'A' o 'B' in base alla struttura della pagina ELENCO ALLIEVI.
+    """Returns 'A' or 'B' based on the structure of the ELENCO ALLIEVI page.
 
-    LAYOUT A (Cliente A): righe interlacciate - il numero (N) e' su una
-      riga separata (y) rispetto a cognome/nome (y+/-6). Inoltre i campi
-      CF/DATA/AZIENDA sono molto vicini verticalmente al cognome.
-    LAYOUT B (corsi a riga unica): riga unica pulita -
-      '1 ASCOLI ASCOLI CF DATA AZIENDA' tutto sulla stessa y.
+    LAYOUT A (Cliente A): interleaved rows - the number (N) is on a
+      separate row (y) with respect to surname/name (y+/-6). Moreover the
+      CF/DATA/AZIENDA fields are vertically very close to the surname.
+    LAYOUT B (single-row courses): clean single row -
+      '1 ASCOLI ASCOLI CF DATA AZIENDA' all on the same y.
 
-    Euristica robusta: raggruppiamo le parole per riga (toleranza 2px) e
-    contiamo quante righe iniziano con un numero (1-100) seguito da testo
-    alfabetico SULLA STESSA riga. Layout B -> tante righe cosi'; Layout A ->
-      poche (perche' numero e nome sono su y diverse).
+    Robust heuristic: we group the words by row (2px tolerance) and
+    count how many rows start with a number (1-100) followed by alphabetic
+    text ON THE SAME row. Layout B -> many rows like that; Layout A ->
+      few (because the number and the name are on different y values).
     """
     if not pagine_elenco_idx:
         return "A"  # default
@@ -143,20 +143,20 @@ def rileva_layout(pdf, pagine_elenco_idx):
         txts = [w['text'] for w in line]
         if not txts:
             continue
-        # riga che inizia con numero e ha subito dopo un cognome (parola alpha)
+        # row starting with a number and immediately followed by a surname (alpha word)
         if re.fullmatch(r"\d{1,3}", txts[0]) and len(txts) >= 2 and \
                 re.match(r"^[A-Z]+$", txts[1]):
             righe_complete += 1
-    # Layout B: molte righe complete (>5). Layout A: poche.
+    # Layout B: many complete rows (>5). Layout A: few.
     return "B" if righe_complete >= 5 else "A"
 
 
-# Parole tipiche di ragione sociale che, appena incontrate nella riga
-# ELENCO ALLIEVI (layout B), chiudono il campo "nome" dell'allievo e fanno
-# iniziare il campo "azienda". Evita che nomi vengano inquinati quando il CF
-# o la data non vengono riconosciuti dal parser (es. "ROSSI MARIA
-# INFORMATION AND" invece di "ROSSI MARIA", o "BIANCHI LUCA I.CON."
-# invece di "BIANCHI LUCA").
+# Typical company-name words that, as soon as they are found in an
+# ELENCO ALLIEVI row (layout B), close the student's "nome" field and
+# start the "azienda" field. Prevents names from being polluted when the
+# CF or the date is not recognized by the parser (e.g. "ROSSI MARIA
+# INFORMATION AND" instead of "ROSSI MARIA", or "BIANCHI LUCA I.CON."
+# instead of "BIANCHI LUCA").
 AZIENDA_WORDS = {
     "INFORMATION", "AND", "STARTUP", "START", "UP", "COSTITUITA",
     "COSTITUZIONE", "SOCIETA", "SOC", "SRL", "SPA", "SNC", "SAS",
@@ -168,21 +168,21 @@ AZIENDA_WORDS = {
 
 
 def _is_azienda_word(t):
-    """True se il token e' una parola tipica di ragione sociale.
+    """True if the token is a typical company-name word.
 
-    IMPORTANTE: i punti vanno rimossi SENZA sostituirli con spazio, altrimenti
-    'X.Y.Z.' diventerebbe 'X Y Z' (piu' parole) e non matcherebbe 'XYZ'.
-    Quindi qui si fa una normalizzazione "tight" (punti/apostrofi rimossi),
-    diversa da norm() che li trasforma in spazio.
+    IMPORTANT: periods must be removed WITHOUT replacing them with a space,
+    otherwise 'X.Y.Z.' would become 'X Y Z' (more words) and would not match
+    'XYZ'. So a "tight" normalization is done here (periods/apostrophes
+    removed), different from norm() which turns them into spaces.
     """
     s = t.upper()
-    # togli punti/apostrofi/trattini senza lasciare spazio: X.Y.Z. -> XYZ
+    # remove periods/apostrophes/hyphens without leaving a space: X.Y.Z. -> XYZ
     s = re.sub(r"[.\'\-]", "", s)
     s = re.sub(r"\s+", " ", s).strip()
-    # prima prova l'intero token (es. S.P.A.->SPA)
+    # first try the whole token (e.g. S.P.A.->SPA)
     if s in AZIENDA_WORDS:
         return True
-    # poi prova le singole parole (es. START-UP -> 'START UP' -> match 'START')
+    # then try the single words (e.g. START-UP -> 'START UP' -> match 'START')
     for w in s.split():
         if w in AZIENDA_WORDS:
             return True
@@ -190,8 +190,8 @@ def _is_azienda_word(t):
 
 
 def _estrai_riga_elenco_B(page):
-    """Parser LAYOUT B: ogni riga = 'N COGNOME NOME CF DATA AZIENDA' su una y.
-    Restituisce {numero: {nome, cf, data, azienda}}."""
+    """LAYOUT B parser: each row = 'N COGNOME NOME CF DATA AZIENDA' on one y.
+    Returns {numero: {nome, cf, data, azienda}}."""
     words = page.extract_words()
     rows = {}
     for w in words:
@@ -206,12 +206,12 @@ def _estrai_riga_elenco_B(page):
         num = int(txts[0])
         if not (1 <= num <= 100):
             continue
-        # raccogli parole dopo il numero. La fase avanza cosi':
-        #   "nome" -> (CF rilevato) -> "after_cf" -> (data) -> "after_data"
-        #   "nome" -> (parola-azienda) -> "after_azienda"  [filtro anti-inquinamento]
-        # In ogni fase successiva a "nome", i token residui (che non siano CF
-        # o data) vanno nell'azienda: cosi' "INFORMATION AND ..." non lascia
-        # la parola "AND" nel nome.
+        # collect the words after the number. The phase advances like this:
+        #   "nome" -> (CF detected) -> "after_cf" -> (date) -> "after_data"
+        #   "nome" -> (company-word) -> "after_azienda"  [anti-pollution filter]
+        # In any phase after "nome", the leftover tokens (unless they are a
+        # CF or a date) go into the company: this way "INFORMATION AND ..."
+        # does not leave the word "AND" in the name.
         parts = []
         cf = data = azienda = ""
         phase = "nome"
@@ -226,23 +226,23 @@ def _estrai_riga_elenco_B(page):
                     data = t
                     phase = "after_data"
                     continue
-                # dopo il CF ma prima della data (raro): ignora
+                # after the CF but before the date (rare): ignore
                 continue
-            # Filtro anti-inquinamento: una parola-azienda chiude il nome.
+            # Anti-pollution filter: a company-word closes the name.
             if phase == "nome" and _is_azienda_word(t):
                 phase = "after_azienda"
                 azienda = (azienda + " " + t).strip()
                 continue
-            # In qualsiasi fase "dopo" (after_data / after_azienda): tutto va
-            # in azienda, niente finisce piu' nel nome.
+            # In any "after" phase (after_data / after_azienda): everything
+            # goes into the company, nothing ends up in the name anymore.
             if phase in ("after_data", "after_azienda"):
                 azienda = (azienda + " " + t).strip()
                 continue
             parts.append(t)
         nome = " ".join(parts).strip()
-        # Cap backstop: massimo 3 parole (2 spazi) nel nome. Rete di sicurezza
-        # per ragioni sociali non coperte da AZIENDA_WORDS. Mantiene cognomi
-        # composti (DI PIETRO ALESSANDRO = 3 parole) e nomi doppi.
+        # Cap backstop: max 3 words (2 spaces) in the name. Safety net for
+        # company names not covered by AZIENDA_WORDS. Keeps compound
+        # surnames (DI PIETRO ALESSANDRO = 3 words) and double first names.
         nome_words = nome.split()
         if len(nome_words) > 3:
             nome = " ".join(nome_words[:3])
@@ -253,7 +253,7 @@ def _estrai_riga_elenco_B(page):
 
 NOME_WORD_RE = re.compile(r"^[A-Za-z][A-Za-z'\u00C0-\u024F]+$")
 
-# parole dell'header ELENCO ALLIEVI da escludere dal nome (case-insensitive)
+# ELENCO ALLIEVI header words to exclude from the name (case-insensitive)
 HEADER_WORDS = {
     "COGNOME", "NOME", "E", "DELL'ALLIEVO", "DELLALLIEVO",
     "CF", "DATA", "AZIENDA", "N",
@@ -262,30 +262,30 @@ HEADER_WORDS = {
 
 
 def _is_nome_valido(t):
-    """True se la parola e' un componente plausibile di un nome (non header)."""
+    """True if the word is a plausible component of a name (not a header)."""
     if t.upper() in HEADER_WORDS:
         return False
-    # particelle nobiliari/locuzioni nei cognomi italiani
+    # noble particles/phrases in Italian surnames
     if t in ("De", "Di", "Da", "La", "Lo", "Del", "Della", "Delle", "Dello"):
         return True
     return bool(NOME_WORD_RE.match(t))
 
 
 def _estrai_riga_elenco_A(page):
-    """Parser LAYOUT A (Cliente A): righe interlacciate.
-    Il CF, il cognome+nome e il numero sono su y VICINE ma non sempre
-    identiche (delta fino a +/-12px). Esempio:
+    """LAYOUT A parser (Cliente A): interleaved rows.
+    The CF, the surname+name and the number sit on NEARBY but not always
+    identical y values (delta up to +/-12px). Example:
         y124: CF@x236 CLIENTE_A@x413
-        y126: Battoli@x96 Sigfrido@x127          <- nome su riga diversa dal CF
-        y130: 1@x77                               <- numero su un'altra riga
+        y126: Battoli@x96 Sigfrido@x127          <- name on a row different from the CF
+        y130: 1@x77                               <- number on yet another row
 
-    Strategia "banda logica": raggruppiamo le parole per bande orizzontali
-    larghe (toleranza ~30px) in modo che CF, nome e numero della stessa
-    persona cadano nella stessa banda. Da ogni banda estraiamo:
-      - numero  = intero 1-100 con x < 95
-      - CF      = token che matcha CF_RE
-      - nome    = parole alfabetiche (non header) con 90 < x < 200
-      - azienda = parole alfabetiche con x > x_CF
+    "Logical band" strategy: we group the words into wide horizontal
+    bands (~30px tolerance) so that the CF, name and number of the same
+    person fall into the same band. From each band we extract:
+      - numero  = integer 1-100 with x < 95
+      - CF      = token matching CF_RE
+      - nome    = alphabetic words (not header) with 90 < x < 200
+      - azienda = alphabetic words with x > x_CF
     """
     words = page.extract_words()
     bande = {}
@@ -293,7 +293,7 @@ def _estrai_riga_elenco_A(page):
         key = round(w['top'] / 30) * 30
         bande.setdefault(key, []).append(w)
     X_NUM_MAX = 95
-    X_NOME_MAX = 200   # nome sta a x ~93-153; CF inizia ~233
+    X_NOME_MAX = 200   # name sits at x ~93-153; CF starts ~233
     out = {}
     sorted_keys = sorted(bande)
     for bi, bkey in enumerate(sorted_keys):
@@ -314,7 +314,7 @@ def _estrai_riga_elenco_A(page):
                     nome_parts.append((w['x0'], t))
                 elif cf:
                     azienda_parts.append((w['x0'], t))
-        # numero mancante: cerca in banda adiacente
+        # missing number: look in an adjacent band
         if num is None and cf and nome_parts:
             for dbkey in (sorted_keys[bi - 1] if bi > 0 else None,
                           sorted_keys[bi + 1] if bi + 1 < len(sorted_keys) else None):
@@ -340,12 +340,12 @@ def _estrai_riga_elenco_A(page):
 
 
 def estrai_allievi_elenco(pdf, layout, pagine_elenco_idx):
-    """Estrae {numero: {nome, cf, data, azienda}} da tutte le pagine ELENCO.
-    Usa voto a maggioranza tra pagine multiple se presenti."""
+    """Extracts {numero: {nome, cf, data, azienda}} from all the ELENCO pages.
+    Uses majority voting across multiple pages when present."""
     if not pagine_elenco_idx:
         return {}
     parser = _estrai_riga_elenco_A if layout == "A" else _estrai_riga_elenco_B
-    nomi = {}  # numero -> Counter() su dict-str
+    nomi = {}  # numero -> Counter() over dict-str
     for idx in pagine_elenco_idx:
         estratti = parser(pdf.pages[idx])
         for num, info in estratti.items():
@@ -358,8 +358,8 @@ def estrai_allievi_elenco(pdf, layout, pagine_elenco_idx):
     return out
 
 
-# ============================ rilevazione azienda =========================
-# keyword note nel titolo -> slug azienda (fallback se colonna AZIENDA vuota)
+# ============================ company detection ===========================
+# known keywords in the title -> company slug (fallback if the AZIENDA column is empty)
 AZIENDE_NOTE = {
     "CLIENTE_A": "cliente_a",
     "CORSO_X": "corso_x",
@@ -370,9 +370,9 @@ AZIENDE_NOTE = {
 
 
 def rileva_azienda(allievi_estratti, pdf):
-    """Rileva l'azienda dalla colonna AZIENDA dell'elenco (maggioranza).
-    Fallback: keyword nel titolo (prime 3 pagine)."""
-    # 1) maggioranza sulla colonna azienda
+    """Detects the company from the AZIENDA column of the list (majority).
+    Fallback: keyword in the title (first 3 pages)."""
+    # 1) majority vote on the company column
     c = Counter()
     for info in allievi_estratti.values():
         az = info.get("azienda", "").strip()
@@ -380,7 +380,7 @@ def rileva_azienda(allievi_estratti, pdf):
             c[slugify(az)] += 1
     if c:
         return c.most_common(1)[0][0]
-    # 2) fallback titolo
+    # 2) title fallback
     try:
         for page in pdf.pages[:3]:
             text = (page.extract_text() or "").upper()
@@ -393,13 +393,13 @@ def rileva_azienda(allievi_estratti, pdf):
 
 
 def gestisci_storage_azienda(slug, allievi_estratti):
-    """Se l'azienda e' nuova, crea docs/aziende/<slug>.json.
-    Restituisce (azienda_conosciuta: bool, path_storage)."""
+    """If the company is new, creates docs/aziende/<slug>.json.
+    Returns (azienda_conosciuta: bool, path_storage)."""
     AZIENDE_DIR.mkdir(parents=True, exist_ok=True)
     path = AZIENDE_DIR / f"{slug}.json"
     conosciuta = path.exists()
     if not conosciuta:
-        # salva i nomi estratti dal PDF (auto-apprendimento)
+        # saves the names extracted from the PDF (self-learning)
         data = {
             "azienda_slug": slug,
             "allievi": {str(n): info for n, info in sorted(allievi_estratti.items())},
@@ -410,8 +410,8 @@ def gestisci_storage_azienda(slug, allievi_estratti):
 
 # ============================ parsing Excel ===============================
 def leggi_allievi_excel(path_excel: Path) -> dict:
-    """{nome_chiave_normalizzato: ultima_disconnessione_str} per allievi
-    (no docenti/tutor)."""
+    """{normalized name key: last disconnection str} for students
+    (no instructors/tutors)."""
     wb = openpyxl.load_workbook(path_excel, data_only=True)
     ws = wb[wb.sheetnames[0]]
     righe = [[ws.cell(r, c).value for c in range(1, ws.max_column + 1)]
@@ -488,20 +488,20 @@ def leggi_multi_excel(paths):
             allievi = leggi_allievi_excel(p)
             out.append({"data": data, "ora_in": oi, "ora_out": of,
                         "allievi": allievi, "fonte": p.name})
-            print(f"  {p.name}: data={data} orario={oi}-{of}  "
-                  f"allievi={len(allievi)}")
+            print(f"  {p.name}: date={data} time={oi}-{of}  "
+                  f"students={len(allievi)}")
         except Exception as e:
-            print(f"  ERRORE {p.name}: {e}")
+            print(f"  ERROR {p.name}: {e}")
     return out
 
 
-# ============================ parsing PDF: sessioni =======================
+# ============================ PDF parsing: sessions =======================
 def info_pagina(page):
     text = page.extract_text() or ""
     ha_header = "REGISTRO PRESENZE ALLIEVI" in text
     m = re.search(r"(\d{2}/\d{2}/\d{4})", text)
     data = m.group(1) if m else None
-    # orario: layout A (8:30-13:30) o layout B (DALLE:.. ALLE:..)
+    # time: layout A (8:30-13:30) or layout B (DALLE:.. ALLE:..)
     orar = None
     m_orar = re.search(r"(\d{1,2}:\d{2}-\d{1,2}:\d{2})", text)
     if m_orar:
@@ -549,8 +549,8 @@ def raggruppa_sessioni(pdf):
 
 
 def estrai_righe_allievi_da_pagina(page):
-    """[(numero, top_y, nome_esistente, x_entrata, x_uscita)] per una pagina
-    presenze. Valido per entrambi i layout (entrambi hanno COGNOME/ENTRATA/USCITA)."""
+    """[(numero, top_y, nome_esistente, x_entrata, x_uscita)] for an
+    attendance page. Valid for both layouts (both have COGNOME/ENTRATA/USCITA)."""
     words = page.extract_words()
     entrata_x = uscita_x = None
     for w in words:
@@ -624,7 +624,7 @@ def estrai_righe_allievi_da_pagina(page):
 
 
 def estrai_righe_pagina_B_nuda(page):
-    """Parser per pagine B senza header (solo numeri+nomi)."""
+    """Parser for B pages without header (numbers+names only)."""
     words = page.extract_words(use_text_flow=True)
     rows = {}
     for w in words:
@@ -668,9 +668,9 @@ def estrai_righe_pagina_B_nuda(page):
     return righe, None, None
 
 
-# ============================ scrittura PDF ===============================
+# ============================ PDF writing =================================
 def decidi_presenza(nome_ref, excel_giornata, is_pomeriggio, inizio_pom_min):
-    """'PRESENTE', 'ASSENTE' o None."""
+    """'PRESENTE', 'ASSENTE' or None."""
     if not excel_giornata:
         return None
     allievi = excel_giornata["allievi"]
@@ -692,10 +692,10 @@ def decidi_presenza(nome_ref, excel_giornata, is_pomeriggio, inizio_pom_min):
             nome_match = best_k
     if nome_match is None:
         return "ASSENTE"
-    # Regola semplificata: se l'allievo e' nel report -> sempre PRESENTE,
-    # altrimenti ASSENTE (gestito sopra). Nessuna euristica su orari/uscite.
-    # (is_pomeriggio / inizio_pom_min mantenuti nella firma per retrocompat,
-    #  ma non piu' usati per la decisione.)
+    # Simplified rule: if the student is in the report -> always PRESENTE,
+    # otherwise ASSENTE (handled above). No heuristics on times/exits.
+    # (is_pomeriggio / inizio_pom_min kept in the signature for backward
+    #  compatibility, but no longer used for the decision.)
     return "PRESENTE"
 
 
@@ -784,7 +784,7 @@ def compila_pdf(registro_pdf, sessioni, ref_list, excel_giornate, output_pdf):
     return report
 
 
-# ============================ anteprima/apertura ==========================
+# ============================ preview/opening ============================
 def renderizza_anteprima(pdf_path, pagina_idx, png_path):
     try:
         doc = fitz.open(str(pdf_path))
@@ -793,7 +793,7 @@ def renderizza_anteprima(pdf_path, pagina_idx, png_path):
         doc.close()
         return True
     except Exception as e:
-        print(f"  anteprima fallita: {e}")
+        print(f"  preview failed: {e}")
         return False
 
 
@@ -818,51 +818,51 @@ def main():
 
     pdfs = sorted(INPUT_DIR.glob("*.pdf"))
     if not pdfs:
-        print("ERRORE: nessun PDF in input/"); sys.exit(2)
+        print("ERROR: no PDF in input/"); sys.exit(2)
     registro_pdf = pdfs[0]
     output_pdf = OUTPUT_DIR / f"{registro_pdf.stem}_compilato.pdf"
 
     excel_paths = sorted(p for p in INPUT_DIR.glob("*.xlsx")
                          if "TEST" not in p.name.upper())
     if not excel_paths:
-        print("ERRORE: nessun Excel in input/"); sys.exit(2)
+        print("ERROR: no Excel in input/"); sys.exit(2)
 
-    print(f"[1/5] Analisi PDF: {registro_pdf.name}")
+    print(f"[1/5] PDF analysis: {registro_pdf.name}")
     with pdfplumber.open(registro_pdf) as pdf:
         pagine_elenco = _trova_pagine_elenco(pdf)
-        print(f"      pagine ELENCO ALLIEVI: {[i+1 for i in pagine_elenco] or '(nessuna!)'}")
+        print(f"      ELENCO ALLIEVI pages: {[i+1 for i in pagine_elenco] or '(none!)'}")
         layout = rileva_layout(pdf, pagine_elenco)
-        print(f"      layout rilevato: {layout}")
-        print(f"      estrazione allievi dall'ELENCO ALLIEVI (fonte primaria)...")
+        print(f"      detected layout: {layout}")
+        print(f"      extracting students from the ELENCO ALLIEVI (primary source)...")
         allievi_pdf = estrai_allievi_elenco(pdf, layout, pagine_elenco)
         azienda_slug = rileva_azienda(allievi_pdf, pdf)
 
     ref_list = {num: info["nome"] for num, info in allievi_pdf.items()}
-    print(f"      {len(ref_list)} allievi estratti dal PDF")
-    print(f"      azienda rilevata: {azienda_slug}")
+    print(f"      {len(ref_list)} students extracted from the PDF")
+    print(f"      detected company: {azienda_slug}")
 
     if not ref_list:
-        print("ERRORE: nessun allievo estratto dall'ELENCO ALLIEVI!")
-        print("        (il PDF potrebbe non avere la pagina ELENCO ALLIEVI,")
-        print("         o il layout non e' riconosciuto). Vedi il README.")
+        print("ERROR: no students extracted from the ELENCO ALLIEVI!")
+        print("        (the PDF may not have an ELENCO ALLIEVI page,")
+        print("         or the layout is not recognized). See the README.")
         sys.exit(3)
 
-    print(f"[2/5] Storage aziende...")
+    print(f"[2/5] Company storage...")
     conosciuta, path_az = gestisci_storage_azienda(azienda_slug, allievi_pdf)
     if conosciuta:
-        print(f"      azienda gia' nota: {path_az.name}")
+        print(f"      company already known: {path_az.name}")
     else:
-        print(f"      NUOVA azienda! creato storage: {path_az.name}")
+        print(f"      NEW company! storage created: {path_az.name}")
 
-    print(f"[3/5] Lettura Excel Piattaforma ({len(excel_paths)} file):")
+    print(f"[3/5] Reading Platform Excel files ({len(excel_paths)} files):")
     giornate = leggi_multi_excel(excel_paths)
 
-    print(f"[4/5] Analisi sessioni PDF...")
+    print(f"[4/5] PDF session analysis...")
     with pdfplumber.open(registro_pdf) as pdf:
         sessioni = raggruppa_sessioni(pdf)
-    print(f"      {len(sessioni)} sessioni trovate")
+    print(f"      {len(sessioni)} sessions found")
 
-    print(f"[5/5] Compilazione PDF: {output_pdf.name}")
+    print(f"[5/5] Filling PDF: {output_pdf.name}")
     rep = compila_pdf(registro_pdf, sessioni, ref_list, giornate, output_pdf)
     rep["layout"] = layout
     rep["azienda_rilevata"] = azienda_slug
@@ -877,19 +877,19 @@ def main():
 
     print()
     print("=" * 60)
-    print("COMPLETATO")
+    print("COMPLETED")
     print(f"  Layout:         {layout}")
-    print(f"  Azienda:        {azienda_slug}"
-          f"{' (NUOVA)' if not conosciuta else ''}")
-    print(f"  Allievi:        {len(ref_list)}")
+    print(f"  Company:        {azienda_slug}"
+          f"{' (NEW)' if not conosciuta else ''}")
+    print(f"  Students:       {len(ref_list)}")
     print(f"  PDF:            {output_pdf}")
     print(f"  Report JSON:    {report_json}")
-    print(f"  PRESENTE totali: {rep['present_totali']}")
-    print(f"  ASSENTE totali:  {rep['assente_totali']}")
+    print(f"  PRESENTE totals: {rep['present_totali']}")
+    print(f"  ASSENTE totals:  {rep['assente_totali']}")
     if rep['sessioni_senza_excel']:
-        print(f"  Sessioni senza Excel ({len(rep['sessioni_senza_excel'])}):")
+        print(f"  Sessions without Excel ({len(rep['sessioni_senza_excel'])}):")
         for s in rep['sessioni_senza_excel']:
-            print(f"    - data={s['data']} orar={s['orar']}")
+            print(f"    - date={s['data']} time={s['orar']}")
     print("=" * 60)
 
     if archive and not args:
@@ -899,7 +899,7 @@ def main():
         try:
             apri_pdf(output_pdf)
         except Exception as e:
-            print(f"  apertura fallita: {e}")
+            print(f"  failed to open: {e}")
 
 
 def archivia_input(base, registro_pdf, excel_paths):
@@ -913,14 +913,14 @@ def archivia_input(base, registro_pdf, excel_paths):
         shutil.move(str(registro_pdf), str(elab_dir / registro_pdf.name))
         spostati.append(registro_pdf.name)
     except Exception as e:
-        print(f"  (impossibile spostare {registro_pdf.name}: {e})")
+        print(f"  (cannot move {registro_pdf.name}: {e})")
     for xp in excel_paths:
         try:
             shutil.move(str(xp), str(elab_dir / xp.name))
             spostati.append(xp.name)
         except Exception as e:
-            print(f"  (impossibile spostare {xp.name}: {e})")
-    print(f"  File archiviati in: elaborati/{ts}/ ({len(spostati)} file)")
+            print(f"  (cannot move {xp.name}: {e})")
+    print(f"  Files archived in: elaborati/{ts}/ ({len(spostati)} files)")
 
 
 if __name__ == "__main__":

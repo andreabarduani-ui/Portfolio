@@ -28,3 +28,7 @@ What used to be days of retyping letters for each course edition is now a
 two-second batch job with pixel-accurate alignment.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

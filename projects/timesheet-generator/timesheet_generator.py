@@ -2,28 +2,28 @@
 """
 timesheet_generator.py
 =========================
-Compila automaticamente i timesheet (Allegato A.7) del progetto PROGRAMMA_A/PROGRAMMA_B
-a partire da:
-  - Lista Tirocini.xlsx     -> anagrafiche tirocinanti
-  - Timesheet <tutor>.xlsx  -> ore di tutoraggio (2 file: Tutor A + Tutor B)
-  - Timesheet_template.xlsx  -> template mensile
+Automatically fills in the timesheets (Allegato A.7) of the PROGRAMMA_A/PROGRAMMA_B
+project from:
+  - Lista Tirocini.xlsx     -> trainee records
+  - Timesheet <tutor>.xlsx  -> tutoring hours (2 files: Tutor A + Tutor B)
+  - Timesheet_template.xlsx  -> monthly template
 
-Per ciascun tirocinante con attivita' nell'anno di rendiconto genera:
-  1) un file Excel per ogni mese  (Timesheet_<Nome>_<AAAA-MM>.xlsx)
-  2) un file Excel unico con un foglio per ogni mese
+For each trainee with activity in the reporting year it generates:
+  1) one Excel file per month  (Timesheet_<Nome>_<AAAA-MM>.xlsx)
+  2) a single Excel file with one sheet per month
                                  (Timesheet_<Nome>_UNICO_<AAAA>.xlsx)
 
-Il template viene esteso inline con una nuova riga "Denominazione Progetto"
-in posizione 5; il file non viene modificato (se ne crea una copia "v2").
+The template is extended inline with a new "Denominazione Progetto" row
+in position 5; the file itself is not modified (a "v2" copy is created).
 
-La distinzione Programma_A/Programma_B si gestisce tramite config_progetti.yaml.
+The Programma_A/Programma_B distinction is managed via config_progetti.yaml.
 
-Uso:
-    py timesheet_generator.py            # esegue tutto
-    py timesheet_generator.py --dry-run  # solo estrazione + report, no file
-    py timesheet_generator.py --solo-unici   # genera solo i file unici
+Usage:
+    py timesheet_generator.py            # runs everything
+    py timesheet_generator.py --dry-run  # extraction + report only, no files
+    py timesheet_generator.py --solo-unici   # generates only the single files
 
-Dipendenze:  openpyxl, pyyaml
+Dependencies:  openpyxl, pyyaml
 """
 import argparse
 import calendar
@@ -40,7 +40,7 @@ import yaml
 from openpyxl.utils import get_column_letter
 
 # ============================================================
-# Costanti
+# Constants
 # ============================================================
 NOMI_MESI = ['', 'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
              'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']
@@ -53,7 +53,7 @@ CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # Utility
 # ============================================================
 def norm(s):
-    """Normalizza una stringa: lowercase, spazi multipli -> singolo, nbsp rimosso."""
+    """Normalizes a string: lowercase, multiple spaces -> single, nbsp removed."""
     if s is None:
         return ''
     s = str(s).replace('\xa0', ' ')
@@ -61,24 +61,24 @@ def norm(s):
 
 
 def safe_name(s):
-    """Rimuove caratteri non validi per nomi file/cartelle Windows."""
+    """Removes characters that are invalid in Windows file/folder names."""
     for ch in ['<', '>', ':', '"', '/', '\\', '|', '?', '*']:
         s = s.replace(ch, '_')
     return s.strip()
 
 
 def carica_config():
-    """Carica config_progetti.yaml."""
+    """Loads config_progetti.yaml."""
     with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
         cfg = yaml.safe_load(f)
     return cfg
 
 
 # ============================================================
-# Lettura anagrafiche (Lista Tirocini)
+# Reading trainee records (Lista Tirocini)
 # ============================================================
 def leggi_anagrafiche(path_lista):
-    """Restituisce lista ordinata di dict con i dati dei tirocinanti."""
+    """Returns a sorted list of dicts with the trainees' data."""
     wb = openpyxl.load_workbook(path_lista, data_only=True)
     ws = wb['Riepilogo tirocini attivati ']
     anag = []
@@ -102,10 +102,10 @@ def leggi_anagrafiche(path_lista):
 
 
 # ============================================================
-# Estrazione ore dai timesheet tutor
+# Extracting hours from the tutor timesheets
 # ============================================================
 def normalizza_nome_tutor(nome_txt):
-    """Da 'Tirocinio Luca Novelli' / 'Tutoraggio Tirocinante X' -> 'luca novelli' / 'x'."""
+    """From 'Tirocinio Luca Novelli' / 'Tutoraggio Tirocinante X' -> 'luca novelli' / 'x'."""
     s = nome_txt
     for pref in ['Tutoraggio Tirocinante', 'Tirocinio', 'Tutor Tirocinio',
                  'Tutoraggio', 'Tutor']:
@@ -114,10 +114,10 @@ def normalizza_nome_tutor(nome_txt):
 
 
 def estrai_da_tutor(file_path, anno):
-    """Estrae ore per tirocinante da un file timesheet tutor.
-    Restituisce dict: nome_norm -> {(mese, anno): {giorno: ore}}.
-    Considera solo le righe con B='Programma_A' (o 'Programma_B') e C contenente un nome
-    (esclude 'Segreteria')."""
+    """Extracts hours per trainee from a tutor timesheet file.
+    Returns dict: nome_norm -> {(mese, anno): {giorno: ore}}.
+    Considers only rows with B='Programma_A' (or 'Programma_B') and C containing a name
+    (excludes 'Segreteria')."""
     wb = openpyxl.load_workbook(file_path, data_only=True)
     ws = wb['imputazione ore']
     risultato = defaultdict(lambda: defaultdict(dict))
@@ -126,12 +126,12 @@ def estrai_da_tutor(file_path, anno):
         a = ws.cell(r, 1).value
         b = ws.cell(r, 2).value
         c = ws.cell(r, 3).value
-        # aggiorna mese/anno corrente (la data e' ripetuta su ogni riga del blocco)
+        # update current month/year (the date is repeated on every row of the block)
         if a and isinstance(a, str):
             m = re.match(r'^\s*(\d{1,2})/(\d{4})\s*$', a)
             if m:
                 mese_cor, anno_cor = int(m.group(1)), int(m.group(2))
-        # riga Programma_A o Programma_B con nome tirocinante
+        # Programma_A or Programma_B row with a trainee name
         if b and isinstance(b, str) and b.strip().lower() in ('programma_a', 'programma_b'):
             if c and isinstance(c, str):
                 c_clean = c.strip()
@@ -150,7 +150,7 @@ def estrai_da_tutor(file_path, anno):
 
 
 def estrai_ore_tutor(paths_tutor, anno):
-    """Unisce le estrazioni da piu' file tutor."""
+    """Merges the extractions from multiple tutor files."""
     ore_all = defaultdict(lambda: defaultdict(dict))
     for p in paths_tutor:
         parziale = estrai_da_tutor(p, anno)
@@ -162,10 +162,10 @@ def estrai_ore_tutor(paths_tutor, anno):
 
 
 # ============================================================
-# Matching nomi Lista <-> etichette tutor
+# Matching Lista names <-> tutor labels
 # ============================================================
 def match_fuzzy(nl, nt):
-    """Match tra nome lista (nl) e nome tutor (nt), entrambi normalizzati."""
+    """Match between the list name (nl) and the tutor name (nt), both normalized."""
     if nl == nt:
         return 'ESATTO'
     parole_l = nl.split()
@@ -180,9 +180,9 @@ def match_fuzzy(nl, nt):
 
 
 def costruisci_corrispondenze(anag, ore_all):
-    """Per ogni tirocinante trova il nome tutor corrispondente."""
+    """For each trainee, finds the corresponding tutor name."""
     rank_order = {'ESATTO': 4, 'NOME_COGNOME': 3, 'INCLUSIONE': 2, 'COGNOME_OK': 1}
-    # mappature manuali note (varianti nome)
+    # known manual mappings (name variants)
     mappa_manuale = {
         'teresita de jesus saenz villarreal': 'teresita saenz villareal',
     }
@@ -210,31 +210,31 @@ def costruisci_corrispondenze(anag, ore_all):
 
 
 # ============================================================
-# Template v2 (riga Denominazione Progetto)
+# Template v2 (Denominazione Progetto row)
 # ============================================================
 def crea_template_v2(path_template_originale):
-    """Crea una copia del template con una nuova riga 'Denominazione Progetto'
-    in posizione 5. Gestisce manualmente merge e formule (insert_rows non li
-    aggiorna automaticamente in openpyxl). Restituisce il percorso del file v2."""
+    """Creates a copy of the template with a new 'Denominazione Progetto'
+    row in position 5. Manually handles merges and formulas (insert_rows does
+    not update them automatically in openpyxl). Returns the v2 file path."""
     path_v2 = os.path.join(os.path.dirname(path_template_originale),
                            '_template_v2_tmp.xlsx')
     shutil.copy(path_template_originale, path_v2)
     wb = openpyxl.load_workbook(path_v2)
     ws = wb['Foglio1']
 
-    # 1) rimuovi merge esistenti
+    # 1) remove existing merges
     for mr in list(ws.merged_cells.ranges):
         ws.unmerge_cells(str(mr))
 
-    # 2) inserisci riga in posizione 5
+    # 2) insert row at position 5
     ws.insert_rows(5, amount=1)
 
-    # 3) re-inserisci merge alle posizioni corrette
+    # 3) re-insert merges at the correct positions
     for m in ['B4:AH4', 'C5:J5', 'C6:J6', 'C7:J7', 'C8:J8', 'C9:J9',
               'C10:J10', 'C11:J11', 'C12:J12', 'AH13:AH14']:
         ws.merge_cells(m)
 
-    # 4) label + stile riga 5 (copia stile dalla riga 6)
+    # 4) label + style of row 5 (style copied from row 6)
     ws.cell(5, 2).value = 'Denominazione Progetto'
     ws.cell(5, 3).value = ''
     for col in (2, 3):
@@ -248,7 +248,7 @@ def crea_template_v2(path_template_originale):
     ws.cell(5, 3).number_format = '@'
     ws.row_dimensions[5].height = ws.row_dimensions[6].height
 
-    # 5) correggi formule totali (righe attivita' ora 15..23, totale riga 24)
+    # 5) fix total formulas (activity rows now 15..23, total row 24)
     for r in range(15, 24):
         ws.cell(r, 34).value = '=SUM(C%d:AG%d)' % (r, r)
     for c in range(3, 34):
@@ -261,7 +261,7 @@ def crea_template_v2(path_template_originale):
 
 
 def copia_foglio(ws_src, ws_dst):
-    """Copia valori, stili, merge, dimensioni righe/colonne da ws_src a ws_dst."""
+    """Copies values, styles, merges, row/column dimensions from ws_src to ws_dst."""
     for row in ws_src.iter_rows():
         for cell in row:
             new = ws_dst.cell(row=cell.row, column=cell.column, value=cell.value)
@@ -282,11 +282,11 @@ def copia_foglio(ws_src, ws_dst):
 
 
 def compila_foglio_mese(ws, info, ore_mese, mese, anno, denominazione):
-    """Compila un foglio (giÃ  popolato dal template v2) con anagrafica + ore."""
+    """Fills a sheet (already populated from the v2 template) with records + hours."""
     giorni_mese = calendar.monthrange(anno, mese)[1]
-    # anagrafica (template v2):
-    # riga 5=Denominazione Progetto, 6=CUP, 7=Cod.Progetto, 8=SO,
-    # 9=Tutor, 10=Tirocinante, 11=inizio, 12=fine
+    # records (template v2):
+    # row 5=Denominazione Progetto, 6=CUP, 7=Cod.Progetto, 8=SO,
+    # 9=Tutor, 10=Tirocinante, 11=start, 12=end
     ws.cell(5, 3).value = denominazione
     ws.cell(6, 3).value = 'F81J25000180009'
     ws.cell(7, 3).value = '24020DP000000025'
@@ -297,7 +297,7 @@ def compila_foglio_mese(ws, info, ore_mese, mese, anno, denominazione):
     ws.cell(12, 3).value = info['fine']
     ws.cell(11, 3).number_format = 'DD/MM/YYYY'
     ws.cell(12, 3).number_format = 'DD/MM/YYYY'
-    # giorni settimana (riga 13) + numeri (riga 14)
+    # weekdays (row 13) + day numbers (row 14)
     for col_idx in range(3, 34):  # C..AG -> giorni 1..31
         giorno = col_idx - 2
         if giorno <= giorni_mese:
@@ -307,7 +307,7 @@ def compila_foglio_mese(ws, info, ore_mese, mese, anno, denominazione):
         else:
             ws.cell(13, col_idx).value = None
             ws.cell(14, col_idx).value = None
-    # ore riga 15
+    # hours row 15
     for col_idx in range(3, 34):
         giorno = col_idx - 2
         if giorno > giorni_mese:
@@ -317,7 +317,7 @@ def compila_foglio_mese(ws, info, ore_mese, mese, anno, denominazione):
 
 
 def mesi_periodo(ini, fine, anno):
-    """Restituisce lista di (mese, anno) compresi tra ini e fine e nell'anno dato."""
+    """Returns the list of (month, year) between ini and fine and within the given year."""
     if not ini or not fine or not hasattr(ini, 'year'):
         return []
     if ini.year > anno:
@@ -330,10 +330,10 @@ def mesi_periodo(ini, fine, anno):
 
 
 # ============================================================
-# Generazione file
+# File generation
 # ============================================================
 def denominazione_per_tirocinante(info, cfg):
-    """Restituisce la denominazione progetto (Programma_A/Programma_B) per il tirocinante."""
+    """Returns the project denomination (Programma_A/Programma_B) for the trainee."""
     programma_b_list = [norm(n) for n in (cfg.get('tirocinanti_programma_b') or [])]
     denom_map = cfg.get('denominazioni', {})
     if info['key'] in programma_b_list:
@@ -342,7 +342,7 @@ def denominazione_per_tirocinante(info, cfg):
 
 
 def genera_file_mensili_separati(info, mesi, ore_tir, denom, path_template_v2, out_dir):
-    """Genera un file .xlsx per ogni mese."""
+    """Generates one .xlsx file per month."""
     n = 0
     cartella = os.path.join(out_dir, safe_name(info['tirocinante']))
     os.makedirs(cartella, exist_ok=True)
@@ -361,7 +361,7 @@ def genera_file_mensili_separati(info, mesi, ore_tir, denom, path_template_v2, o
 
 
 def genera_file_unico(info, mesi, ore_tir, denom, path_template_v2, out_dir):
-    """Genera un unico file .xlsx con un foglio per mese."""
+    """Generates a single .xlsx file with one sheet per month."""
     cartella = os.path.join(out_dir, safe_name(info['tirocinante']))
     os.makedirs(cartella, exist_ok=True)
     wb_tpl = openpyxl.load_workbook(path_template_v2)
@@ -386,39 +386,39 @@ def genera_file_unico(info, mesi, ore_tir, denom, path_template_v2, out_dir):
 # ============================================================
 def main():
     parser = argparse.ArgumentParser(
-        description='Compila i timesheet Programma_A/Programma_B a partire dai timesheet tutor.')
+        description='Fills in the Programma_A/Programma_B timesheets from the tutor timesheets.')
     parser.add_argument('--dry-run', action='store_true',
-                        help='Solo estrazione e report, non genera file.')
+                        help='Extraction and report only, generates no files.')
     parser.add_argument('--solo-unici', action='store_true',
-                        help='Genera solo i file unici (non quelli mensili separati).')
+                        help='Generates only the single files (not the separate monthly ones).')
     args = parser.parse_args()
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
     cfg = carica_config()
     file_cfg = cfg['file']
     anno = cfg['anno_rendiconto']
-    print('>> Configurazione caricata. Anno rendiconto: %d' % anno)
+    print('>> Configuration loaded. Reporting year: %d' % anno)
 
-    # 1) anagrafiche
+    # 1) trainee records
     path_lista = os.path.join(base_dir, file_cfg['lista_tirocini'])
-    print('>> Lettura anagrafiche: %s' % os.path.basename(path_lista))
+    print('>> Reading trainee records: %s' % os.path.basename(path_lista))
     anag = leggi_anagrafiche(path_lista)
-    print('   %d tirocinanti trovati.' % len(anag))
+    print('   %d trainees found.' % len(anag))
 
-    # 2) estrazione ore
+    # 2) hour extraction
     path_tutor = [
         os.path.join(base_dir, file_cfg['tutor_a']),
         os.path.join(base_dir, file_cfg['tutor_b']),
     ]
-    print('>> Estrazione ore dai timesheet tutor...')
+    print('>> Extracting hours from the tutor timesheets...')
     ore_all = estrai_ore_tutor(path_tutor, anno)
-    print('   %d etichette tirocinante estratte dai tutor.' % len(ore_all))
+    print('   %d trainee labels extracted from the tutors.' % len(ore_all))
 
-    # 3) corrispondenze
+    # 3) matches
     corr, report_corr = costruisci_corrispondenze(anag, ore_all)
 
-    # report matching
-    print('\n=== CORRISPONDENZE NOMI ===')
+    # matching report
+    print('\n=== NAME MATCHES ===')
     n_match = n_no = 0
     for nome_disp, nt, tipo in report_corr:
         flag = 'OK' if nt else 'NO'
@@ -427,11 +427,11 @@ def main():
         else:
             n_no += 1
         print('  [%s] %s -> %s (%s)' % (flag, nome_disp, nt or '-', tipo))
-    print('Match: %d, senza match: %d\n' % (n_match, n_no))
+    print('Matched: %d, unmatched: %d\n' % (n_match, n_no))
 
     if args.dry_run:
-        print('>> DRY-RUN: nessun file generato.')
-        # stampa comunque il riepilogo ore per chi avrebbe file
+        print('>> DRY-RUN: no files generated.')
+        # still print the hour summary for those who would have files
         for info in anag:
             mesi = mesi_periodo(info['inizio'], info['fine'], anno)
             if not mesi:
@@ -441,25 +441,25 @@ def main():
             tot = []
             for (m, a) in mesi:
                 ore_m = ore_tir.get((m, a), {})
-                tot.append('%02d: %s ore' % (m, sum(ore_m.values())))
+                tot.append('%02d: %s h' % (m, sum(ore_m.values())))
             print('  %s | %s | %d mesi | %s' %
                   (info['tirocinante'], denom, len(mesi), ', '.join(tot)))
         return
 
-    # 4) crea template v2 (con riga Denominazione Progetto)
-    print('>> Creazione template v2...')
+    # 4) create v2 template (with Denominazione Progetto row)
+    print('>> Creating v2 template...')
     path_tpl_v2 = crea_template_v2(os.path.join(base_dir, file_cfg['template']))
     print('   Template v2: %s' % os.path.basename(path_tpl_v2))
 
-    # 5) genera file
+    # 5) generate files
     out_dir = os.path.join(base_dir, file_cfg['cartella_output'])
     os.makedirs(out_dir, exist_ok=True)
     n_unici = n_separati = n_saltati = 0
-    print('\n=== GENERAZIONE FILE ===')
+    print('\n=== FILE GENERATION ===')
     for info in anag:
         mesi = mesi_periodo(info['inizio'], info['fine'], anno)
         if not mesi:
-            print('  SKIP %s (N.%s) - nessun mese nel %d' %
+            print('  SKIP %s (N.%s) - no months in %d' %
                   (info['tirocinante'], info['num'], anno))
             n_saltati += 1
             continue
@@ -472,21 +472,21 @@ def main():
         genera_file_unico(info, mesi, ore_tir, denom, path_tpl_v2, out_dir)
         n_unici += 1
         tot_ore = sum(sum(ore_tir.get((m, a), {}).values()) for (m, a) in mesi)
-        print('  OK %s - %d mesi - denom=%s - tot ore: %s' %
+        print('  OK %s - %d months - denom=%s - total hours: %s' %
               (info['tirocinante'], len(mesi), denom.split()[-1], tot_ore))
 
-    # 6) cleanup template v2 temporaneo
+    # 6) cleanup temporary v2 template
     try:
         os.remove(path_tpl_v2)
     except OSError:
         pass
 
-    print('\n=== RIEPILOGO ===')
-    print('Tirocinanti processati: %d' % n_unici)
-    print('Tirocinanti saltati (altro anno): %d' % n_saltati)
+    print('\n=== SUMMARY ===')
+    print('Trainees processed: %d' % n_unici)
+    print('Trainees skipped (other year): %d' % n_saltati)
     if not args.solo_unici:
-        print('File mensili separati generati: %d' % n_separati)
-    print('File unici generati: %d' % n_unici)
+        print('Separate monthly files generated: %d' % n_separati)
+    print('Single files generated: %d' % n_unici)
     print('Output: %s' % out_dir)
 
 

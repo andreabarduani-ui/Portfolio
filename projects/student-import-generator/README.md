@@ -27,3 +27,7 @@ places by hand. The tool cuts it to a single command and eliminates typos on
 hundreds of rows per course edition.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

@@ -1,14 +1,14 @@
 """
 =============================================================================
-MONITORAGGIO ORE DI FORMAZIONE E-LEARNING
+E-LEARNING TRAINING HOURS MONITORING
 =============================================================================
-Lo script rileva automaticamente i file di input presenti nella cartella
-e produce un UNICO file Excel con un foglio per ogni mese elaborato.
+The script automatically detects the input files present in the folder
+and produces a SINGLE Excel file with one sheet for each processed month.
 
-  Celle giornaliere -> ore EFFETTIVE (= ore totali - ore in eccesso)
-  Note sulle celle  -> "Ore totali" + "Eccesso" (solo se c'e' eccesso)
+  Daily cells        -> ACTUAL hours (= total hours - excess hours)
+  Notes on the cells -> "Ore totali" + "Eccesso" (only if there is excess)
 
-  Colonne riepilogative (sempre nello stesso ordine, MODALITA A e MODALITA B):
+  Summary columns (always in the same order, MODALITA A and MODALITA B):
       1) Totale Ore Effettive  (HH:MM:SS)
       2) Ore Totali            (HH:MM:SS)
       3) Totale Eccesso        (HH:MM:SS)  = Ore Totali - Totale Ore Effettive
@@ -16,29 +16,29 @@ e produce un UNICO file Excel con un foglio per ogni mese elaborato.
       5) Eccesso Dopo 18:00    (HH:MM:SS)
       6) Eccesso Mattutino     (HH:MM:SS)  (06:00-07:40)
 
-  MODALITA A - Solo CSV
-  MODALITA B - CSV + LUL (Presenze XLSX): la regola dell'eccesso ore LAV
-      e del cap 8h/giorno viene comunque applicata internamente e confluisce
-      nel Totale Eccesso, senza una colonna dedicata.
+  MODALITA A - CSV only
+  MODALITA B - CSV + LUL (Presenze XLSX): the LAV hours excess rule
+      and the 8h/day cap are still applied internally and flow into
+      the Totale Eccesso, without a dedicated column.
 
-  MODALITA B - parsing LUL (V17):
-      - leggi_mappa_colonne gestisce: "1 L", "1", date openpyxl
-      - parse_blocco_dipendente cerca LAV anche in col 1, gestisce assenze
-        con codice (F, M, ROL...) anche senza ore >= 8
-      - carica_lul cerca la riga 'ORE' in tutti i fogli del workbook
-      - calcola_giorno distingue: lul=None (no abbinamento -> come Mod.A),
-        lav=None (giorno fuori LUL -> come Mod.A), lav=0 (giorno non lavorato
-        -> assente), lav>0 (giorno lavorato -> cap a lav_ore)
+  MODALITA B - LUL parsing (V17):
+      - leggi_mappa_colonne handles: "1 L", "1", openpyxl dates
+      - parse_blocco_dipendente looks for LAV also in col 1, handles absences
+        with a code (F, M, ROL...) even without hours >= 8
+      - carica_lul looks for the 'ORE' row in all sheets of the workbook
+      - calcola_giorno distinguishes: lul=None (no match -> same as MODALITA A),
+        lav=None (day outside the LUL -> same as MODALITA A), lav=0 (day not
+        worked -> absent), lav>0 (worked day -> capped at lav_ore)
 
-SELEZIONE DEL PERIODO:
-  - Imposta MESE = numero del mese (es. 3 per Marzo) per un mese specifico
-  - Imposta MESE = None per elaborare TUTTI i mesi presenti nel CSV
-  In entrambi i casi viene prodotto un unico file Excel con un foglio per mese.
+PERIOD SELECTION:
+  - Set MESE = month number (e.g. 3 for March) for a specific month
+  - Set MESE = None to process ALL months present in the CSV
+  In both cases a single Excel file is produced with one sheet per month.
 
-DIPENDENZE:
+DEPENDENCIES:
     pip install pandas openpyxl
 
-UTILIZZO:
+USAGE:
     python monitoraggio_formazione.py
 =============================================================================
 """
@@ -54,30 +54,30 @@ from openpyxl.comments import Comment
 
 
 # =============================================================================
-# CONFIGURAZIONE
+# CONFIGURATION
 # =============================================================================
 
 CSV_FILE    = "Report_Accessi.csv"
-# Il LUL puo' essere un PDF (stampa piattaforma orari) oppure un XLSX.
-# Lo script rileva automaticamente il primo file disponibile tra questi nomi.
-# IMPORTANTE: il PDF e' la fonte piu' affidabile. La conversione del PDF in
-# Excel spesso PERDE i nomi dei dipendenti (tranne il primo), quindi quando
-# possibile usare direttamente il PDF.
+# The LUL can be a PDF (times platform printout) or an XLSX.
+# The script automatically detects the first available file among these names.
+# IMPORTANT: the PDF is the most reliable source. Converting the PDF to
+# Excel often LOSES the employee names (except the first one), so whenever
+# possible use the PDF directly.
 LUL_FILE_PDF  = "Presenze.pdf"
 LUL_FILE_XLSX = "Presenze.xlsx"
-LUL_FILE      = LUL_FILE_XLSX   # compatibilita': impostato dinamicamente in main()
-AZIENDA_BREVE = "aicomply"   # nome breve dell'azienda per il file di output
-# Il nome del file di output include automaticamente la data di oggi e l'azienda
-# Es: Monitoraggio_15-04-2026.xlsx
+LUL_FILE      = LUL_FILE_XLSX   # compatibility: set dynamically in main()
+AZIENDA_BREVE = "aicomply"   # short company name for the output file
+# The output file name automatically includes today's date and the company
+# E.g.: Monitoraggio_15-04-2026.xlsx
 OUTPUT_FILE = f"Monitoraggio_{datetime.date.today().strftime('%d-%m-%Y')}.xlsx"
 
-# Mese da elaborare:
-#   MESE = None    -> elabora TUTTI i mesi e anni presenti nel CSV (consigliato)
-#   MESE = 32026   -> elabora solo Marzo 2026     (3  + 2026)
-#   MESE = 112025  -> elabora solo Novembre 2025  (11 + 2025)
-#   MESE = 12026   -> elabora solo Gennaio 2026   (1  + 2026)
-# Formula: scrivi il numero del mese seguito dall anno a 4 cifre
-# Nota: con MESE = None la variabile ANNO qui sotto viene ignorata
+# Month to process:
+#   MESE = None    -> process ALL months and years present in the CSV (recommended)
+#   MESE = 32026   -> process only March 2026     (3  + 2026)
+#   MESE = 112025  -> process only November 2025  (11 + 2025)
+#   MESE = 12026   -> process only January 2026   (1  + 2026)
+# Formula: write the month number followed by the 4-digit year
+# Note: with MESE = None the ANNO variable below is ignored
 MESE = None
 
 CSV_SEPARATOR      = ";"
@@ -85,41 +85,41 @@ SOGLIA_ORA         = 18.0
 SOGLIA_MATTINO_INI = 6.0
 SOGLIA_MATTINO_FIN = 7 + 40/60
 TOLLERANZA_MINUTI  = 20
-CAP_ORE_GIORNALIERO = 8.0    # ore massime riconoscibili per discente in un singolo giorno
-ORE_LIMITE_FINANZIATE = 150  # ore massime riconoscibili per discente (per la colonna MIN nel Riepilogo)
+CAP_ORE_GIORNALIERO = 8.0    # maximum recognizable hours per learner in a single day
+ORE_LIMITE_FINANZIATE = 150  # maximum recognizable hours per learner (for the MIN column in the Riepilogo)
 
 
 # =============================================================================
-# COSTANTI
+# CONSTANTS
 # =============================================================================
 
 NOMI_MESI = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
               "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
 
 COLORI = {
-    # Stati cella (tonalita' molto chiare per ridurre il "rumore" visivo)
-    "verde":   "F0F6EC",   # fruizione normale
-    "arancio": "FBEAD8",   # eccesso ore LAV
-    "viola":   "F2E8EE",   # eccesso dopo soglia
-    "azzurro": "E8EFF5",   # eccesso mattino (06:00-07:40)
-    "rosa":    "FAE6E6",   # fruizione nel weekend
-    "giallo":  "FBF4D9",   # giorno assente con fruizione
-    "grigio":  "F2F2F2",   # weekend senza fruizione
+    # Cell states (very light shades to reduce visual "noise")
+    "verde":   "F0F6EC",   # normal usage
+    "arancio": "FBEAD8",   # LAV hours excess
+    "viola":   "F2E8EE",   # excess after threshold
+    "azzurro": "E8EFF5",   # morning excess (06:00-07:40)
+    "rosa":    "FAE6E6",   # weekend usage
+    "giallo":  "FBF4D9",   # absent day with usage
+    "grigio":  "F2F2F2",   # weekend without usage
     # UI
-    "header":  "F4F5F7",   # intestazioni - grigio chiarissimo
-    "titolo":  "ECF0F4",   # sfondo titolo - azzurro tenuissimo
-    "titolo_testo": "2C3E50",  # colore testo titolo
-    "totale":  "F1F3F5",   # riga totale - grigio chiarissimo
-    "bordo":   "BDC3C7",   # bordi sottili
+    "header":  "F4F5F7",   # headers - very light gray
+    "titolo":  "ECF0F4",   # title background - very light blue
+    "titolo_testo": "2C3E50",  # title text color
+    "totale":  "F1F3F5",   # total row - very light gray
+    "bordo":   "BDC3C7",   # thin borders
 }
 
 
-# Formato Excel per durate (anche superiori a 24 ore)
+# Excel format for durations (also above 24 hours)
 DURATION_FORMAT = "[h]:mm:ss"
 
 
 # =============================================================================
-# UTILITA GENERALI
+# GENERAL UTILITIES
 # =============================================================================
 
 def giorni_nel_mese(anno, mese):
@@ -141,40 +141,40 @@ def giorni_weekend(anno, mese):
 
 
 def normalizza_nome(nome):
-    """Normalizza un nome per l'ABBINAMENTO LUL<->CSV: ordina alfabeticamente
-    i token cosi' "MARIO ROSSI" e "ROSSI MARIO" coincidono. NON usare questa
-    funzione per ordinare i discenti nei fogli (vedi chiave_ordinamento)."""
+    """Normalizes a name for LUL<->CSV MATCHING: sorts the tokens alphabetically
+    so that "MARIO ROSSI" and "ROSSI MARIO" coincide. Do NOT use this
+    function to sort the learners in the sheets (see chiave_ordinamento)."""
     token = re.sub(r"[^A-Za-z ]", "", nome.upper()).split()
     return " ".join(sorted(token))
 
 
 def chiave_ordinamento(nome):
-    """Chiave per l'ORDINAMENTO ALFABETICO dei discenti nei fogli, per COGNOME.
+    """Key for the ALPHABETICAL SORTING of learners in the sheets, by SURNAME.
 
-    Nei file il nome e' scritto "COGNOME NOME" (es. "ROSSI FABIO"), quindi
-    la stringa ripulita e maiuscola gia' ordina per cognome. A differenza di
-    normalizza_nome, qui NON si riordinano i token: l'ordine delle parole
-    (cognome prima) viene preservato."""
+    In the files the name is written "COGNOME NOME" (e.g. "ROSSI FABIO"), so
+    the cleaned uppercase string already sorts by surname. Unlike
+    normalizza_nome, here the tokens are NOT re-sorted: the word order
+    (surname first) is preserved."""
     return re.sub(r"[^A-Za-z ]", "", str(nome).upper()).strip()
 
 
 def normalizza_ordine_nomi(discenti_globali, dipendenti_lul):
-    """Riordina i nomi dei discenti nel formato "COGNOME NOME" usando il LUL
-    come riferimento.
+    """Reorders the learner names into "COGNOME NOME" format using the LUL
+    as reference.
 
-    Nel CSV i nomi possono essere scritti "Nome Cognome" (es. "Mario Rossi"),
-    mentre nel LUL sono "Cognome Nome" (es. "ROSSI MARIO"). Per ordinare e
-    mostrare i discenti per COGNOME servono i token nell'ordine giusto.
+    In the CSV names may be written "Nome Cognome" (e.g. "Mario Rossi"),
+    while in the LUL they are "Cognome Nome" (e.g. "ROSSI MARIO"). To sort and
+    display learners by COGNOME the tokens must be in the right order.
 
-    Strategia:
-      - per ogni discente si cercano nel LUL i token corrispondenti (match per
-        prefisso, robusto ai troncamenti del PDF e all'ordine invertito);
-      - se si trova il dipendente LUL, si adotta l'ordine dei token del LUL
-        (cognome prima), completando pero' i token troncati con la versione
-        intera presa dal CSV (es. LUL "GIOVA" -> si tiene "GIOVANNI" dal CSV);
-      - se il discente NON e' nel LUL, si applica il fallback: si assume che
-        l'ULTIMA parola sia il cognome e lo si porta in testa.
-    Il campo "nome" di ogni discente viene aggiornato in "COGNOME NOME".
+    Strategy:
+      - for each learner the corresponding tokens are searched in the LUL
+        (prefix match, robust to PDF truncations and inverted order);
+      - if the LUL employee is found, the LUL token order is adopted
+        (surname first), completing truncated tokens with the full version
+        taken from the CSV (e.g. LUL "GIOVA" -> "GIOVANNI" from the CSV is kept);
+      - if the learner is NOT in the LUL, the fallback applies: the LAST word
+        is assumed to be the surname and is moved to the front.
+    The "nome" field of each learner is updated to "COGNOME NOME".
     """
     def _tok(n):
         return [t for t in re.sub(r"[^A-Za-z ]", " ", str(n).upper()).split() if t]
@@ -192,7 +192,7 @@ def normalizza_ordine_nomi(discenti_globali, dipendenti_lul):
         if not tok_csv:
             continue
 
-        # Cerca il dipendente LUL compatibile
+        # Look for the compatible LUL employee
         ordine_lul = None
         for tlul, d in lul_tokens:
             piccolo, grande = (tok_csv, tlul) if len(tok_csv) <= len(tlul) else (tlul, tok_csv)
@@ -209,9 +209,9 @@ def normalizza_ordine_nomi(discenti_globali, dipendenti_lul):
                 break
 
         if ordine_lul:
-            # Adotta l'ordine del LUL, ma per ogni token del LUL preferisci la
-            # versione PIU' LUNGA tra LUL e CSV (cosi' i troncamenti del PDF
-            # vengono completati con il nome intero del CSV).
+            # Adopt the LUL order, but for each LUL token prefer the LONGEST
+            # version between LUL and CSV (so PDF truncations are completed
+            # with the full name from the CSV).
             csv_disp = list(tok_csv)
             nuovi = []
             for tl in ordine_lul:
@@ -222,21 +222,21 @@ def normalizza_ordine_nomi(discenti_globali, dipendenti_lul):
                         csv_disp.remove(tc)
                         break
                 nuovi.append(scelto)
-            # eventuali token CSV non abbinati (rari) si accodano
+            # any unmatched CSV tokens (rare) are appended
             nuovi.extend(csv_disp)
             info["nome"] = " ".join(nuovi).upper()
         else:
-            # Fallback (discente NON nel LUL): si assume "Nome ... Cognome", quindi
-            # il cognome e' in coda. Si gestiscono i cognomi con particella
-            # (DE, DEL, DELLA, DI, DA, LO, LA, LE, VAN, VON, MC, ...): la
-            # particella che precede l'ultima parola fa parte del cognome.
+            # Fallback (learner NOT in the LUL): "Nome ... Cognome" is assumed, so
+            # the surname is at the end. Surnames with a particle are handled
+            # (DE, DEL, DELLA, DI, DA, LO, LA, LE, VAN, VON, MC, ...): the
+            # particle preceding the last word is part of the surname.
             PARTICELLE = {"DE","DEL","DELLA","DELLE","DELLO","DEI","DEGLI","DI","DA",
                           "DAL","DALLA","LO","LA","LE","LI","VAN","VON","MC","MAC",
                           "SAN","SANTA","SANT","D"}
             if len(tok_csv) >= 2:
-                # quante parole finali compongono il cognome?
+                # how many trailing words make up the surname?
                 n_cog = 1
-                # includi particelle immediatamente precedenti il cognome
+                # include particles immediately preceding the surname
                 while len(tok_csv) - n_cog - 1 >= 1 and tok_csv[-(n_cog + 1)] in PARTICELLE:
                     n_cog += 1
                 cognome = tok_csv[-n_cog:]
@@ -257,9 +257,9 @@ LOGO_FNC       = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fnc-l
 
 
 def inserisci_loghi(ws, riga_logo=2, altezza_riga=40):
-    """Inserisce i due loghi nella riga indicata (default: riga 2).
-    Logo aziendale a sinistra (cella A), FNC a destra (ultima colonna visibile).
-    Gestisce gracefully l'assenza dei file immagine."""
+    """Inserts the two logos in the given row (default: row 2).
+    Company logo on the left (cell A), FNC on the right (last visible column).
+    Gracefully handles missing image files."""
     from openpyxl.drawing.image import Image as XLImage
     ws.row_dimensions[riga_logo].height = altezza_riga
     for path, anchor in [(LOGO_AZIENDA, "A2"), (LOGO_FNC, None)]:
@@ -267,20 +267,20 @@ def inserisci_loghi(ws, riga_logo=2, altezza_riga=40):
             continue
         try:
             img = XLImage(path)
-            # Scala mantenendo aspect ratio all'altezza target
-            h_target = altezza_riga * 1.33   # punti -> pixel approssimativi
+            # Scale keeping the aspect ratio at the target height
+            h_target = altezza_riga * 1.33   # points -> approximate pixels
             scale    = h_target / img.height
             img.width  = int(img.width  * scale)
             img.height = int(img.height * scale)
             if anchor is None:
-                # Calcola l'ultima colonna del merge del titolo per posizionare FNC
-                # (usa colonna N abbastanza a destra — la funzione chiamante può
-                # passare la lettera corretta via parametro se serve)
-                anchor = "B2"   # placeholder; verrà sovrascritto dal chiamante
+                # Compute the last column of the title merge to position FNC
+                # (uses a column far enough to the right — the calling function
+                # can pass the correct letter via parameter if needed)
+                anchor = "B2"   # placeholder; will be overwritten by the caller
             img.anchor = anchor
             ws.add_image(img)
         except Exception:
-            pass   # Se Pillow/openpyxl non reggono il file, ignora silenziosamente
+            pass   # If Pillow/openpyxl cannot handle the file, skip silently
 
 
 def ore_decimali_a_hhmmss(ore_dec):
@@ -294,7 +294,7 @@ def ore_decimali_a_hhmmss(ore_dec):
 
 
 # =============================================================================
-# PARSING CSV
+# CSV PARSING
 # =============================================================================
 
 def parse_durata(testo):
@@ -322,11 +322,11 @@ def splitta_ore_per_soglia(riga, soglia):
         return durata, 0.0
     if t_inizio >= soglia:
         return 0.0, durata
-    # Usa l'intervallo reale della sessione come denominatore (non la durata fruita),
-    # per calcolare correttamente la frazione di studio proporzionale al tempo dopo soglia.
+    # Use the real session interval as denominator (not the consumed duration),
+    # to correctly compute the study fraction proportional to the time after the threshold.
     elapsed = t_fine - t_inizio
     frazione_dopo = (t_fine - soglia) / elapsed if elapsed > 0 else 0
-    # Clamp per sicurezza numerica
+    # Clamp for numerical safety
     frazione_dopo = max(0.0, min(1.0, frazione_dopo))
     ore_dopo = durata * frazione_dopo
     return durata - ore_dopo, ore_dopo
@@ -334,16 +334,16 @@ def splitta_ore_per_soglia(riga, soglia):
 
 def ore_in_finestra_mattino(riga):
     """
-    Calcola le ore di studio (proporzionali al tempo trascorso) che cadono
-    nella finestra mattutina [SOGLIA_MATTINO_INI, SOGLIA_MATTINO_FIN].
-    Usa la stessa logica proporzionale di splitta_ore_per_soglia: la frazione
-    di studio in finestra e' proporzionale alla frazione di tempo elapsed in
-    finestra, non alla durata fruita.
+    Computes the study hours (proportional to elapsed time) that fall
+    in the morning window [SOGLIA_MATTINO_INI, SOGLIA_MATTINO_FIN].
+    Uses the same proportional logic as splitta_ore_per_soglia: the study
+    fraction in the window is proportional to the elapsed time fraction in
+    the window, not to the consumed duration.
     """
     durata   = parse_durata(riga["Totale Ore"])
     t_inizio = ora_in_decimale(riga["Primo Accesso"])
     t_fine   = ora_in_decimale(riga["Ultimo Accesso"])
-    # Sessione interamente fuori dalla finestra mattutina
+    # Session entirely outside the morning window
     if t_fine <= SOGLIA_MATTINO_INI or t_inizio >= SOGLIA_MATTINO_FIN:
         return 0.0
     elapsed = t_fine - t_inizio
@@ -360,8 +360,8 @@ def ore_in_finestra_mattino(riga):
 
 
 def fmt_durata_breve(ore_dec):
-    """Formatta una durata decimale in modo compatto (per le note delle celle).
-    Es. 1.5h -> '1 h 30 min', 0.42h -> '25 min', 0.005h -> '18 s'."""
+    """Formats a decimal duration in compact form (for cell notes).
+    E.g. 1.5h -> '1 h 30 min', 0.42h -> '25 min', 0.005h -> '18 s'."""
     sec_tot = int(round(ore_dec * 3600))
     h = sec_tot // 3600
     m = (sec_tot % 3600) // 60
@@ -374,7 +374,7 @@ def fmt_durata_breve(ore_dec):
 
 
 def carica_csv_completo(percorso_file):
-    print(f"Caricamento CSV: {percorso_file}")
+    print(f"Loading CSV: {percorso_file}")
     df = pd.read_csv(percorso_file, sep=CSV_SEPARATOR, encoding="utf-8-sig")
     df["Giorno"] = pd.to_datetime(df["Giorno"], format="%d/%m/%Y")
     return df
@@ -401,16 +401,16 @@ def elabora_mese_dal_csv(df_completo, mese, anno, soglia):
         lambda r: pd.Series(splitta_ore_per_soglia(r, soglia)), axis=1)
     df_mese["ore_mattino"] = df_mese.apply(ore_in_finestra_mattino, axis=1)
     df_mese["ore_tot"]     = df_mese.apply(lambda r: parse_durata(r["Totale Ore"]), axis=1)
-    # ore_prima = ore "valide" (orario normale = tra fine finestra mattutina e soglia)
-    # = ore_prima_raw (prima della soglia) meno la parte che cade nella finestra mattino
+    # ore_prima = "valid" hours (normal schedule = between the end of the morning window and the threshold)
+    # = ore_prima_raw (before the threshold) minus the part falling in the morning window
     df_mese["ore_prima"] = (df_mese["ore_prima_raw"] - df_mese["ore_mattino"]).clip(lower=0)
     df_mese["day"] = df_mese["Giorno"].dt.day
 
-    # Raggruppamento per (Codice Fiscale, giorno): SOMMA le ore di TUTTE le
-    # sessioni di quel giorno, INCLUSI percorsi formativi diversi della stessa
-    # persona. Se un discente segue due o piu' percorsi e nello stesso giorno
-    # ha sessioni su piu' di essi (anche con orari sovrapposti), le ore vengono
-    # sommate (somma semplice: eventuali sovrapposizioni temporali sono conteggiate).
+    # Grouping by (Codice Fiscale, day): SUMS the hours of ALL the sessions of
+    # that day, INCLUDING different training paths of the same person. If a
+    # learner follows two or more paths and on the same day has sessions on
+    # more than one of them (even with overlapping schedules), the hours are
+    # summed (simple sum: any time overlaps are counted).
     df_giornaliero = (
         df_mese.groupby(["Codice Fiscale", "day"])
         .agg(ore_prima  =("ore_prima",   "sum"),
@@ -420,8 +420,8 @@ def elabora_mese_dal_csv(df_completo, mese, anno, soglia):
         .reset_index()
     )
 
-    # Elenco discenti: un discente = un Codice Fiscale. Se ha piu' percorsi,
-    # vengono elencati tutti, concatenati con " | ".
+    # Learner list: one learner = one Codice Fiscale. If they have multiple paths,
+    # all of them are listed, concatenated with " | ".
     discenti_info = (
         df_mese.groupby("Codice Fiscale")
         .agg(nome    =("Nome Cognome", "first"),
@@ -432,40 +432,40 @@ def elabora_mese_dal_csv(df_completo, mese, anno, soglia):
     discenti_info = discenti_info.sort_values("sort_key").reset_index(drop=True)
 
     azienda = df_mese["Azienda"].iloc[0]
-    print(f"  {NOMI_MESI[mese]} {anno}: {len(discenti_info)} discenti | Azienda: {azienda}")
+    print(f"  {NOMI_MESI[mese]} {anno}: {len(discenti_info)} learners | Company: {azienda}")
     return df_giornaliero, discenti_info, azienda
 
 
 # =============================================================================
-# PARSING LUL
+# LUL PARSING
 # =============================================================================
 
 def leggi_mappa_colonne(riga_ore):
-    """Costruisce la mappa {indice_colonna: numero_giorno} dalla riga intestazione del LUL.
+    """Builds the map {column_index: day_number} from the LUL header row.
 
-    Gestisce i vari formati con cui le aziende numerano i giorni nella riga 'ORE':
-      - "1 L", "2 M", ... (formato classico con spazio + lettera giorno)
-      - "1", "2", ...     (solo numero intero, senza lettera)
-      - datetime.date     (alcuni LUL restituiscono date openpyxl)
-      - Salta "ORE", "TOT" e celle vuote.
+    Handles the various formats companies use to number the days in the 'ORE' row:
+      - "1 L", "2 M", ... (classic format with space + day letter)
+      - "1", "2", ...     (integer only, without letter)
+      - datetime.date     (some LULs return openpyxl dates)
+      - Skips "ORE", "TOT" and empty cells.
     """
     col_giorno = {}
     for ci, valore in enumerate(riga_ore):
         if valore is None:
             continue
-        # Oggetto data openpyxl -> usa il giorno del mese
+        # openpyxl date object -> use the day of the month
         if isinstance(valore, (datetime.date, datetime.datetime)):
             col_giorno[ci] = valore.day
             continue
         s = str(valore).strip()
         if not s or s in ("ORE", "TOT"):
             continue
-        # "1 L", "15 M", ecc.
+        # "1 L", "15 M", etc.
         m = re.match(r"^(\d{1,2})\s+[A-Za-z]", s)
         if m:
             col_giorno[ci] = int(m.group(1))
             continue
-        # Solo numero intero (es. "1", "15")
+        # Integer only (e.g. "1", "15")
         if re.match(r"^\d{1,2}$", s):
             col_giorno[ci] = int(s)
     return col_giorno
@@ -478,21 +478,21 @@ def estrai_nome_dipendente(testo):
 
 
 def parse_blocco_dipendente(righe, indice_inizio, col_giorno):
-    """Estrae le ore LAV e i giorni di assenza dal blocco di un dipendente nel LUL.
+    """Extracts the LAV hours and the absence days from an employee block in the LUL.
 
-    Miglioramenti rispetto alla versione precedente:
-    - Cerca la riga LAV anche quando il label è in una cella non prima (es. col 1).
-    - Gestisce assenze con ore < 8 ma con codice assenza significativo (es. "F", "M").
-    - Gestisce il formato alternativo ASSENZE con più righe di codici.
-    - Distingue tra "giorno non presente nel LUL" (dipendente non in quel mese)
-      e "giorno con LAV = 0" (dipendente presente ma senza ore lavorate dichiarate).
-    - Non conta come "assente" un giorno con lav_ore > 0 anche se ha una voce assenza.
+    Improvements over the previous version:
+    - Looks for the LAV row even when the label is in a non-first cell (e.g. col 1).
+    - Handles absences with hours < 8 but with a significant absence code (e.g. "F", "M").
+    - Handles the alternative ASSENZE format with multiple code rows.
+    - Distinguishes between "day not present in the LUL" (employee not in that month)
+      and "day with LAV = 0" (employee present but with no declared worked hours).
+    - Does not count a day with lav_ore > 0 as "absent" even if it has an absence entry.
     """
     nome    = estrai_nome_dipendente(str(righe[indice_inizio][0]))
     lav     = {}
     assenti = set()
 
-    # Codici assenza che indicano giorno non lavorato (in aggiunta al criterio ore >= 8)
+    # Absence codes indicating a non-worked day (in addition to the hours >= 8 criterion)
     CODICI_ASSENZA = {"F", "M", "MR", "P", "ROL", "EX", "AL", "ASP", "INF",
                       "MAL", "CIG", "CIGS", "0", "ART", "SOS", "PERM"}
 
@@ -500,8 +500,8 @@ def parse_blocco_dipendente(righe, indice_inizio, col_giorno):
         riga = righe[j]
         if not riga:
             continue
-        # Cerca il label in colonna 0 o colonna 1 (alcuni LUL hanno una colonna
-        # descrittiva in col 0 e il label vero in col 1)
+        # Look for the label in column 0 or column 1 (some LULs have a
+        # descriptive column in col 0 and the real label in col 1)
         v0 = riga[0]
         v1 = riga[1] if len(riga) > 1 else None
         label = None
@@ -510,19 +510,19 @@ def parse_blocco_dipendente(righe, indice_inizio, col_giorno):
         elif isinstance(v1, str):
             label = v1.strip()
 
-        # ── Riga LAV ─────────────────────────────────────────────────────────
+        # ── LAV row ──────────────────────────────────────────────────────────
         if label == "LAV":
             for ci, val in enumerate(riga):
                 if ci in col_giorno:
                     if isinstance(val, (int, float)):
                         lav[col_giorno[ci]] = float(val)
                     elif val is None or val == "":
-                        # Giorno presente nella mappa ma senza valore ->
-                        # marca esplicitamente come 0 (dipendente in quel mese,
-                        # giorno senza ore lavorate dichiarate)
+                        # Day present in the map but without a value ->
+                        # explicitly mark as 0 (employee in that month,
+                        # day with no declared worked hours)
                         lav.setdefault(col_giorno[ci], 0.0)
 
-        # ── Sezione ASSENZE ──────────────────────────────────────────────────
+        # ── ASSENZE section ──────────────────────────────────────────────────
         elif isinstance(label, str) and "A S S E N Z E" in label:
             riga_codici = riga
             riga_ore    = righe[j + 1] if j + 1 < len(righe) else [None] * 50
@@ -533,16 +533,16 @@ def parse_blocco_dipendente(righe, indice_inizio, col_giorno):
                 if not codice:
                     continue
                 codice_s = str(codice).strip().upper()
-                # Assenza certa: ore >= 8 intere giornata
+                # Certain absence: hours >= 8 full day
                 if isinstance(ore_ass, (int, float)) and ore_ass >= 8:
                     assenti.add(giorno_num)
-                # Assenza per codice riconosciuto (anche mezza giornata)
+                # Absence by recognized code (half day too)
                 elif codice_s in CODICI_ASSENZA:
-                    # Solo se non ha già ore LAV > 0 registrate
+                    # Only if it has no LAV hours > 0 already recorded
                     if lav.get(giorno_num, 0.0) == 0.0:
                         assenti.add(giorno_num)
 
-        # ── Fine blocco ───────────────────────────────────────────────────────
+        # ── End of block ─────────────────────────────────────────────────────
         elif j > indice_inizio + 2 and isinstance(label, str):
             if "PIATTAFORMA" in label or label.startswith("Azienda") or "Dipendente" in label:
                 break
@@ -551,19 +551,19 @@ def parse_blocco_dipendente(righe, indice_inizio, col_giorno):
 
 
 def carica_lul(percorso_file):
-    """Carica il LUL (Presenze.xlsx) e restituisce la lista dei dipendenti con
-    ore LAV e giorni di assenza per ogni giorno del mese.
+    """Loads the LUL (Presenze.xlsx) and returns the list of employees with
+    LAV hours and absence days for each day of the month.
 
-    Miglioramenti rispetto alla versione precedente:
-    - Cerca la riga 'ORE' in tutte le righe (non solo le prime), utile per LUL
-      con intestazioni aziendali di lunghezza variabile.
-    - Prova tutti i fogli del workbook se nel foglio attivo non trova la mappa.
-    - Log di debug sui dipendenti trovati e non trovati.
+    Improvements over the previous version:
+    - Looks for the 'ORE' row in all rows (not only the first ones), useful for LULs
+      with company headers of variable length.
+    - Tries all sheets of the workbook if the map is not found in the active sheet.
+    - Debug log of employees found and not found.
     """
-    print(f"Caricamento LUL: {percorso_file}")
+    print(f"Loading LUL: {percorso_file}")
     wb = openpyxl.load_workbook(percorso_file, data_only=True)
 
-    # Prova prima il foglio attivo, poi tutti gli altri
+    # Try the active sheet first, then all the others
     fogli_da_provare = [wb.active] + [wb[s] for s in wb.sheetnames if wb[s] != wb.active]
 
     righe      = None
@@ -571,29 +571,29 @@ def carica_lul(percorso_file):
 
     for ws in fogli_da_provare:
         righe_candidate = list(ws.iter_rows(values_only=True))
-        # Cerca la riga 'ORE' (intestazione dei giorni)
+        # Look for the 'ORE' row (day header)
         for riga in righe_candidate:
             if riga and riga[0] == "ORE":
                 col_giorno = leggi_mappa_colonne(riga)
                 if col_giorno:
                     righe = righe_candidate
-                    print(f"  Mappa colonne trovata nel foglio '{ws.title}' "
-                          f"({len(col_giorno)} giorni)")
+                    print(f"  Column map found in sheet '{ws.title}' "
+                          f"({len(col_giorno)} days)")
                     break
         if col_giorno:
             break
 
     if not col_giorno or righe is None:
-        print("  ATTENZIONE: impossibile trovare la riga 'ORE' con la mappa giorni nel LUL.")
-        print("  Verifica che il LUL abbia una riga con 'ORE' in colonna A e i giorni "
-              "nel formato '1 L', '2 M', ... (o solo numero) nelle colonne successive.")
+        print("  WARNING: unable to find the 'ORE' row with the day map in the LUL.")
+        print("  Check that the LUL has a row with 'ORE' in column A and the days "
+              "in the format '1 L', '2 M', ... (or number only) in the following columns.")
         return []
 
-    # Individua gli inizi dei blocchi dipendente.
-    # Una riga inizia un blocco se contiene "Dipendente:" in colonna A.
-    # NON si vincola la posizione di "PIATTAFORMA" (che nei LUL reali può
-    # comparire in coda alla riga, oltre i primi caratteri): basta che la
-    # parola sia presente nella riga, oppure che la riga inizi con "Azienda".
+    # Locate the starts of the employee blocks.
+    # A row starts a block if it contains "Dipendente:" in column A.
+    # The position of "PIATTAFORMA" is NOT constrained (in real LULs it can
+    # appear at the end of the row, beyond the first characters): it is enough
+    # that the word is present in the row, or that the row starts with "Azienda".
     inizi_blocchi = [
         i for i, riga in enumerate(righe)
         if riga and isinstance(riga[0], str)
@@ -601,56 +601,56 @@ def carica_lul(percorso_file):
     ]
 
     if not inizi_blocchi:
-        print("  ATTENZIONE: nessun blocco dipendente trovato nel LUL. "
-              "Verifica il formato (atteso: riga con 'Dipendente:' in colonna A).")
+        print("  WARNING: no employee block found in the LUL. "
+              "Check the format (expected: row with 'Dipendente:' in column A).")
         return []
 
     dipendenti = [parse_blocco_dipendente(righe, i, col_giorno) for i in inizi_blocchi]
-    # Filtra eventuali blocchi vuoti / senza nome
+    # Filter out any empty blocks / blocks without a name
     dipendenti = [d for d in dipendenti if d["name"] != "SCONOSCIUTO" or d["lav"]]
-    print(f"  Trovati {len(dipendenti)} dipendenti nel LUL")
+    print(f"  Found {len(dipendenti)} employees in the LUL")
     return dipendenti
 
 
 def carica_lul_da_pdf(percorso_file):
-    """Carica il LUL direttamente dal PDF di piattaforma orari (stampa dettagliata
-    controllo presenze) e restituisce la lista dei dipendenti con ore LAV e
-    giorni di assenza.
+    """Loads the LUL directly from the times platform PDF (detailed attendance
+    control printout) and returns the list of employees with LAV hours and
+    absence days.
 
-    Perche' leggere il PDF e non l'Excel convertito:
-    nel PDF ogni dipendente ha la propria intestazione di pagina con nome e
-    "Ore lavorate". La conversione PDF->Excel tipicamente conserva solo la
-    prima intestazione e rende anonimi gli altri blocchi: leggere il PDF
-    risolve il problema alla radice.
+    Why read the PDF instead of the converted Excel:
+    in the PDF each employee has their own page header with name and
+    "Ore lavorate". The PDF->Excel conversion typically keeps only the first
+    header and makes the other blocks anonymous: reading the PDF
+    solves the problem at the root.
 
-    Tecnica di parsing:
-    - una pagina = un dipendente;
-    - dall'intestazione si estrae nome e "Ore lavorate" (per validazione);
-    - dalla riga 'ORE' si mappa ogni numero-giorno alla sua coordinata X;
-    - la riga 'LAV' contiene le ore lavorate, allineate per X alla colonna
-      giorno piu' vicina (le colonne nel PDF non sono equispaziate);
-    - un giorno con LAV > 0 e' lavorato; i giorni feriali senza valore LAV
-      (festivi, ferie, malattia, ROL, permessi) vengono marcati a 0.0 e
-      trattati a valle come non lavorati.
+    Parsing technique:
+    - one page = one employee;
+    - from the header the name and "Ore lavorate" are extracted (for validation);
+    - from the 'ORE' row each day-number is mapped to its X coordinate;
+    - the 'LAV' row contains the worked hours, aligned by X to the nearest
+      day column (columns in the PDF are not evenly spaced);
+    - a day with LAV > 0 is worked; weekdays without a LAV value
+      (holidays, leave, illness, ROL, permits) are marked 0.0 and
+      treated downstream as not worked.
     """
     try:
         import pdfplumber
     except ImportError:
-        print("  ERRORE: per leggere il LUL in PDF serve la libreria 'pdfplumber'.")
-        print("          Installala dal terminale con:  pip install pdfplumber")
-        print("          (oppure:  python -m pip install pdfplumber)")
-        print("          Senza LUL i fogli saranno generati in Modalita' A (solo CSV).")
+        print("  ERROR: the 'pdfplumber' library is required to read the LUL in PDF.")
+        print("          Install it from the terminal with:  pip install pdfplumber")
+        print("          (or:  python -m pip install pdfplumber)")
+        print("          Without LUL the sheets will be generated in MODALITA A (CSV only).")
         return [], None
     from collections import defaultdict
 
     def _num(s):
         return float(str(s).replace(",", "."))
 
-    print(f"Caricamento LUL (PDF): {percorso_file}")
+    print(f"Loading LUL (PDF): {percorso_file}")
     pdf = pdfplumber.open(percorso_file)
     dipendenti = []
     senza_ore  = 0
-    mese_lul   = None   # (num_mese, anno) rilevato dall'intestazione del PDF
+    mese_lul   = None   # (month_num, year) detected from the PDF header
 
     MESI_IT = {"gennaio":1,"febbraio":2,"marzo":3,"aprile":4,"maggio":5,
                "giugno":6,"luglio":7,"agosto":8,"settembre":9,
@@ -668,12 +668,12 @@ def carica_lul_da_pdf(percorso_file):
         mlav = re.search(r"Ore lavorate:\s*([\d.,]+)", testo)
         ore_dichiarate = _num(mlav.group(1)) if mlav else None
 
-        # Raggruppa i token per riga (bin di 2px sull'asse verticale)
+        # Group the tokens by row (2px bins on the vertical axis)
         righe_y = defaultdict(list)
         for w in words:
             righe_y[round(w['top'] / 2) * 2].append(w)
 
-        # Mappa giorno -> centro X dalla riga 'ORE'
+        # Map day -> X center from the 'ORE' row
         giorni_x = {}
         ore_ykey = None
         for ykey in sorted(righe_y):
@@ -696,7 +696,7 @@ def carica_lul_da_pdf(percorso_file):
                     bestd, best = d, g
             return best if bestd < 13 else None
 
-        # Riga 'LAV' -> ore lavorate per giorno (per posizione X)
+        # 'LAV' row -> worked hours per day (by X position)
         lav = {}
         for ykey in sorted(righe_y):
             if ykey <= ore_ykey:
@@ -708,20 +708,20 @@ def carica_lul_da_pdf(percorso_file):
                         continue
                     if re.match(r'^[\d,]+$', w['text']):
                         v = _num(w['text'])
-                        if v > 24:      # colonna TOT a fine riga
+                        if v > 24:      # TOT column at the end of the row
                             continue
                         g = _col_giorno((w['x0'] + w['x1']) / 2)
                         if g:
                             lav[g] = v
-                break   # solo la prima riga 'LAV'
+                break   # only the first 'LAV' row
 
         if not lav:
             senza_ore += 1
-        # I giorni feriali del mese SENZA valore LAV (ferie, malattia, ROL,
-        # permessi, festivita') vengono marcati esplicitamente a 0.0: cosi'
-        # calcola_giorno li tratta come "non lavorati" (eccesso LAV) e non come
-        # "giorno fuori dal LUL". I weekend non si toccano: ci pensa la logica
-        # weekend di calcola_giorno. Il mese/anno si ricavano dall'intestazione.
+        # The weekdays of the month WITHOUT a LAV value (leave, illness, ROL,
+        # permits, holidays) are explicitly marked 0.0: this way
+        # calcola_giorno treats them as "not worked" (LAV excess) and not as
+        # "day outside the LUL". Weekends are left untouched: the weekend
+        # logic of calcola_giorno handles them. Month/year are derived from the header.
         mmese = re.search(r"Mese:\s*([A-Za-z]+)\s+(\d{4})", testo)
         if mmese:
             nome_mese = mmese.group(1).lower()
@@ -733,42 +733,42 @@ def carica_lul_da_pdf(percorso_file):
                 import calendar as _cal
                 ndays = _cal.monthrange(anno_pdf, num_mese)[1]
                 for d in range(1, ndays + 1):
-                    wd = datetime.date(anno_pdf, num_mese, d).weekday()  # 0=lun..6=dom
-                    if wd < 5 and d not in lav:   # feriale e non gia' lavorato
+                    wd = datetime.date(anno_pdf, num_mese, d).weekday()  # 0=Mon..6=Sun
+                    if wd < 5 and d not in lav:   # weekday and not already worked
                         lav[d] = 0.0
         dipendenti.append({"name": nome, "lav": lav, "assente": set(),
                            "ore_dichiarate": ore_dichiarate})
 
-    # Validazione: somma LAV == "Ore lavorate" dichiarate
+    # Validation: LAV sum == declared "Ore lavorate"
     incongruenti = []
     for d in dipendenti:
         tot = sum(d["lav"].values())
         if d["ore_dichiarate"] is not None and abs(tot - d["ore_dichiarate"]) > 0.5:
             incongruenti.append(f"{d['name']} (LAV={tot:.0f}h vs dich={d['ore_dichiarate']:.0f}h)")
 
-    print(f"  Trovati {len(dipendenti)} dipendenti nel LUL (PDF)")
+    print(f"  Found {len(dipendenti)} employees in the LUL (PDF)")
     if mese_lul:
-        print(f"  Mese del LUL: {mese_lul[0]:02d}/{mese_lul[1]} "
-              f"(la Modalita' B sara' applicata SOLO a questo mese)")
+        print(f"  LUL month: {mese_lul[0]:02d}/{mese_lul[1]} "
+              f"(MODALITA B will be applied ONLY to this month)")
     else:
-        print("  ATTENZIONE: impossibile rilevare il mese dal LUL "
-              "(intestazione 'Mese: ...' non trovata).")
+        print("  WARNING: unable to detect the month from the LUL "
+              "('Mese: ...' header not found).")
     if senza_ore:
-        print(f"  Di cui {senza_ore} senza ore lavorate nel mese (es. cessati/assenti).")
+        print(f"  Of which {senza_ore} without worked hours in the month (e.g. terminated/absent).")
     if incongruenti:
-        print(f"  ATTENZIONE: {len(incongruenti)} dipendenti con somma LAV diversa dalle ore dichiarate:")
+        print(f"  WARNING: {len(incongruenti)} employees with LAV sum different from the declared hours:")
         for s in incongruenti[:10]:
             print(f"     - {s}")
     return dipendenti, mese_lul
 
 
 def carica_lul_auto(percorso_file):
-    """Sceglie automaticamente il parser in base all'estensione del file LUL.
+    """Automatically chooses the parser based on the LUL file extension.
 
-    Restituisce sempre una tupla (dipendenti, mese_lul), dove mese_lul e'
-    (num_mese, anno) se rilevato, altrimenti None. Per il formato XLSX il mese
-    non e' rilevabile dall'intestazione, quindi mese_lul = None e la Modalita' B
-    viene applicata a tutti i mesi (comportamento legacy)."""
+    Always returns a tuple (dipendenti, mese_lul), where mese_lul is
+    (month_num, year) if detected, otherwise None. For the XLSX format the
+    month is not detectable from the header, so mese_lul = None and MODALITA B
+    is applied to all months (legacy behavior)."""
     ext = os.path.splitext(percorso_file)[1].lower()
     if ext == ".pdf":
         return carica_lul_da_pdf(percorso_file)
@@ -776,43 +776,43 @@ def carica_lul_auto(percorso_file):
 
 
 def abbina_discenti_lul(discenti_info, dipendenti_lul):
-    """Abbina i discenti del CSV ai dipendenti del LUL tramite il nome.
+    """Matches the CSV learners to the LUL employees by name.
 
-    Problema dei PDF piattaforma orari: il nome del dipendente viene TRONCATO a
-    circa 19 caratteri (es. "GIORDANETTI ALESSAN" invece di
-    "GIORDANETTI ALESSANDRO", "LOMBARDINI BEATRIC" invece di
-    "LOMBARDINI BEATRICE"). Un confronto esatto fallirebbe per tutti i nomi
-    lunghi, lasciandoli erroneamente in Modalita' A (nessun controllo ore LAV).
+    Problem with times platform PDFs: the employee name is TRUNCATED to
+    about 19 characters (e.g. "GIORDANETTI ALESSAN" instead of
+    "GIORDANETTI ALESSANDRO", "LOMBARDINI BEATRIC" instead of
+    "LOMBARDINI BEATRICE"). An exact comparison would fail for all long
+    names, wrongly leaving them in MODALITA A (no LAV hours check).
 
-    Strategia di abbinamento (in ordine):
-      1) match esatto sul nome normalizzato (token ordinati);
-      2) match per PREFISSO COGNOME+NOME: il nome del LUL (eventualmente
-         troncato) deve essere prefisso del nome completo del CSV, o viceversa,
-         confrontando la sequenza dei caratteri senza spazi. Cosi'
-         "GIORDANETTI ALESSAN" abbina "GIORDANETTI ALESSANDRO".
-    Se un nome del LUL e' prefisso ambiguo di piu' discenti, NON si abbina e si
-    segnala, per evitare attribuzioni sbagliate.
+    Matching strategy (in order):
+      1) exact match on the normalized name (sorted tokens);
+      2) SURNAME+NAME PREFIX match: the LUL name (possibly truncated)
+         must be a prefix of the full CSV name, or vice versa,
+         comparing the character sequence without spaces. This way
+         "GIORDANETTI ALESSAN" matches "GIORDANETTI ALESSANDRO".
+    If a LUL name is an ambiguous prefix of multiple learners, it is NOT
+    matched and is reported, to avoid wrong attributions.
     """
     def _tokens(nome):
-        # insieme ordinato di token alfabetici maiuscoli, senza accenti spurî
+        # sorted set of uppercase alphabetic tokens, without stray accents
         return [t for t in re.sub(r"[^A-Za-z ]", " ", str(nome).upper()).split() if t]
 
     def _key(nome):
-        # chiave per match esatto: token ordinati alfabeticamente
+        # key for exact match: alphabetically sorted tokens
         return " ".join(sorted(_tokens(nome)))
 
     def _match_token(a, b):
-        # due token combaciano se uno e' prefisso dell'altro di almeno 3 lettere
-        # (gestisce i troncamenti del PDF, es. FEDERIC ~ FEDERICO, GIOVA ~ GIOVANNI)
+        # two tokens match if one is a prefix of the other of at least 3 letters
+        # (handles PDF truncations, e.g. FEDERIC ~ FEDERICO, GIOVA ~ GIOVANNI)
         if a == b:
             return True
         corto, lungo = (a, b) if len(a) <= len(b) else (b, a)
         return len(corto) >= 3 and lungo.startswith(corto)
 
     def _nomi_compatibili(tok_csv, tok_lul):
-        # ogni token del nome piu' corto deve trovare un match (prefisso) in un
-        # token ancora libero dell'altro nome. Robust a ordine invertito
-        # (CSV "Nome Cognome" vs LUL "Cognome Nome") e a token troncati/mancanti.
+        # each token of the shorter name must find a (prefix) match in a
+        # still-free token of the other name. Robust to inverted order
+        # (CSV "Nome Cognome" vs LUL "Cognome Nome") and to truncated/missing tokens.
         piccolo, grande = (tok_csv, tok_lul) if len(tok_csv) <= len(tok_lul) else (tok_lul, tok_csv)
         disponibili = list(grande)
         for t in piccolo:
@@ -824,10 +824,10 @@ def abbina_discenti_lul(discenti_info, dipendenti_lul):
             if trovato is None:
                 return False
             disponibili.remove(trovato)
-        # almeno 2 token combaciati (cognome + nome) per evitare falsi positivi
+        # at least 2 matching tokens (surname + name) to avoid false positives
         return len(piccolo) >= 2
 
-    # Indici del LUL
+    # LUL indices
     lul_per_nome = {}
     lul_tokens   = []   # (tokens, dipendente)
     for d in dipendenti_lul:
@@ -843,12 +843,12 @@ def abbina_discenti_lul(discenti_info, dipendenti_lul):
         nome_csv = riga["nome"]
         kcsv     = _key(nome_csv)
 
-        # 1) match esatto sui token ordinati
+        # 1) exact match on the sorted tokens
         if kcsv in lul_per_nome:
             cf_a_lul[cf] = lul_per_nome[kcsv]
             continue
 
-        # 2) match token-per-token con prefisso (ordine invertito + troncamenti)
+        # 2) token-by-token prefix match (inverted order + truncations)
         tcsv = _tokens(nome_csv)
         candidati = []
         for tlul, d in lul_tokens:
@@ -862,18 +862,18 @@ def abbina_discenti_lul(discenti_info, dipendenti_lul):
         else:
             non_abbinati.append(nome_csv)
 
-    print(f"  Abbinati: {len(cf_a_lul)} / {len(discenti_info)}")
+    print(f"  Matched: {len(cf_a_lul)} / {len(discenti_info)}")
     if abbinati_prefisso:
-        print(f"  Abbinati per nome troncato/parziale ({len(abbinati_prefisso)}):")
+        print(f"  Matched by truncated/partial name ({len(abbinati_prefisso)}):")
         for a in abbinati_prefisso:
             print(f"     - {a}")
     if non_abbinati:
-        print(f"  Non abbinati (restano in Modalita' A): {', '.join(non_abbinati)}")
+        print(f"  Not matched (remain in MODALITA A): {', '.join(non_abbinati)}")
     return cf_a_lul
 
 
 # =============================================================================
-# CALCOLO ORE PER GIORNO
+# HOURS CALCULATION PER DAY
 # =============================================================================
 
 def calcola_giorno(cf, giorno, df_giornaliero, cf_a_lul, weekend_days, modalita_b):
@@ -887,16 +887,16 @@ def calcola_giorno(cf, giorno, df_giornaliero, cf_a_lul, weekend_days, modalita_
         ore_mattino = riga["ore_mattino"].iloc[0]
         ore_tot     = riga["ore_tot"].iloc[0]
 
-    # Applica tolleranza dopo le 18:00 e nel mattino (20 min/giorno per finestra non contano)
+    # Apply tolerance after 18:00 and in the morning (20 min/day per window do not count)
     tolleranza_ore  = TOLLERANZA_MINUTI / 60
     ore_dopo_eff    = 0.0 if ore_dopo    <= tolleranza_ore else ore_dopo
     ore_mattino_eff = 0.0 if ore_mattino <= tolleranza_ore else ore_mattino
 
-    # Applica cap giornaliero: se le ore in orario normale superano 8h, l'eccesso non e' riconosciuto.
+    # Apply daily cap: if the normal-schedule hours exceed 8h, the excess is not recognized.
     exc_cap   = max(0.0, ore_prima - CAP_ORE_GIORNALIERO)
     ore_prima = min(ore_prima, CAP_ORE_GIORNALIERO)
 
-    # ── MODALITA A: solo CSV ──────────────────────────────────────────────────
+    # ── MODALITA A: CSV only ────────────────────────────────────────────────
     if not modalita_b:
         if giorno in weekend_days:
             return {"ore_tot": ore_tot, "eff": 0.0,
@@ -920,17 +920,17 @@ def calcola_giorno(cf, giorno, df_giornaliero, cf_a_lul, weekend_days, modalita_
                     "colore": colore}
 
     # ── MODALITA B: CSV + LUL ────────────────────────────────────────────────
-    # Metodo (verificato a mano sui dati reali):
-    #   1) Weekend          -> tutte le ore sono eccesso weekend, eff = 0
-    #   2) Nessun abbinamento LUL (lul None) o giorno fuori dal LUL (lav_ore None)
-    #                       -> come Modalita' A: nessun vincolo LAV
-    #   3) Giorno NON lavorato (assente, oppure lav_ore == 0)
-    #                       -> tutte le ore feriali sono eccesso LAV, eff = 0
-    #   4) Giorno lavorato (lav_ore > 0)
-    #                       -> ore valide = min(ore_prima, lav_ore);
-    #                          l'eccedenza oltre le ore lavorate e' eccesso LAV.
-    # In tutti i casi restano validi anche i tagli "serale" (ore_dopo_eff),
-    # "mattutino" (ore_mattino_eff) e "cap 8h" (exc_cap) gia' calcolati sopra.
+    # Method (manually verified on real data):
+    #   1) Weekend          -> all hours are weekend excess, eff = 0
+    #   2) No LUL match (lul None) or day outside the LUL (lav_ore None)
+    #                       -> same as MODALITA A: no LAV constraint
+    #   3) NOT worked day (absent, or lav_ore == 0)
+    #                       -> all weekday hours are LAV excess, eff = 0
+    #   4) Worked day (lav_ore > 0)
+    #                       -> valid hours = min(ore_prima, lav_ore);
+    #                          the amount beyond the worked hours is LAV excess.
+    # In all cases the "evening" (ore_dopo_eff), "morning" (ore_mattino_eff)
+    # and "8h cap" (exc_cap) cuts already computed above remain valid.
     lul       = cf_a_lul.get(cf)
     e_assente = (giorno in lul["assente"]) if lul else False
     lav_ore   = lul["lav"].get(giorno, None) if lul else None
@@ -942,7 +942,7 @@ def calcola_giorno(cf, giorno, df_giornaliero, cf_a_lul, weekend_days, modalita_
                 "exc_cap": 0.0, "exc_lav": 0.0,
                 "colore": COLORI["rosa"] if ore_tot > 0 else COLORI["grigio"]}
 
-    # 2) Nessun vincolo LAV applicabile -> come Modalita' A
+    # 2) No LAV constraint applicable -> same as MODALITA A
     if lul is None or (lav_ore is None and not e_assente):
         if ore_dopo_eff > 0:      colore = COLORI["viola"]
         elif ore_mattino_eff > 0: colore = COLORI["azzurro"]
@@ -954,14 +954,14 @@ def calcola_giorno(cf, giorno, df_giornaliero, cf_a_lul, weekend_days, modalita_
                 "exc_mattino": ore_mattino_eff, "exc_cap": exc_cap, "exc_lav": 0.0,
                 "colore": colore}
 
-    # 3) Giorno NON lavorato (assenza dichiarata oppure ore lavorate = 0)
+    # 3) NOT worked day (declared absence or worked hours = 0)
     if e_assente or lav_ore == 0.0:
         return {"ore_tot": ore_tot, "eff": 0.0, "exc_we": 0.0,
                 "exc_dopo": ore_dopo_eff, "exc_mattino": ore_mattino_eff,
                 "exc_cap": exc_cap, "exc_lav": ore_prima,
                 "colore": COLORI["giallo"] if ore_tot > 0 else None}
 
-    # 4) Giorno lavorato: cap alle ore effettivamente lavorate (LAV)
+    # 4) Worked day: capped at the actually worked hours (LAV)
     eff     = min(ore_prima, lav_ore)
     exc_lav = max(0.0, ore_prima - lav_ore)
 
@@ -978,37 +978,37 @@ def calcola_giorno(cf, giorno, df_giornaliero, cf_a_lul, weekend_days, modalita_
 
 
 # =============================================================================
-# SCRITTURA FOGLIO EXCEL (un foglio per mese, sullo stesso Workbook)
+# EXCEL SHEET WRITING (one sheet per month, on the same Workbook)
 # =============================================================================
 
 def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
                   mese, anno, cf_a_lul=None, discenti_globali=None):
     """
-    Aggiunge un foglio al Workbook wb con i dati del mese indicato.
+    Adds a sheet to the Workbook wb with the data of the given month.
     """
     modalita_b    = cf_a_lul is not None
     totale_giorni = giorni_nel_mese(anno, mese)
     weekend_days  = giorni_weekend(anno, mese)
-    modo_label    = "MODALITA B (CSV+LUL)" if modalita_b else "MODALITA A (solo CSV)"
+    modo_label    = "MODALITA B (CSV+LUL)" if modalita_b else "MODALITA A (CSV only)"
 
     titolo = f"MONITORAGGIO ORE FORMAZIONE - {NOMI_MESI[mese]} {anno} - {azienda}"
 
-    # Layout colonne
+    # Column layout
     COL_A       = 1
     COL_B       = 2
     COL_C       = 3
     COL_DAY_INI = 4
     COL_DAY_FIN = COL_DAY_INI + totale_giorni - 1
 
-    # Colonne riepilogative — ordine fisso.
-    # In MODALITA B viene aggiunta una colonna "Eccesso Ore LAV" tra
-    # "Totale Eccesso" e "Eccesso Weekend"; in MODALITA A questa colonna
-    # non e' presente perche' non c'e' la sorgente LUL.
-    COL_TOT_EFF      = COL_DAY_FIN + 1   # Totale Ore Effettive (=SUM celle giorno)
-    COL_TOT_ORE      = COL_DAY_FIN + 2   # Ore Totali           (valore Python)
-    COL_TOT_EXC      = COL_DAY_FIN + 3   # Totale Eccesso       (= ore totali - effettive)
+    # Summary columns — fixed order.
+    # In MODALITA B an "Eccesso Ore LAV" column is added between
+    # "Totale Eccesso" and "Eccesso Weekend"; in MODALITA A this column
+    # is not present because there is no LUL source.
+    COL_TOT_EFF      = COL_DAY_FIN + 1   # Totale Ore Effettive (=SUM of day cells)
+    COL_TOT_ORE      = COL_DAY_FIN + 2   # Ore Totali           (Python value)
+    COL_TOT_EXC      = COL_DAY_FIN + 3   # Totale Eccesso       (= total hours - actual)
     if modalita_b:
-        COL_EXC_LAV      = COL_DAY_FIN + 4   # Eccesso Ore LAV (solo modalita B)
+        COL_EXC_LAV      = COL_DAY_FIN + 4   # Eccesso Ore LAV (MODALITA B only)
         COL_EXC_WE       = COL_DAY_FIN + 5
         COL_EXC_DOPO     = COL_DAY_FIN + 6
         COL_EXC_MATTINO  = COL_DAY_FIN + 7
@@ -1038,7 +1038,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
     N           = len(lista_discenti)
     RIGA_TOTALE = RIGA_DATI + N
 
-    # Stili (palette pulita, testo grigio scuro, sfondo chiaro)
+    # Styles (clean palette, dark gray text, light background)
     font_base    = Font(name="Arial", size=9, color="333333")
     font_header  = Font(name="Arial", size=9, bold=True, color="495057")
     font_titolo  = Font(name="Arial", size=12, bold=True, color=COLORI["titolo_testo"])
@@ -1050,7 +1050,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
 
     ws = wb.create_sheet(title=f"{NOMI_MESI[mese]} {anno}")
 
-    # ── Titolo ────────────────────────────────────────────────────────────────
+    # ── Title ────────────────────────────────────────────────────────────────
     ws.row_dimensions[RIGA_TITOLO].height = 26
     c = ws.cell(RIGA_TITOLO, COL_A, value=titolo)
     c.font = font_titolo; c.fill = fill_cell(COLORI["titolo"])
@@ -1058,7 +1058,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
     ws.merge_cells(start_row=RIGA_TITOLO, start_column=COL_A,
                    end_row=RIGA_TITOLO,   end_column=ULTIMA_COL)
 
-    # ── Riga loghi ────────────────────────────────────────────────────────────
+    # ── Logos row ────────────────────────────────────────────────────────────
     from openpyxl.drawing.image import Image as XLImage
     ws.row_dimensions[RIGA_LOGO].height = 38
     for path, anchor_col in [(LOGO_AZIENDA, COL_A), (LOGO_FNC, ULTIMA_COL - 1)]:
@@ -1075,7 +1075,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
         except Exception:
             pass
 
-    # ── Intestazioni ──────────────────────────────────────────────────────────
+    # ── Headers ──────────────────────────────────────────────────────────────
     ws.row_dimensions[RIGA_HEADER].height = 32
 
     def scrivi_header(col, testo):
@@ -1096,7 +1096,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
         c.alignment = allin_wrap
         c.fill = fill_cell(COLORI["grigio"] if abbr in ("S", "D") else COLORI["header"])
 
-    # Colonne riepilogative — 6 colonne fisse in ordine specifico
+    # Summary columns — 6 fixed columns in a specific order
     scrivi_header(COL_TOT_EFF,       "Totale\nOre Effettive")
     ws.cell(RIGA_HEADER, COL_TOT_EFF).comment = Comment(
         "Somma delle ore effettive del mese\n"
@@ -1145,7 +1145,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
         "Tolleranza 20 min/giorno (sotto questa soglia non contano).",
         "Monitoraggio")
 
-    # ── Larghezze colonne ─────────────────────────────────────────────────────
+    # ── Column widths ─────────────────────────────────────────────────────────
     ws.column_dimensions[get_column_letter(COL_A)].width = 25
     ws.column_dimensions[get_column_letter(COL_B)].width = 17
     ws.column_dimensions[get_column_letter(COL_C)].width = 35
@@ -1165,16 +1165,16 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
     col_tot_eff_letter = get_column_letter(COL_TOT_EFF)
     col_tot_ore_letter = get_column_letter(COL_TOT_ORE)
 
-    # Mappa CF -> ore effettive del mese (per il foglio Riepilogo Generale,
-    # che ora le scrive come VALORI invece che come formule cross-sheet).
+    # Map CF -> actual hours of the month (for the Riepilogo Generale sheet,
+    # which now writes them as VALUES instead of cross-sheet formulas).
     ore_eff_per_cf = {}
 
     for idx, (cf, info_disc) in enumerate(lista_discenti):
         r = RIGA_DATI + idx
         cf_a_riga[cf] = r
 
-        # Il nome nei file e' gia' nel formato "COGNOME NOME": lo si usa cosi'
-        # com'e' (solo in maiuscolo), senza invertire i token.
+        # The name in the files is already in "COGNOME NOME" format: it is used
+        # as-is (uppercase only), without swapping the tokens.
         cognome_nome = info_disc["nome"].strip().upper()
 
         ws.row_dimensions[r].height = 17
@@ -1182,15 +1182,15 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
         c = ws.cell(r, COL_B, value=cf);           c.font = font_base; c.alignment = allin_centro
         c = ws.cell(r, COL_C, value=info_disc["percorso"]); c.font = font_base; c.alignment = allin_sin
 
-        # Accumulatori mensili:
-        # - acc_tot:     somma ore totali del mese (per "Ore Totali")
-        # - acc_eff:     somma ore effettive del mese (per Riepilogo)
-        # - acc_we:      somma eccesso weekend
-        # - acc_dopo:    somma eccesso dopo soglia serale
-        # - acc_mattino: somma eccesso mattutino
-        # - acc_lav:     somma eccesso ore LAV (solo modalita B, sempre 0 in A)
-        # exc_cap viene comunque conteggiato nel Totale Eccesso via la formula
-        # (Ore Totali - Totale Ore Effettive), quindi non serve accumularlo.
+        # Monthly accumulators:
+        # - acc_tot:     sum of total hours of the month (for "Ore Totali")
+        # - acc_eff:     sum of actual hours of the month (for the Riepilogo)
+        # - acc_we:      sum of weekend excess
+        # - acc_dopo:    sum of excess after the evening threshold
+        # - acc_mattino: sum of morning excess
+        # - acc_lav:     sum of LAV hours excess (MODALITA B only, always 0 in A)
+        # exc_cap is still counted in the Totale Eccesso via the formula
+        # (Ore Totali - Totale Ore Effettive), so it does not need to be accumulated.
         acc_tot = acc_eff = acc_we = acc_dopo = acc_mattino = acc_lav = 0.0
 
         for d in range(1, totale_giorni + 1):
@@ -1202,10 +1202,10 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
                               + res.get("exc_cap", 0) + res.get("exc_lav", 0))
             ore_eff_daily   = ore_tot_daily - excess_daily
 
-            # Valore cella: ore EFFETTIVE (= totali - eccesso).
-            # Se ore_tot==0 -> cella vuota (giornata senza fruizione).
-            # Se ore_tot>0 ma ore_eff==0 (es. weekend interamente in eccesso)
-            # mostra esplicitamente 0:00:00 col colore di sfondo dell'eccesso.
+            # Cell value: ACTUAL hours (= total - excess).
+            # If ore_tot==0 -> empty cell (day without usage).
+            # If ore_tot>0 but ore_eff==0 (e.g. weekend entirely in excess)
+            # it explicitly shows 0:00:00 with the excess background color.
             if ore_tot_daily > 0:
                 c = ws.cell(r, col, value=ore_eff_daily / 24)
                 c.number_format = DURATION_FORMAT
@@ -1215,14 +1215,14 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
             if res["colore"]:
                 c.fill = fill_cell(res["colore"])
 
-            # Nota: SOLO se c'e' eccesso effettivamente contato (ore totali != ore effettive)
-            # Mostra "Ore totali", "Eccesso" e il dettaglio per tipo di eccesso.
+            # Note: ONLY if there is actually counted excess (total hours != actual hours)
+            # Shows "Ore totali", "Eccesso" and the detail by excess type.
             if excess_daily > 1e-6:
                 note_lines = [
                     f"Ore totali: {ore_decimali_a_hhmmss(ore_tot_daily)}",
                     f"Eccesso: {ore_decimali_a_hhmmss(excess_daily)}",
                 ]
-                # Dettaglio per tipo di eccesso (solo voci con valore > 0)
+                # Detail by excess type (only entries with value > 0)
                 if res.get("exc_we", 0) > 1e-6:
                     note_lines.append(
                         f"- Weekend: {ore_decimali_a_hhmmss(res['exc_we'])}")
@@ -1251,7 +1251,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
             acc_mattino += res.get("exc_mattino", 0)
             acc_lav     += res.get("exc_lav", 0)
 
-        # Memorizza ore effettive per il Riepilogo (anche per i non-fruitori: 0)
+        # Store the actual hours for the Riepilogo (also for non-users: 0)
         ore_eff_per_cf[cf] = acc_eff
 
         def scrivi_durata(col, val):
@@ -1270,28 +1270,28 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
         if cf not in cf_fruitori:
             continue
 
-        # ── Colonne riepilogative (ordine fisso) ─────────────────────────────
-        # 1) Totale Ore Effettive = somma delle celle giornaliere (=SUM)
+        # ── Summary columns (fixed order) ─────────────────────────────────────
+        # 1) Totale Ore Effettive = sum of the daily cells (=SUM)
         scrivi_formula(COL_TOT_EFF,
                        f"=SUM({col_day_ini_letter}{r}:{col_day_fin_letter}{r})")
-        # 2) Ore Totali = valore Python (somma di ore_tot giornaliere)
+        # 2) Ore Totali = Python value (sum of the daily ore_tot)
         scrivi_durata(COL_TOT_ORE, acc_tot)
-        # 3) Totale Eccesso = Ore Totali - Totale Ore Effettive (formula trasparente)
+        # 3) Totale Eccesso = Ore Totali - Totale Ore Effettive (transparent formula)
         scrivi_formula(COL_TOT_EXC,
                        f"={col_tot_ore_letter}{r}-{col_tot_eff_letter}{r}")
-        # 3-bis) Eccesso Ore LAV (solo modalita B)
+        # 3-bis) Eccesso Ore LAV (MODALITA B only)
         if modalita_b:
             scrivi_durata(COL_EXC_LAV, acc_lav)
-        # 4) Eccesso Weekend
+        # 4) Weekend excess
         scrivi_durata(COL_EXC_WE, acc_we)
-        # 5) Eccesso Dopo soglia serale
+        # 5) Evening threshold excess
         scrivi_durata(COL_EXC_DOPO, acc_dopo)
-        # 6) Eccesso Mattutino
+        # 6) Morning excess
         scrivi_durata(COL_EXC_MATTINO, acc_mattino)
 
-    # ── Riga TOTALE ───────────────────────────────────────────────────────────
-    # Tutti i totali sono ottenuti tramite formule =SUM() sulle righe utenti,
-    # in modo che l'azienda possa verificare i conteggi cliccando sulle celle.
+    # ── TOTALE row ───────────────────────────────────────────────────────────
+    # All totals are obtained via =SUM() formulas on the user rows,
+    # so that the company can verify the counts by clicking the cells.
     ws.row_dimensions[RIGA_TOTALE].height = 18
     c = ws.cell(RIGA_TOTALE, COL_A, value="TOTALE")
     c.font = font_totale
@@ -1305,7 +1305,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
     riga_primo_utente = RIGA_DATI
     riga_ultimo_utente = RIGA_TOTALE - 1
 
-    # Le colonne riepilogative (in MODALITA B con anche EXC_LAV)
+    # The summary columns (in MODALITA B also with EXC_LAV)
     col_riepilogo_tot = [COL_TOT_EFF, COL_TOT_ORE, COL_TOT_EXC]
     if modalita_b:
         col_riepilogo_tot.append(COL_EXC_LAV)
@@ -1321,7 +1321,7 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
 
     ws.freeze_panes = ws.cell(RIGA_DATI, COL_DAY_INI)
 
-    # Statistiche di log (solo per output a console, non scritte sul foglio)
+    # Log statistics (console output only, not written to the sheet)
     tot_fruite_log = df_giornaliero["ore_tot"].sum()
     tolleranza_ore = TOLLERANZA_MINUTI / 60
     tot_dopo_log = 0.0
@@ -1338,10 +1338,10 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
         for d in giorni_weekend(anno, mese)
     )
 
-    print(f"  -> Foglio '{NOMI_MESI[mese]} {anno}' scritto | "
-          f"Discenti: {N} | Ore fruite: {ore_decimali_a_hhmmss(tot_fruite_log)} | "
-          f"Eccesso 18:00: {ore_decimali_a_hhmmss(tot_dopo_log)} | "
-          f"Eccesso WE: {ore_decimali_a_hhmmss(tot_we_log)} | {modo_label}")
+    print(f"  -> Sheet '{NOMI_MESI[mese]} {anno}' written | "
+          f"Learners: {N} | Hours used: {ore_decimali_a_hhmmss(tot_fruite_log)} | "
+          f"Excess after 18:00: {ore_decimali_a_hhmmss(tot_dopo_log)} | "
+          f"Weekend excess: {ore_decimali_a_hhmmss(tot_we_log)} | {modo_label}")
 
     return {
         "sheet_name":       ws.title,
@@ -1354,22 +1354,22 @@ def scrivi_foglio(wb, discenti_info, df_giornaliero, azienda,
         "col_tot_exc":      COL_TOT_EXC,
         "col_ore_maturate": COL_TOT_EFF,
         "n_discenti":       N,
-        # Dizionario CF -> ore effettive del mese (in ore decimali).
-        # Usato dal foglio Riepilogo per scrivere VALORI (non formule).
+        # Dictionary CF -> actual hours of the month (in decimal hours).
+        # Used by the Riepilogo sheet to write VALUES (not formulas).
         "ore_eff_per_cf":   ore_eff_per_cf,
         "discenti":         discenti_info[["Codice Fiscale", "nome", "percorso"]].to_dict("records"),
     }
 
 
 # =============================================================================
-# FOGLIO RIEPILOGO GENERALE (totali per discente, su tutti i mesi elaborati)
+# RIEPILOGO GENERALE SHEET (totals per learner, across all processed months)
 # =============================================================================
 
 def ore_decimali_a_testo(ore_dec):
-    """Formatta ore decimali come stringa 'X H YY M ZZ S' (es. '150 H 00 M 00 S').
+    """Formats decimal hours as an 'X H YY M ZZ S' string (e.g. '150 H 00 M 00 S').
 
-    Le ore non hanno padding (cosi' '150 H ...' resta naturale), mentre
-    minuti e secondi sono sempre a 2 cifre. Valori <=0 -> '0 H 00 M 00 S'.
+    Hours are not padded (so '150 H ...' stays natural), while
+    minutes and seconds are always 2 digits. Values <=0 -> '0 H 00 M 00 S'.
     """
     if ore_dec is None or ore_dec <= 0:
         return "0 H 00 M 00 S"
@@ -1382,30 +1382,30 @@ def ore_decimali_a_testo(ore_dec):
 
 def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
     """
-    Crea un foglio "Riepilogo Generale" con un discente per riga, una
-    colonna per ogni mese elaborato e tre colonne finali:
-      - Totale Ore Maturate    (valore, somma dei mesi)
-      - Min(150 ore)           (valore, capped a 150 ore)
-      - Ore (formato testuale) (testo "X H YY M ZZ S" del valore capped)
+    Creates a "Riepilogo Generale" sheet with one learner per row, one
+    column for each processed month and three final columns:
+      - Totale Ore Maturate    (value, sum of the months)
+      - Min(150 ore)           (value, capped at 150 hours)
+      - Ore (testo)            (text "X H YY M ZZ S" of the capped value)
 
-    Tutte le celle del Riepilogo usano formule Excel per massima trasparenza:
-      - Colonne mensili     : ='NomeFoglio'!{COL_TOT_EFF}{riga}
-      - Totale Ore Maturate : =SUM(colonne mensili)
+    All the Riepilogo cells use Excel formulas for maximum transparency:
+      - Monthly columns     : ='SheetName'!{COL_TOT_EFF}{row}
+      - Totale Ore Maturate : =SUM(monthly columns)
       - Min(150 ore)        : =MIN(Totale, 150/24)
-      - Ore (testo)         : formula TEXT()+MOD() -> "X H YY M ZZ S"
+      - Ore (testo)         : TEXT()+MOD() formula -> "X H YY M ZZ S"
 
-    fogli_info: lista di dict restituiti da scrivi_foglio() (uno per mese).
-    discenti_globali: dict {cf: {"nome":..., "percorso":...}} con TUTTI i
-        discenti del CSV. Se fornito, ogni discente compare in tabella anche
-        se non ha maturato ore in nessun mese (riga con tutti 0:00:00).
+    fogli_info: list of dicts returned by scrivi_foglio() (one per month).
+    discenti_globali: dict {cf: {"nome":..., "percorso":...}} with ALL the
+        learners of the CSV. If provided, every learner appears in the table
+        even if they earned no hours in any month (row with all 0:00:00).
     """
     if not fogli_info:
         return
 
-    # Ordina i fogli per anno/mese
+    # Sort the sheets by year/month
     fogli_info = sorted(fogli_info, key=lambda x: (x["anno"], x["mese"]))
 
-    # Elenco discenti: usa quello globale se passato, altrimenti unione mensile
+    # Learner list: use the global one if provided, otherwise the monthly union
     if discenti_globali is None:
         discenti_globali = {}
         for f in fogli_info:
@@ -1422,16 +1422,16 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
     n_mesi = len(fogli_info)
     N      = len(discenti_lista)
 
-    # Layout colonne (aggiunta colonna "Ore Tolte" dopo Min(150))
+    # Column layout (adds the "Ore Tolte" column after Min(150))
     COL_NOME       = 1
     COL_CF         = 2
     COL_PERCORSO   = 3
     COL_MESE_INI   = 4
     COL_MESE_FIN   = COL_MESE_INI + n_mesi - 1
-    COL_TOTALE     = COL_MESE_FIN + 1   # Totale Ore Maturate (valore)
-    COL_MIN_150    = COL_MESE_FIN + 2   # Cap a 150 ore (valore)
-    COL_ORE_TOLTE  = COL_MESE_FIN + 3   # Ore Totali - Min(150): ore non riconoscibili
-    COL_TESTO      = COL_MESE_FIN + 4   # Stringa "X H YY M ZZ S" (valore testo)
+    COL_TOTALE     = COL_MESE_FIN + 1   # Totale Ore Maturate (value)
+    COL_MIN_150    = COL_MESE_FIN + 2   # Cap at 150 hours (value)
+    COL_ORE_TOLTE  = COL_MESE_FIN + 3   # Ore Totali - Min(150): non-recognizable hours
+    COL_TESTO      = COL_MESE_FIN + 4   # "X H YY M ZZ S" string (text value)
     ULTIMA_COL     = COL_TESTO
 
     RIGA_TITOLO = 1
@@ -1440,7 +1440,7 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
     RIGA_DATI   = 4
     RIGA_TOTALE = RIGA_DATI + N
 
-    # Stili
+    # Styles
     font_base    = Font(name="Arial", size=10, color="333333")
     font_header  = Font(name="Arial", size=9, bold=True, color="495057")
     font_titolo  = Font(name="Arial", size=13, bold=True, color=COLORI["titolo_testo"])
@@ -1450,10 +1450,10 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
     allin_wrap   = Alignment(horizontal="center", vertical="center", wrap_text=True)
     bordo_top    = Border(top=Side(style="thin", color=COLORI["bordo"]))
 
-    # Inserisci il foglio in PRIMA posizione
+    # Insert the sheet in FIRST position
     ws = wb.create_sheet(title="Riepilogo Generale", index=0)
 
-    # ── Titolo ────────────────────────────────────────────────────────────────
+    # ── Title ────────────────────────────────────────────────────────────────
     ws.row_dimensions[RIGA_TITOLO].height = 28
     c = ws.cell(RIGA_TITOLO, COL_NOME, value=f"Riepilogo Generale - {azienda}")
     c.font = font_titolo; c.fill = fill_cell(COLORI["titolo"])
@@ -1461,7 +1461,7 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
     ws.merge_cells(start_row=RIGA_TITOLO, start_column=COL_NOME,
                    end_row=RIGA_TITOLO,   end_column=ULTIMA_COL)
 
-    # ── Riga loghi ────────────────────────────────────────────────────────────
+    # ── Logos row ────────────────────────────────────────────────────────────
     from openpyxl.drawing.image import Image as XLImage
     ws.row_dimensions[RIGA_LOGO].height = 38
     for path, anchor_col in [(LOGO_AZIENDA, COL_NOME), (LOGO_FNC, ULTIMA_COL - 1)]:
@@ -1478,7 +1478,7 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
         except Exception:
             pass
 
-    # ── Intestazioni ──────────────────────────────────────────────────────────
+    # ── Headers ──────────────────────────────────────────────────────────────
     ws.row_dimensions[RIGA_HEADER].height = 38
 
     def scrivi_header(col, testo):
@@ -1499,7 +1499,7 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
     scrivi_header(COL_ORE_TOLTE, "Ore\nTolte")
     scrivi_header(COL_TESTO,   "Ore\n(testo)")
 
-    # Tooltip esplicativi
+    # Explanatory tooltips
     ws.cell(RIGA_HEADER, COL_TOTALE).comment = Comment(
         "Somma delle ore maturate (al netto degli eccessi) "
         "su tutti i mesi elaborati. Formula: =SUM(colonne mensili).",
@@ -1521,7 +1521,7 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
         f"Formula Excel con TEXT() e MOD().",
         "Monitoraggio")
 
-    # ── Larghezze colonne ─────────────────────────────────────────────────────
+    # ── Column widths ─────────────────────────────────────────────────────────
     ws.column_dimensions[get_column_letter(COL_NOME)].width     = 28
     ws.column_dimensions[get_column_letter(COL_CF)].width       = 17
     ws.column_dimensions[get_column_letter(COL_PERCORSO)].width = 35
@@ -1532,17 +1532,17 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
     ws.column_dimensions[get_column_letter(COL_ORE_TOLTE)].width = 12
     ws.column_dimensions[get_column_letter(COL_TESTO)].width   = 22
 
-    # ── Lettere colonne (usate nelle formule) ────────────────────────────────
+    # ── Column letters (used in formulas) ────────────────────────────────────
     col_mese_ini_letter  = get_column_letter(COL_MESE_INI)
     col_mese_fin_letter  = get_column_letter(COL_MESE_FIN)
     col_totale_letter    = get_column_letter(COL_TOTALE)
     col_min150_letter    = get_column_letter(COL_MIN_150)
     col_ore_tolte_letter = get_column_letter(COL_ORE_TOLTE)
 
-    # ── Righe dati ────────────────────────────────────────────────────────────
+    # ── Data rows ────────────────────────────────────────────────────────────
     for i, (cf, info) in enumerate(discenti_lista):
         r = RIGA_DATI + i
-        # Il nome e' gia' "COGNOME NOME": usato cosi' com'e' (maiuscolo).
+        # The name is already "COGNOME NOME": used as-is (uppercase).
         cognome_nome = info["nome"].strip().upper()
 
         ws.row_dimensions[r].height = 19
@@ -1550,17 +1550,17 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
         c = ws.cell(r, COL_CF,       value=cf);               c.font = font_base; c.alignment = allin_centro
         c = ws.cell(r, COL_PERCORSO, value=info["percorso"]); c.font = font_base; c.alignment = allin_sin
 
-        # Colonne mensili: MATCH+INDEX cross-sheet cercando il CF nella col B del foglio
-        # Usa MATCH(CF, col_B_foglio, 0) per trovare la riga corretta indipendentemente
-        # dall'ordinamento — evita il bug di inversione quando i nomi hanno accenti o
-        # caratteri speciali che alterano il sort key.
+        # Monthly columns: cross-sheet MATCH+INDEX looking up the CF in col B of the sheet
+        # Uses MATCH(CF, sheet_col_B, 0) to find the correct row regardless of
+        # the sorting — avoids the inversion bug when names have accents or
+        # special characters that alter the sort key.
         for j, f in enumerate(fogli_info):
             col    = COL_MESE_INI + j
             sname  = f["sheet_name"].replace("'", "''")
             col_cf_ms  = get_column_letter(2)                    # col B = Codice Fiscale
             col_eff_ms = get_column_letter(f["col_ore_maturate"])
-            n_righe    = f.get("n_discenti", 200)                # range di ricerca abbondante
-            # IFERROR(...,0) per i discenti assenti in quel mese
+            n_righe    = f.get("n_discenti", 200)                # generous search range
+            # IFERROR(...,0) for learners absent in that month
             formula_eff = (
                 f"=IFERROR(INDEX('{sname}'!{col_eff_ms}{RIGA_DATI}:{col_eff_ms}{RIGA_DATI+n_righe},"
                 f"MATCH({chr(34)}{cf}{chr(34)},'{sname}'!{col_cf_ms}{RIGA_DATI}:{col_cf_ms}{RIGA_DATI+n_righe},0)),0)"
@@ -1569,21 +1569,21 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
             c.number_format = DURATION_FORMAT
             c.font = font_base; c.alignment = allin_centro
 
-        # COL_TOTALE: formula =SUM(colonne mensili)
+        # COL_TOTALE: =SUM(monthly columns) formula
         c = ws.cell(r, COL_TOTALE,
                     value=f"=SUM({col_mese_ini_letter}{r}:{col_mese_fin_letter}{r})")
         c.number_format = DURATION_FORMAT
         c.font = font_dato_b; c.alignment = allin_centro
         c.fill = fill_cell(COLORI["totale"])
 
-        # COL_MIN_150: formula =MIN(Totale, limite/24)
+        # COL_MIN_150: =MIN(Totale, limit/24) formula
         c = ws.cell(r, COL_MIN_150,
                     value=f"=MIN({col_totale_letter}{r},{ORE_LIMITE_FINANZIATE}/24)")
         c.number_format = DURATION_FORMAT
         c.font = font_dato_b; c.alignment = allin_centro
         c.fill = fill_cell(COLORI["totale"])
 
-        # COL_ORE_TOLTE: somma MATCH+INDEX su COL_TOT_EXC di ogni foglio mensile
+        # COL_ORE_TOLTE: MATCH+INDEX sum over COL_TOT_EXC of each monthly sheet
         parti_exc = []
         for f in fogli_info:
             sname      = f["sheet_name"].replace("'", "''")
@@ -1600,7 +1600,7 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
         c.font = font_dato_b; c.alignment = allin_centro
         c.fill = fill_cell("FEF2F2")   # rosso tenuissimo
 
-        # COL_TESTO: formula Excel "X H YY M ZZ S" dalla cella Min(150)
+        # COL_TESTO: Excel formula "X H YY M ZZ S" from the Min(150) cell
         testo_formula = (
             f'=TEXT(INT({col_min150_letter}{r}*24),"0")'
             f'&" H "&TEXT(INT(MOD({col_min150_letter}{r}*24,1)*60),"00")'
@@ -1613,7 +1613,7 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
 
     ws.freeze_panes = ws.cell(RIGA_DATI, COL_MESE_INI)
 
-    # ── Riga TOTALE ───────────────────────────────────────────────────────────
+    # ── TOTALE row ───────────────────────────────────────────────────────────
     bordo_top   = Border(top=Side(style="thin", color=COLORI["bordo"]))
     font_totale = Font(name="Arial", size=10, bold=True, color="333333")
     ws.row_dimensions[RIGA_TOTALE].height = 20
@@ -1632,12 +1632,12 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
         c.number_format = DURATION_FORMAT
         c.font = font_totale; c.alignment = Alignment(horizontal="center", vertical="center")
         c.fill = fill_cell(COLORI["totale"]); c.border = bordo_top
-    # Colonna testo: lasciata vuota nel totale
+    # Text column: left empty in the total
     cc = ws.cell(RIGA_TOTALE, COL_TESTO)
     cc.fill = fill_cell(COLORI["totale"]); cc.border = bordo_top
 
-    print(f"\n>> Foglio 'Riepilogo Generale' creato | "
-          f"Discenti: {N} | Mesi: {n_mesi}")
+    print(f"\n>> Sheet 'Riepilogo Generale' created | "
+          f"Learners: {N} | Months: {n_mesi}")
 
 
 # =============================================================================
@@ -1646,79 +1646,79 @@ def scrivi_foglio_riepilogo(wb, fogli_info, azienda, discenti_globali=None):
 
 def main():
     print("=" * 65)
-    print("  MONITORAGGIO ORE FORMAZIONE E-LEARNING")
+    print("  E-LEARNING TRAINING HOURS MONITORING")
     print("=" * 65)
 
     csv_presente = os.path.isfile(CSV_FILE)
-    # Rileva il LUL: preferenza al PDF (piu' affidabile sui nomi), poi XLSX
+    # Detect the LUL: PDF preferred (more reliable for names), then XLSX
     global LUL_FILE
     if os.path.isfile(LUL_FILE_PDF):
         LUL_FILE = LUL_FILE_PDF
     elif os.path.isfile(LUL_FILE_XLSX):
         LUL_FILE = LUL_FILE_XLSX
     else:
-        LUL_FILE = LUL_FILE_XLSX  # nome di default per i messaggi
+        LUL_FILE = LUL_FILE_XLSX  # default name for messages
     lul_presente = os.path.isfile(LUL_FILE)
 
     if not csv_presente:
-        print(f"\nERRORE: file CSV non trovato -> {CSV_FILE}")
+        print(f"\nERROR: CSV file not found -> {CSV_FILE}")
         return
 
-    print(f"\n[OK] CSV trovato:  {CSV_FILE}")
+    print(f"\n[OK] CSV found:  {CSV_FILE}")
     if lul_presente:
         tipo = "PDF" if LUL_FILE.lower().endswith(".pdf") else "XLSX"
-        print(f"[OK] LUL trovato:  {LUL_FILE}  ({tipo})")
+        print(f"[OK] LUL found:  {LUL_FILE}  ({tipo})")
     else:
-        print(f"[--] LUL non trovato ({LUL_FILE_PDF} o {LUL_FILE_XLSX}) -> elaborazione solo CSV")
+        print(f"[--] LUL not found ({LUL_FILE_PDF} or {LUL_FILE_XLSX}) -> CSV-only processing")
 
-    # Carica CSV completo
+    # Load the full CSV
     df_completo = carica_csv_completo(CSV_FILE)
 
-    # Determina mesi da elaborare
+    # Determine the months to process
     if MESE is None:
         periodi = mesi_disponibili_nel_csv(df_completo)
-        print(f"\nModalita: TUTTI I MESI nel CSV")
-        print(f"Mesi trovati: {', '.join(f'{NOMI_MESI[m]} {a}' for a, m in periodi)}")
+        print(f"\nMode: ALL MONTHS in the CSV")
+        print(f"Months found: {', '.join(f'{NOMI_MESI[m]} {a}' for a, m in periodi)}")
     else:
-        # Parsing del formato MMAAAA (es. 112025 = Novembre 2025, 32026 = Marzo 2026)
+        # Parsing of the MMYYYY format (e.g. 112025 = November 2025, 32026 = March 2026)
         codice = str(MESE)
         anno_sel = int(codice[-4:])
         mese_sel = int(codice[:-4])
         if not (1 <= mese_sel <= 12):
-            print(f"\nERRORE: mese non valido nel codice {MESE}. Usa formato MMAAAA, es. 32026 per Marzo 2026.")
+            print(f"\nERROR: invalid month in code {MESE}. Use MMYYYY format, e.g. 32026 for March 2026.")
             return
         periodi = [(anno_sel, mese_sel)]
-        print(f"\nModalita: mese singolo -> {NOMI_MESI[mese_sel]} {anno_sel}")
+        print(f"\nMode: single month -> {NOMI_MESI[mese_sel]} {anno_sel}")
 
-    # Carica LUL (se presente)
+    # Load the LUL (if present)
     dipendenti_lul = []
     mese_lul       = None
     if lul_presente:
         try:
             dipendenti_lul, mese_lul = carica_lul_auto(LUL_FILE)
         except Exception as e:
-            print(f"  Errore nella lettura del LUL: {e} -> procedo senza LUL")
+            print(f"  Error reading the LUL: {e} -> proceeding without LUL")
 
     print(f"\n{'-' * 65}")
-    print(f"  ELABORAZIONE")
+    print(f"  PROCESSING")
     print(f"{'-' * 65}")
 
-    # Crea un unico Workbook con un foglio per ogni mese
+    # Create a single Workbook with one sheet for each month
     wb = openpyxl.Workbook()
-    wb.remove(wb.active)   # rimuove il foglio vuoto creato di default
+    wb.remove(wb.active)   # remove the default empty sheet created automatically
     fogli_creati = 0
-    fogli_info = []          # per il foglio Riepilogo Generale
+    fogli_info = []          # for the Riepilogo Generale sheet
     azienda_global = ""
 
     # =========================================================================
-    # ELENCO DISCENTI GLOBALE
+    # GLOBAL LEARNER LIST
     # =========================================================================
-    # Costruiamo discenti_globali da TUTTO il CSV (df_completo), non solo
-    # dai mesi che verranno elaborati. In questo modo OGNI foglio mensile
-    # conterra' la riga di TUTTI i discenti presenti nel CSV, anche di quelli
-    # che in quel mese non hanno maturato ore (la loro riga sara' vuota:
-    # solo nome, codice fiscale e percorso, senza dati giornalieri ne'
-    # colonne riepilogative).
+    # We build discenti_globali from the WHOLE CSV (df_completo), not only
+    # from the months that will be processed. This way EVERY monthly sheet
+    # will contain the row of ALL the learners present in the CSV, including
+    # those who earned no hours in that month (their row will be empty:
+    # only name, codice fiscale and path, without daily data or
+    # summary columns).
     # =========================================================================
     discenti_globali = {}
     discenti_unici_df = (
@@ -1732,11 +1732,11 @@ def main():
             "nome":     row["nome"],
             "percorso": row["percorso"],
         }
-    # Riordina i nomi in "COGNOME NOME" usando il LUL come riferimento, cosi'
-    # l'ordinamento e la visualizzazione nei fogli sono per cognome (A->Z).
+    # Reorder the names into "COGNOME NOME" using the LUL as reference, so
+    # the sorting and display in the sheets are by surname (A->Z).
     normalizza_ordine_nomi(discenti_globali, dipendenti_lul)
-    print(f"\nDiscenti totali nel CSV: {len(discenti_globali)} "
-          f"(saranno tutti presenti in ogni foglio mensile)")
+    print(f"\nTotal learners in the CSV: {len(discenti_globali)} "
+          f"(all of them will appear in every monthly sheet)")
 
     periodi_elaborati_dati = []
 
@@ -1747,23 +1747,23 @@ def main():
             df_completo, mese, anno, SOGLIA_ORA)
 
         if discenti_info.empty:
-            print(f"   Nessun dato per {NOMI_MESI[mese]} {anno}, salto.")
+            print(f"   No data for {NOMI_MESI[mese]} {anno}, skipping.")
             continue
 
         azienda_global = azienda
 
         cf_a_lul = None
         if dipendenti_lul:
-            # Il LUL si riferisce a UN SOLO mese. Se abbiamo rilevato il mese del
-            # LUL (mese_lul), applichiamo la Modalita' B solo a quel mese; gli
-            # altri mesi restano in Modalita' A (solo CSV). Se il mese non e'
-            # stato rilevato (es. LUL in XLSX), manteniamo il comportamento
-            # legacy applicandolo a tutti i mesi.
+            # The LUL refers to a SINGLE month. If we detected the LUL month
+            # (mese_lul), we apply MODALITA B only to that month; the
+            # other months remain in MODALITA A (CSV only). If the month was
+            # not detected (e.g. LUL in XLSX), we keep the legacy behavior
+            # and apply it to all months.
             if mese_lul is None or (mese, anno) == mese_lul:
                 cf_a_lul = abbina_discenti_lul(discenti_info, dipendenti_lul)
             else:
-                print(f"   LUL non riferito a questo mese "
-                      f"(LUL = {mese_lul[0]:02d}/{mese_lul[1]}) -> Modalita' A per "
+                print(f"   LUL not referring to this month "
+                      f"(LUL = {mese_lul[0]:02d}/{mese_lul[1]}) -> MODALITA A for "
                       f"{NOMI_MESI[mese]} {anno}")
 
         periodi_elaborati_dati.append((anno, mese, df_giornaliero, discenti_info, azienda, cf_a_lul))
@@ -1775,7 +1775,7 @@ def main():
         fogli_info.append(info)
         fogli_creati += 1
 
-    # Crea il foglio Riepilogo Generale (in prima posizione)
+    # Create the Riepilogo Generale sheet (in first position)
     if fogli_info:
         scrivi_foglio_riepilogo(wb, fogli_info, azienda_global,
                                 discenti_globali=discenti_globali)
@@ -1783,12 +1783,12 @@ def main():
     if fogli_creati > 0:
         wb.save(OUTPUT_FILE)
         print(f"\n{'=' * 65}")
-        print(f"  COMPLETATO")
-        print(f"  File creato: {OUTPUT_FILE}")
-        print(f"  Fogli nel file: {fogli_creati} ({', '.join(f'{NOMI_MESI[m]} {a}' for a, m in periodi)})")
+        print(f"  COMPLETED")
+        print(f"  File created: {OUTPUT_FILE}")
+        print(f"  Sheets in file: {fogli_creati} ({', '.join(f'{NOMI_MESI[m]} {a}' for a, m in periodi)})")
         print(f"{'=' * 65}\n")
     else:
-        print("\nNessun dato trovato. Controlla il CSV e le impostazioni.")
+        print("\nNo data found. Check the CSV and the settings.")
 
 
 if __name__ == "__main__":

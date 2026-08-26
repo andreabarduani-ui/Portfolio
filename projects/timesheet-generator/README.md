@@ -31,3 +31,7 @@ from scattered sources — now generated in batch with a dry-run mode for
 verification before writing anything.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

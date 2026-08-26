@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Generatore di Scheda Finanziaria (A/B/C/D/E)
+Scheda Finanziaria (Financial Plan) Generator (A/B/C/D/E)
 ------------------------------------------------------
-Crea un Excel con formule live: cambi un'ora o un costo e tutto si ricalcola,
-inclusi i controlli dei vincoli del fondo (A<=35%, B>=40%, D<=25%).
+Creates an Excel workbook with live formulas: change an hour or a cost and
+everything recalculates, including the fund constraint checks (A<=35%, B>=40%, D<=25%).
 
-Uso:  py financial_plan_builder.py
-Output: Scheda_Finanziaria_Template.xlsx (stessa cartella)
+Usage:  py financial_plan_builder.py
+Output: Scheda_Finanziaria_Template.xlsx (same folder)
 """
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -16,7 +16,7 @@ from openpyxl.utils import get_column_letter
 OUT = "Scheda_Finanziaria_Template.xlsx"
 
 # ---------------------------------------------------------------------------
-# Stili
+# Styles
 # ---------------------------------------------------------------------------
 TITLE_FONT   = Font(name="Calibri", size=14, bold=True, color="FFFFFF")
 HEAD_FONT    = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
@@ -24,12 +24,12 @@ SECT_FONT    = Font(name="Calibri", size=11, bold=True, color="1F3864")
 BOLD         = Font(bold=True)
 INPUT_FONT   = Font(color="7F6000", bold=True)
 
-NAVY   = PatternFill("solid", fgColor="1F3864")   # intestazioni
-BLUE   = PatternFill("solid", fgColor="2E5496")   # sezioni
-YELLOW = PatternFill("solid", fgColor="FFF2CC")   # input utente
-GREY   = PatternFill("solid", fgColor="D9D9D9")   # totali
-GREEN  = PatternFill("solid", fgColor="C6EFCE")   # semaforo OK
-RED    = PatternFill("solid", fgColor="FFC7CE")   # semaforo KO
+NAVY   = PatternFill("solid", fgColor="1F3864")   # headers
+BLUE   = PatternFill("solid", fgColor="2E5496")   # sections
+YELLOW = PatternFill("solid", fgColor="FFF2CC")   # user input
+GREY   = PatternFill("solid", fgColor="D9D9D9")   # totals
+GREEN  = PatternFill("solid", fgColor="C6EFCE")   # OK status light
+RED    = PatternFill("solid", fgColor="FFC7CE")   # KO status light
 
 thin = Side(style="thin", color="BFBFBF")
 BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
@@ -46,7 +46,7 @@ wb = openpyxl.Workbook()
 ws = wb.active
 ws.title = "Scheda"
 
-# Larghezza colonne (A=Cod, B=Voce, C=Persona, D=€/h, E=Ore, F=Costo €)
+# Column widths (A=Cod, B=Voce, C=Persona, D=€/h, E=Ore, F=Costo €)
 for col, w in {"A":7, "B":46, "C":26, "D":10, "E":9, "F":14}.items():
     ws.column_dimensions[col].width = w
 
@@ -61,19 +61,19 @@ def setc(coord, value=None, font=None, fill=None, align=None, fmt=None, border=T
     return c
 
 # ===========================================================================
-# TITOLO
+# TITLE
 # ===========================================================================
 ws.merge_cells("A1:F1")
 setc("A1", "SCHEDA FINANZIARIA — A/B/C/D/E", TITLE_FONT, NAVY, CENTER, border=False)
 ws.row_dimensions[1].height = 26
 
 # ===========================================================================
-# ZONA 1 — PARAMETRI
+# ZONE 1 — PARAMETERS
 # ===========================================================================
 ws.merge_cells("A3:F3")
 setc("A3", "1) PARAMETRI DI CALCOLO  (celle gialle = da compilare)", HEAD_FONT, BLUE, LEFT)
 
-# Etichette colonna A, valori colonna B
+# Labels in column A, values in column B
 def param(row, label, value, is_input=False, fmt=EUR, formula=False):
     setc(f"A{row}", label, BOLD if not is_input else None, align=LEFT)
     cell = setc(f"B{row}", value, INPUT_FONT if is_input else BOLD,
@@ -91,7 +91,7 @@ E_TARGET = "$B$4"; D_PCT = "$B$5"; C_TARGET = "$B$6"
 A_MAX = "$B$7";  B_MIN = "$B$8"
 
 # ===========================================================================
-# VOCI UFFICIALI DAL MANUALE (Tab. 11 e 12)
+# OFFICIAL ITEMS FROM THE MANUAL (Tab. 11 and 12)
 # ===========================================================================
 VOCI_A = [
     ("A1","Progettazione esecutiva"),
@@ -118,17 +118,17 @@ VOCI_B = [
     ("B10","Altro (dettagliare analiticamente)"),
 ]
 
-# Esempio prefisso (tratto dal BDG PROGETTO per validare: E deve fare 10.349 €)
+# Prefill example (taken from BDG PROGETTO for validation: E must come to 10,349 €)
 PREFILL_A = {
-    "A1": ("Pierpaolo Rossi", 21.27, 40),
-    "A5": ("Coordinatore A", 25.54, 40),         # coordinamento
-    "A5b":("Consulente B", 15.78, 31.4595),       # rendicontazione (2a riga A5)
+    "A1": ("Docente E", 21.27, 40),
+    "A5": ("Coordinatore A", 25.54, 40),         # coordination
+    "A5b":("Consulente B", 15.78, 31.4595),       # rendicontazione (2nd A5 row)
     "A8": ("Polizza fidejussoria", 200, 1),
 }
 PREFILL_B = {
-    "B2": ("Tutor C", 19.02, 82),       # tutor 2025
-    "B2b":("Tutor C", 20.07, 26),       # tutor 2026
-    "B1": ("Daniele Magli", 60, 30),                 # docenza
+    "B2": ("Tutor C", 19.02, 82),       # tutoring 2025
+    "B2b":("Tutor C", 20.07, 26),       # tutoring 2026
+    "B1": ("Docente F", 60, 30),                 # teaching
     "B10":("Coordinatore A - coord. d'aula", 25.54, 30),
     "B10b":("Monitor D - monitoraggio d'aula", 20.30, 52.3503),
 }
@@ -144,27 +144,27 @@ def intestazione_colonne(row):
 def riga_voce(row, cod, voce, persona=None, euh=None, ore=None):
     setc(f"A{row}", cod, align=CENTER)
     setc(f"B{row}", voce, align=LEFT)
-    # C, D, E input (gialli se vuoti o sempre input)
+    # C, D, E input (yellow when empty or always input)
     pc = setc(f"C{row}", persona, INPUT_FONT if persona else None,
               YELLOW if persona is None else None, LEFT)
-    # se persona fornita (esempio) non giallo; se vuoto -> giallo per compilare
+    # if persona is provided (example) not yellow; if empty -> yellow to fill in
     if persona is None:
         ws[f"C{row}"].fill = YELLOW
     setc(f"D{row}", euh, INPUT_FONT if euh else None,
          YELLOW if euh is None else None, RIGHT, fmt=EUR)
     setc(f"E{row}", ore, INPUT_FONT if ore else None,
          YELLOW if ore is None else None, RIGHT, fmt=ORE)
-    # F = costo calcolato
+    # F = calculated cost
     setc(f"F{row}", f'=IF(OR(D{row}="",E{row}=""),"",D{row}*E{row})',
          BOLD, None, RIGHT, fmt=EUR)
 
-# --- Sezione A ---
+# --- Section A ---
 A_TITLE, A_HDR, A_FIRST, A_LAST = 11, 12, 13, 22
 A_TOTAL = A_LAST + 1   # 23
 intestazione_tabella("2) A — COSTI DIRETTI propedeutici, accompagnamento e finali",
                      A_TITLE, "MAX 35% di E")
 intestazione_colonne(A_HDR)
-extra_a = {"A5b": "A5", "B10b": "B10"}  # codici per righe aggiuntive
+extra_a = {"A5b": "A5", "B10b": "B10"}  # codes for extra rows
 for i, (cod, voce) in enumerate(VOCI_A):
     r = A_FIRST + i
     pf = PREFILL_A.get(cod)
@@ -172,38 +172,38 @@ for i, (cod, voce) in enumerate(VOCI_A):
         riga_voce(r, cod, voce, pf[0], pf[1], pf[2])
     else:
         riga_voce(r, cod, voce)
-# riga aggiuntiva A5 (rendicontazione)
-r = A_LAST  # usa l'ultima riga libera per la 2a voce A5 -> la sovrascrivo su A10? no.
-# Invece aggiungo la rendicontazione sulla riga A10 se libera: ma A10 e' prevista.
-# Soluzione semplice: sovrascrivo A10 con la rendicontazione (esempio PROGETTO non usa A10).
+# additional A5 row (rendicontazione / reporting)
+r = A_LAST  # use the last free row for the 2nd A5 item -> overwrite it onto A10? no.
+# Instead add the reporting entry on row A10 if free: but A10 is already reserved.
+# Simple solution: overwrite A10 with the reporting entry (the PROGETTO example does not use A10).
 pf = PREFILL_A.get("A5b")
 riga_voce(A_LAST, "A5", "Coordinamento e gestione (Rendicontazione)", pf[0], pf[1], pf[2])
 
-# Totale A
+# Total A
 setc(f"A{A_TOTAL}", "", fill=GREY)
 setc(f"B{A_TOTAL}", "TOTALE A", BOLD, GREY, LEFT)
 for col in "CDE": setc(f"{col}{A_TOTAL}", "", fill=GREY)
 setc(f"F{A_TOTAL}", f"=SUM(F{A_FIRST}:F{A_LAST})", BOLD, GREY, RIGHT, fmt=EUR)
 
-# --- Sezione B ---
+# --- Section B ---
 B_TITLE, B_HDR, B_FIRST, B_LAST = 24, 25, 26, 35
 B_TOTAL = B_LAST + 1   # 36
 intestazione_tabella("3) B — REALIZZAZIONE ATTIVITA' FORMATIVE (docenza, tutoraggio, ...)",
                      B_TITLE, "MIN 40% di E")
 intestazione_colonne(B_HDR)
-# prima tutte le righe vuote, poi sovrascrivo con i dati PROGETTO
+# first all the empty rows, then overwrite with the PROGETTO data
 for i, (cod, voce) in enumerate(VOCI_B):
     r = B_FIRST + i
     riga_voce(r, cod, voce)
 def put(row, cod, voce, persona, euh, ore):
     riga_voce(row, cod, voce, persona, euh, ore)
-put(B_FIRST+0, "B1", "Docenza", "Daniele Magli", 60, 30)
+put(B_FIRST+0, "B1", "Docenza", "Docente F", 60, 30)
 put(B_FIRST+1, "B2", "Tutoraggio (2025)", "Tutor C", 19.02, 82)
 put(B_FIRST+2, "B2", "Tutoraggio (2026)", "Tutor C", 20.07, 26)
 put(B_FIRST+8, "B10", "Altro - Coordinamento d'aula", "Coordinatore A", 25.54, 30)
 put(B_FIRST+9, "B10", "Altro - Monitoraggio d'aula", "Monitor D", 20.30, 52.3503)
 
-# Totale B
+# Total B
 setc(f"A{B_TOTAL}", "", fill=GREY)
 setc(f"B{B_TOTAL}", "TOTALE B", BOLD, GREY, LEFT)
 for col in "CDE": setc(f"{col}{B_TOTAL}", "", fill=GREY)
@@ -212,7 +212,7 @@ setc(f"F{B_TOTAL}", f"=SUM(F{B_FIRST}:F{B_LAST})", BOLD, GREY, RIGHT, fmt=EUR)
 A_TOT = f"F{A_TOTAL}"; B_TOT = f"F{B_TOTAL}"
 
 # ===========================================================================
-# ZONA 4 — RIEPILOGO + SEMAFORI
+# ZONE 4 — SUMMARY + STATUS LIGHTS
 # ===========================================================================
 R0 = 38
 ws.merge_cells(f"A{R0}:F{R0}")
@@ -238,12 +238,12 @@ riep(D_ROW,  "D = forfait (C × D%)", f"=B{C_ROW}*{D_PCT}")
 riep(EC_ROW, "E calcolato  (C + D)", f"=B{C_ROW}+B{D_ROW}", highlight=True)
 riep(ET_ROW, "E target  (riferimento)", f"={E_TARGET}")
 riep(DEL_ROW,"Δ  (E calcolato − E target)", f"=B{EC_ROW}-B{ET_ROW}")
-# Stato obiettivo
+# Goal status
 setc(f"A{GOAL}", "Stato obiettivo", BOLD, align=LEFT)
 setc(f"B{GOAL}",
      f'=IF(ABS(B{DEL_ROW})<0.5,"✓ RAGGIUNTO","Δ = "&TEXT(B{DEL_ROW},"0.00")&" €")',
      BOLD, None, RIGHT)
-# Controlli vincoli
+# Constraint checks
 def chk(row, label, formula):
     setc(f"A{row}", label, BOLD, align=LEFT)
     setc(f"B{row}", formula, BOLD, None, CENTER)
@@ -251,7 +251,7 @@ chk(CA, "Vincolo A ≤ 35% di E",  f'=IF({A_TOT}<={A_MAX},"OK","SUPERATO")')
 chk(CB, "Vincolo B ≥ 40% di E",  f'=IF({B_TOT}>={B_MIN},"OK","SOTTO MINIMO")')
 chk(CD, "Vincolo D ≤ 25% di C",  f'=IF(B{D_ROW}<=B{C_ROW}*0.25,"OK","SUPERATO")')
 
-# Formattazione condizionale (semafori) sui controlli e sull'obiettivo
+# Conditional formatting (status lights) on the checks and the goal
 for row in (CA, CB, CD):
     ws.conditional_formatting.add(f"B{row}",
         CellIsRule(operator="equal", formula=['"OK"'], fill=GREEN))
@@ -259,12 +259,12 @@ for row in (CA, CB, CD):
         CellIsRule(operator="notEqual", formula=['"OK"'], fill=RED))
 ws.conditional_formatting.add(f"B{GOAL}",
     CellIsRule(operator="containsText", formula=['"RAGGIUNTO"'], fill=GREEN))
-# Goal rosso se non contiene RAGGIUNTO
+# Goal turns red if it does not contain RAGGIUNTO
 ws.conditional_formatting.add(f"B{GOAL}",
     CellIsRule(operator="notContains", formula=['"RAGGIUNTO"'], fill=RED))
 
 # ===========================================================================
-# ZONA 5 — SIMULATORE ORE NECESSARIE
+# ZONE 5 — REQUIRED-HOURS SIMULATOR
 # ===========================================================================
 S0 = 49
 ws.merge_cells(f"A{S0}:F{S0}")
@@ -283,7 +283,7 @@ setc(f"A{S0+3}", "ORE necessarie per chiudere il target  (residuo ÷ €/h)",
 setc(f"B{S0+3}", f'=IF(B{S0+2}=0,"",B{S0+1}/B{S0+2})',
      Font(bold=True, color="1F3864"), YELLOW, RIGHT, fmt=ORE)
 
-# Note d'uso
+# Usage notes
 N0 = S0 + 5   # 54
 ws.merge_cells(f"A{N0}:F{N0}")
 setc(f"A{N0}", "NOTE D'USO", SECT_FONT, fill=GREY, align=LEFT)
@@ -299,9 +299,9 @@ for i, t in enumerate(note):
     ws.merge_cells(f"A{N0+1+i}:F{N0+1+i}")
     setc(f"A{N0+1+i}", t, align=LEFT, border=False)
 
-# Blocca riquadro sotto i parametri
+# Freeze panes below the parameters
 ws.sheet_view.showGridLines = False
 ws.freeze_panes = "A11"
 
 wb.save(OUT)
-print("Generato:", OUT)
+print("Generated:", OUT)

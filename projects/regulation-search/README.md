@@ -30,3 +30,7 @@ re-reading 100-page PDFs. Now it's a menu-driven lookup that always cites
 the page.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

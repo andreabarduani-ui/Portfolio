@@ -27,3 +27,7 @@ Dozens of certificates per course used to be filled one by one from a roster.
 Now: one command, zero transcription errors, consistent formatting.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

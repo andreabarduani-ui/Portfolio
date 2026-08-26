@@ -30,3 +30,7 @@ and filing (with real privacy risk of mis-filed documents) to a single command
 with a verifiable audit trail.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

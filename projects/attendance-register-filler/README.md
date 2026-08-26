@@ -35,3 +35,7 @@ typing work with real error risk. It is now automatic, consistent and
 auditable.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

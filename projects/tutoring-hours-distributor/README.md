@@ -32,3 +32,7 @@ still wrong on edge cases (late-starting internships). Now it's a proposal
 to review, not a spreadsheet to build.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

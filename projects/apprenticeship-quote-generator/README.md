@@ -30,3 +30,7 @@ Each quote went from manual editing of a Word file (with numbering mistakes
 and stale dates) to a guided, consistent, automatically-numbered generation.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

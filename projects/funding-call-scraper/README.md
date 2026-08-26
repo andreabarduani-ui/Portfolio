@@ -31,3 +31,7 @@ Checking nine fund websites by hand every week became a single command that
 produces a filtered, sorted report of the opportunities that matter.
 
 > Public showcase copy: fund websites monitored are public institutions.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

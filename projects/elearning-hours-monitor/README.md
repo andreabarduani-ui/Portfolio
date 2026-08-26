@@ -29,3 +29,7 @@ Reconciling two inconsistent sources by hand for dozens of students each month
 was the single most error-prone task in the whole pipeline. This tool ended that.
 
 > Public showcase copy: company and personal identifiers have been generalized.
+
+## Sample output
+
+An illustrative output example (fictional data) is available in [sample-output.md](sample-output.md).

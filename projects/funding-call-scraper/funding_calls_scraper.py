@@ -1,86 +1,87 @@
 """
 ====================================================================
- SCRAPER BANDI - Fondi Interprofessionali (v2)
- Obiettivo: trovare bandi NON-FNC3 con dotazione > soglia (default 800.000 EUR)
+ FUNDING CALL SCRAPER - Interprofessional Funds (v2)
+ Goal: find NON-FNC3 calls with a budget above a threshold (default 800,000 EUR)
 ====================================================================
 
-COSA CAMBIA RISPETTO ALLA V1
+WHAT CHANGES COMPARED TO V1
 -----------------------------------------------------------------
-La v1 scansionava le HOMEPAGE dei fondi con un matching per parole
-troppo generico ("risorse", "lavoratori", "dipendenti", ecc.), che
-produceva quasi solo rumore (voci di menu, frasi di presentazione)
-e non estraeva mai un dato fondamentale: l'IMPORTO del bando.
+V1 scanned the funds' HOMEPAGES with word matching that was too
+generic ("risorse", "lavoratori", "dipendenti", etc.), which produced
+almost only noise (menu items, presentation sentences) and never
+extracted an essential piece of data: the call's AMOUNT.
 
-Questa v2:
+This v2:
 
-  1) Punta direttamente alle pagine "elenco bandi/avvisi" indicate,
-     con due correzioni emerse da una verifica manuale dei siti
-     (vedi SITI_TARGET piu' sotto per il dettaglio):
-       - Fondo FBA: "Archivio Avvisi" e' lo storico CHIUSO (ultimo
-         bando 2020). La pagina con i bandi davvero aperti e'
-         "Avvisi Aperti" -> sostituita.
-       - Fondo Conoscenza: alla pagina "Programmazione 2026" e'
-         stata affiancata "Avvisi Aperti" (Conto Sistema), che
-         elenca i singoli avvisi attivi con link diretto.
+  1) Targets the "elenco bandi/avvisi" (call/notice list) pages
+     directly, with two corrections found by manually checking the
+     sites (see SITI_TARGET below for details):
+       - Fondo FBA: "Archivio Avvisi" is the CLOSED archive (latest
+         call 2020). The page with the actually open calls is
+         "Avvisi Aperti" -> replaced.
+       - Fondo Conoscenza: "Avvisi Aperti" (Conto Sistema) was added
+         alongside the "Programmazione 2026" page; it lists the
+         individual active notices with a direct link.
 
-  2) Fa uno scraping A DUE LIVELLI:
-       livello 1: pagina-elenco  -> individua i singoli bandi (link)
-       livello 2: pagina-bando   -> apre il dettaglio e ne estrae
-                                    testo, importo e presenza FNC3
-     Questo perche', nei siti verificati, l'elenco mostra solo
-     titolo/data, mentre l'importo ("Dotazione finanziaria") e
-     l'eventuale legame con FNC3 compaiono SOLO nel dettaglio.
-     Esempio reale (Fondo FBA):
-       - in elenco: "Avviso Competenze per l'innovazione" (nessun
-         accenno a FNC3)
-       - nel dettaglio: "Opportunita' di finanziamento con il Fondo
-         Nuove Competenze - Terza Edizione" -> e' FNC3, va escluso.
+  2) Does TWO-LEVEL scraping:
+       level 1: list page   -> identifies the individual calls (links)
+       level 2: call page   -> opens the detail and extracts its
+                               text, amount and FNC3 presence
+     This is because, on the verified sites, the list shows only
+     title/date, while the amount ("Dotazione finanziaria") and any
+     link to FNC3 appear ONLY in the detail.
+     Real example (Fondo FBA):
+       - in the list: "Avviso Competenze per l'innovazione" (no
+         mention of FNC3)
+       - in the detail: "Opportunita' di finanziamento con il Fondo
+         Nuove Competenze - Terza Edizione" -> this is FNC3, exclude it.
 
-  3) Estrae l'IMPORTO con piu' pattern, in ordine di confidenza:
-       alta  -> "Dotazione finanziaria/complessiva/stanziamento... -> € X"
-       media -> "X milioni" / "X mln"
-       bassa -> "€ X.XXX.XXX" o "X.XXX.XXX euro" generico nel testo
-     Gestisce il formato italiano dei numeri (punto = migliaia,
-     virgola = decimali).
+  3) Extracts the AMOUNT with several patterns, in confidence order:
+       high   -> "Dotazione finanziaria/complessiva/stanziamento... -> € X"
+       medium -> "X milioni" / "X mln"
+       low    -> generic "€ X.XXX.XXX" or "X.XXX.XXX euro" in the text
+     Handles the Italian number format (dot = thousands separator,
+     comma = decimals).
 
-  4) Verifica esplicitamente la presenza di FNC3 nel testo completo
-     (elenco + dettaglio), con varianti: "FNC3", "FNC 3", "FNC-3",
+  4) Explicitly checks for FNC3 in the full text (list + detail),
+     with variants: "FNC3", "FNC 3", "FNC-3",
      "FNC III", "Fondo Nuove Competenze" (terza edizione/3/III).
 
-  5) Filtra e mette in evidenza solo i bandi con:
-       importo_rilevato > SOGLIA_IMPORTO  E  NON FNC3
-     mantenendo comunque, per trasparenza, un foglio con TUTTI i
-     bandi trovati (anche quelli scartati), perche' l'estrazione
-     automatica di un importo da testo libero non e' mai perfetta:
-     vanno sempre controllati a vista i casi dubbi.
+  5) Filters and highlights only the calls with:
+       importo_rilevato > SOGLIA_IMPORTO  AND  NOT FNC3
+     while still keeping, for transparency, a sheet with ALL the
+     calls found (including the discarded ones), because automatic
+     amount extraction from free text is never perfect: doubtful
+     cases must always be checked by eye.
 
-  6) Rispetta robots.txt (alcuni siti, es. Fondimpresa, lo richiedono
-     esplicitamente) e mette un tetto al numero di richieste totali
-     per non sovraccaricare i siti dei fondi.
+  6) Respects robots.txt (some sites, e.g. Fondimpresa, explicitly
+     require it) and caps the total number of requests so as not to
+     overload the funds' sites.
 
-LIMITI NOTI (da verificare a vista sui risultati)
+KNOWN LIMITATIONS (visually verify the results)
 -----------------------------------------------------------------
-  - L'estrazione di importi da testo libero puo' generare falsi
-    positivi/negativi: per questo ogni riga riporta anche la
-    "confidenza" e il frammento di testo da cui e' stato estratto
-    l'importo, cosi' puoi verificare in 5 secondi se e' attendibile.
-  - I bandi pubblicati solo in PDF vengono letti con pdfplumber SE
-    la libreria e' installata (pip install pdfplumber); altrimenti
-    vengono segnalati come "PDF non analizzato" e vanno controllati
-    a mano.
-  - Alcuni siti restituiscono contenuto via JavaScript: in quel caso
-    la pagina risultera' vuota o priva di bandi anche se nel browser
-    si vedono. Non e' un bug dello script: serve un browser headless
-    (non incluso qui per restare leggero, come da impostazione v1).
+  - Amount extraction from free text can generate false
+    positives/negatives: for this reason each row also reports the
+    "confidenza" and the text fragment the amount was extracted
+    from, so you can check in 5 seconds whether it is reliable.
+  - Calls published only as PDF are read with pdfplumber IF the
+    library is installed (pip install pdfplumber); otherwise they
+    are flagged as "PDF non analizzato" and must be checked
+    manually.
+  - Some sites return content via JavaScript: in that case the
+    page will turn out empty or without calls even though they are
+    visible in the browser. This is not a bug in the script: a
+    headless browser would be needed (not included here to stay
+    lightweight, as per the v1 setting).
 
-USO
+USAGE
 -----------------------------------------------------------------
     pip install requests beautifulsoup4 openpyxl pdfplumber --break-system-packages
     python scraper_bandi_fondi.py
-    python scraper_bandi_fondi.py --soglia 500000        (soglia diversa)
-    python scraper_bandi_fondi.py --includi-fnc3          (non escludere FNC3)
+    python scraper_bandi_fondi.py --soglia 500000        (different threshold)
+    python scraper_bandi_fondi.py --includi-fnc3          (do not exclude FNC3)
 
-    Su Windows, se "python" non e' riconosciuto, usa "py".
+    On Windows, if "python" is not recognized, use "py".
 """
 
 import io
@@ -107,7 +108,7 @@ except ImportError:
 
 
 # --------------------------------------------------------------------
-# 1) CONFIGURAZIONE
+# 1) CONFIGURATION
 # --------------------------------------------------------------------
 
 HEADERS = {
@@ -128,24 +129,24 @@ HEADERS = {
 
 TIMEOUT = 20
 
-# Soglia di importo (in euro) sopra la quale un bando e' "target".
+# Amount threshold (in euros) above which a call is a "target".
 SOGLIA_IMPORTO_DEFAULT = 800_000
 
-# Numero massimo di pagine di dettaglio seguite per ciascun sito
-# (per non sovraccaricare i siti e tenere il tempo di esecuzione
-# sotto controllo). Aumentalo se un fondo ha tanti avvisi attivi.
+# Maximum number of detail pages followed for each site
+# (to avoid overloading the sites and to keep the execution time
+# under control). Increase it if a fund has many active notices.
 MAX_DETTAGLI_PER_SITO = 15
 
-# Tetto massimo di richieste HTTP totali in un'esecuzione (listing +
-# dettagli + robots.txt), come ulteriore rete di sicurezza.
+# Maximum cap on total HTTP requests in one run (listings +
+# details + robots.txt), as a further safety net.
 MAX_RICHIESTE_TOTALI = 180
 
 PAUSA_MIN_SITI, PAUSA_MAX_SITI = 2.0, 5.0
 PAUSA_MIN_DETTAGLI, PAUSA_MAX_DETTAGLI = 1.0, 2.5
 
-# --- Elenco dei fondi e delle pagine "elenco bandi" da cui partire. ---
-# Le pagine indicate sotto sono quelle fornite, con due correzioni
-# verificate manualmente (vedi commenti nel docstring iniziale):
+# --- List of funds and the "elenco bandi" (call list) pages to start from. ---
+# The pages listed below are the ones provided, with two manually verified
+# corrections (see the comments in the initial docstring):
 SITI_TARGET = [
     ("FonARCom", "https://www.fonarcom.it/strumenti/"),
     ("Fonditalia", "https://www.fonditalia.org/archivio-e-graduatorie/"),
@@ -160,20 +161,20 @@ SITI_TARGET = [
 ]
 
 # --------------------------------------------------------------------
-# 2) PATTERN DI RICONOSCIMENTO
+# 2) MATCHING PATTERNS
 # --------------------------------------------------------------------
 
-# Un link in pagina-elenco e' un "candidato bando" se il suo testo
-# contiene una di queste parole (molto piu' specifico della v1, che
-# usava parole generiche come "risorse" o "lavoratori").
+# A link in a list page is a "call candidate" if its text
+# contains one of these words (much more specific than v1, which
+# used generic words like "risorse" or "lavoratori").
 PATTERN_TITOLO_BANDO = re.compile(
     r"\bavvis[oi]\b|\bband[oi]\b|\binvit[oi]\b|\blinea\s*\d|\bedizione\b|"
     r"\bpian[oi]\s+formativ|\bvoucher\b|\bconto\s+(?:sistema|formazione)\b",
     re.IGNORECASE,
 )
 
-# Titoli/voci di menu troppo generici da NON considerare un bando
-# specifico (sono link di categoria, non al singolo avviso).
+# Titles/menu items too generic to be considered a specific call
+# (they are category links, not links to the individual notice).
 NAV_GENERICI = {
     "avviso", "avvisi", "bando", "bandi", "invito", "inviti",
     "avvisi aperti", "avvisi chiusi", "avvisi attivi", "avvisi pubblicati",
@@ -181,18 +182,18 @@ NAV_GENERICI = {
     "piani formativi", "piano formativo", "elenco avvisi",
 }
 
-# Filtro B: parole che indicano un bando vecchio/chiuso/in graduatoria
-# (soglia anno abbassata rispetto alla v1: un Avviso pubblicato nel
-# 2024 puo' restare aperto per anni, quindi non va scartato solo
-# perche' non contiene un anno >= anno corrente).
+# Filter B: words indicating an old/closed/ranked call
+# (year threshold lowered compared to v1: a notice published in
+# 2024 can stay open for years, so it must not be discarded just
+# because it does not contain a year >= current year).
 PAROLE_SCARTO = [
     "scaduto", "chiuso definitivamente", "concluso", "terminato",
     "graduatoria approvata", "esaurito", "revocato",
 ]
-ANNO_MINIMO = 2023  # scarta solo blocchi i cui anni sono TUTTI precedenti
+ANNO_MINIMO = 2023  # only discard blocks whose years are ALL earlier
 
-# --- Estrazione importi -------------------------------------------------
-# Alta confidenza: il testo dichiara esplicitamente la dotazione.
+# --- Amount extraction -------------------------------------------------
+# High confidence: the text explicitly states the budget.
 RE_DOTAZIONE = re.compile(
     r"(?:dotazione\s+finanziaria|dotazione\s+economica|dotazione\s+complessiva|"
     r"dotazione\s+dell['’]avviso|stanziamento\s+complessivo|"
@@ -200,19 +201,19 @@ RE_DOTAZIONE = re.compile(
     r"[^€\d]{0,20}€?\s*([\d.,]{4,})",
     re.IGNORECASE,
 )
-# Media confidenza: importi espressi "a milioni".
+# Medium confidence: amounts expressed "in millions".
 RE_MILIONI = re.compile(
     r"(\d+(?:[.,]\d+)?)\s*(?:milioni(?:\s+di\s+euro)?|mln)\b",
     re.IGNORECASE,
 )
-# Bassa confidenza: qualunque "€ X.XXX.XXX" o "X.XXX.XXX euro" nel testo.
+# Low confidence: any "€ X.XXX.XXX" or "X.XXX.XXX euro" in the text.
 RE_EURO_PREFISSO = re.compile(r"€\s*([\d]{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d{4,}(?:,\d{1,2})?)")
 RE_EURO_SUFFISSO = re.compile(
     r"\b([\d]{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d{4,}(?:,\d{1,2})?)\s*(?:euro|eur)\b",
     re.IGNORECASE,
 )
 
-# --- Rilevamento FNC3 ----------------------------------------------------
+# --- FNC3 detection ----------------------------------------------------
 PATTERN_FNC3 = re.compile(
     r"fnc\s*3\b|fnc[\s\-]?iii\b|"
     r"fondo\s+nuove\s+competenze\s*(?:[-–—]\s*)?(?:3\b|iii\b|terza\s+edizione)",
@@ -223,11 +224,11 @@ CONTENITORI = ("li", "article", "section", "div")
 
 
 # --------------------------------------------------------------------
-# 3) FUNZIONI DI RETE
+# 3) NETWORK FUNCTIONS
 # --------------------------------------------------------------------
 
 class ContatoreRichieste:
-    """Tiene il conto delle richieste HTTP totali per non eccedere il tetto."""
+    """Keeps count of the total HTTP requests so the cap is not exceeded."""
     def __init__(self, massimo):
         self.massimo = massimo
         self.usate = 0
@@ -251,9 +252,9 @@ def crea_sessione():
 
 def permesso_da_robots(sessione, url):
     """
-    Verifica il robots.txt del sito prima di scaricare una pagina.
-    Se il file non esiste o non e' leggibile, si presume consentito
-    (comportamento conservativo solo quando il divieto e' esplicito).
+    Checks the site's robots.txt before downloading a page.
+    If the file does not exist or is unreadable, permission is
+    presumed (conservative behaviour only when the ban is explicit).
     """
     parsed = urlparse(url)
     base = f"{parsed.scheme}://{parsed.netloc}"
@@ -276,7 +277,7 @@ def permesso_da_robots(sessione, url):
 
 
 def scarica_pagina(sessione, url):
-    """Scarica una pagina HTML gestendo errori senza interrompere il programma."""
+    """Downloads an HTML page handling errors without interrupting the program."""
     if not CONTATORE.puo_procedere():
         return None, "Tetto richieste raggiunto"
     if not permesso_da_robots(sessione, url):
@@ -302,7 +303,7 @@ def scarica_pagina(sessione, url):
 
 
 def estrai_testo_pdf(sessione, url, max_pagine=6):
-    """Estrae il testo delle prime pagine di un PDF (richiede pdfplumber)."""
+    """Extracts the text of the first pages of a PDF (requires pdfplumber)."""
     if not PDF_DISPONIBILE or not CONTATORE.puo_procedere():
         return ""
     try:
@@ -334,14 +335,14 @@ def normalizza_url(href, url_base):
 
 
 # --------------------------------------------------------------------
-# 4) ESTRAZIONE: CONTENUTO PRINCIPALE, BLOCCHI, IMPORTI, FNC3
+# 4) EXTRACTION: MAIN CONTENT, BLOCKS, AMOUNTS, FNC3
 # --------------------------------------------------------------------
 
 def estrai_contenuto_principale(soup):
     """
-    Restringe l'analisi al contenuto principale della pagina (quando
-    individuabile), per non annacquare la ricerca di importo/FNC3 nel
-    rumore di menu/footer ripetuti su ogni pagina del sito.
+    Narrows the analysis to the main content of the page (when it can
+    be identified), so the amount/FNC3 search is not diluted by the
+    menu/footer noise repeated on every page of the site.
     """
     candidati = [
         soup.find("main"),
@@ -356,7 +357,7 @@ def estrai_contenuto_principale(soup):
 
 
 def trova_blocco(elemento, max_caratteri=3000):
-    """Risale al contenitore (li/article/section/div) che racchiude il link."""
+    """Climbs up to the container (li/article/section/div) that encloses the link."""
     blocco = elemento
     nodo = elemento.parent
     while nodo is not None and nodo.name not in ("body", "html", "[document]"):
@@ -373,25 +374,25 @@ def trova_blocco(elemento, max_caratteri=3000):
 
 
 def blocco_da_scartare(testo_blocco):
-    """Filtro per scartare a priori bandi evidentemente vecchi/chiusi."""
+    """Filter to discard evidently old/closed calls up front."""
     tl = testo_blocco.lower()
     for parola in PAROLE_SCARTO:
         if parola in tl:
-            return True, f"parola '{parola}'"
+            return True, f"word '{parola}'"
 
     anni = [int(a) for a in re.findall(r"\b((?:19|20)\d{2})\b", testo_blocco)]
     if anni and not any(a >= ANNO_MINIMO for a in anni):
-        return True, f"anno {max(anni)} antecedente al {ANNO_MINIMO}"
+        return True, f"year {max(anni)} earlier than {ANNO_MINIMO}"
     return False, ""
 
 
 def _numero_italiano_a_float(testo_numero):
-    """Converte '1.200.000,50' o '800000' in float, gestendo il formato IT."""
+    """Converts '1.200.000,50' or '800000' to float, handling the IT format."""
     s = testo_numero.strip()
     if "," in s and "." in s:
         s = s.replace(".", "").replace(",", ".")
     elif "," in s:
-        # Solo virgola: trattala come decimale se l'ultima parte ha <=2 cifre.
+        # Comma only: treat it as a decimal separator if the last part has <=2 digits.
         parti = s.split(",")
         if len(parti[-1]) <= 2:
             s = s.replace(",", ".")
@@ -407,8 +408,8 @@ def _numero_italiano_a_float(testo_numero):
 
 def estrai_importi(testo):
     """
-    Cerca importi in euro nel testo. Ritorna una lista di tuple
-    (valore, confidenza, frammento) ordinabile per attendibilita'.
+    Searches for euro amounts in the text. Returns a list of tuples
+    (valore, confidenza, frammento) sortable by reliability.
     confidenza in {"alta", "media", "bassa"}.
     """
     trovati = []
@@ -436,7 +437,7 @@ def estrai_importi(testo):
 
 
 def importo_migliore(testo):
-    """Sceglie l'importo piu' attendibile trovato nel testo (o None)."""
+    """Picks the most reliable amount found in the text (or None)."""
     importi = estrai_importi(testo)
     if not importi:
         return None, None, ""
@@ -450,7 +451,7 @@ def e_fnc3(testo):
 
 
 def e_candidato_valido(testo_link, href, url_base):
-    """Scarta link di navigazione/categoria troppo generici."""
+    """Discards navigation/category links that are too generic."""
     t = testo_link.strip().lower()
     if t in NAV_GENERICI or len(t) < 6:
         return False
@@ -463,7 +464,7 @@ def e_candidato_valido(testo_link, href, url_base):
 
 
 def trova_candidati_bando(soup, url_base):
-    """Individua, nella pagina-elenco, i link che sembrano singoli bandi."""
+    """Identifies, in the list page, the links that look like individual calls."""
     candidati = []
     visti = set()
     for a in soup.find_all("a", href=True):
@@ -486,14 +487,14 @@ def trova_candidati_bando(soup, url_base):
 
 
 # --------------------------------------------------------------------
-# 5) ANALISI DI UN SINGOLO BANDO (livello 2: pagina di dettaglio)
+# 5) ANALYSIS OF A SINGLE CALL (level 2: detail page)
 # --------------------------------------------------------------------
 
 def analizza_bando(sessione, candidato, soglia, escludi_fnc3):
     """
-    Apre (se possibile) la pagina di dettaglio del bando, combina il
-    testo dell'elenco con quello del dettaglio, ed estrae importo e
-    presenza FNC3. Ritorna il dizionario completo del risultato.
+    Opens (when possible) the call's detail page, combines the list
+    text with the detail text, and extracts the amount and FNC3
+    presence. Returns the complete result dictionary.
     """
     link = candidato["link"]
     testo_dettaglio = ""
@@ -533,7 +534,7 @@ def analizza_bando(sessione, candidato, soglia, escludi_fnc3):
 
 
 # --------------------------------------------------------------------
-# 6) ORCHESTRAZIONE PER SITO
+# 6) PER-SITE ORCHESTRATION
 # --------------------------------------------------------------------
 
 def scansiona_sito(sessione, nome_sito, url, soglia, escludi_fnc3):
@@ -545,18 +546,18 @@ def scansiona_sito(sessione, nome_sito, url, soglia, escludi_fnc3):
         return {"nome": nome_sito, "url": url, "stato": stato, "bandi": []}
 
     candidati = trova_candidati_bando(soup, url)
-    print(f"    Trovati {len(candidati)} candidati-bando nell'elenco.")
+    print(f"    Found {len(candidati)} call candidates in the list.")
 
     bandi = []
     seguiti = 0
     for candidato in candidati:
         scarta, motivo = blocco_da_scartare(candidato["blocco"])
         if scarta:
-            print(f"        [scartato a priori: {motivo}] {candidato['titolo'][:60]}")
+            print(f"        [discarded up front: {motivo}] {candidato['titolo'][:60]}")
             continue
 
         if seguiti >= MAX_DETTAGLI_PER_SITO or not CONTATORE.puo_procedere():
-            print(f"        [non approfondito: tetto raggiunto] {candidato['titolo'][:60]}")
+            print(f"        [not expanded: cap reached] {candidato['titolo'][:60]}")
             continue
 
         risultato = analizza_bando(sessione, candidato, soglia, escludi_fnc3)
@@ -565,7 +566,7 @@ def scansiona_sito(sessione, nome_sito, url, soglia, escludi_fnc3):
 
         bandiera = "TARGET" if risultato["target"] else ("FNC3" if risultato["fnc3"] else "-")
         importo_fmt = f"€ {risultato['importo']:,.0f}".replace(",", ".") if risultato["importo"] else "n.d."
-        print(f"        [{bandiera:7}] {candidato['titolo'][:55]:55} importo={importo_fmt}")
+        print(f"        [{bandiera:7}] {candidato['titolo'][:55]:55} amount={importo_fmt}")
 
         time.sleep(random.uniform(PAUSA_MIN_DETTAGLI, PAUSA_MAX_DETTAGLI))
 
@@ -573,7 +574,7 @@ def scansiona_sito(sessione, nome_sito, url, soglia, escludi_fnc3):
 
 
 # --------------------------------------------------------------------
-# 7) EXPORT EXCEL (3 fogli: Riepilogo, Tutti i Bandi, Target)
+# 7) EXCEL EXPORT (3 sheets: Riepilogo, Tutti i Bandi, Target)
 # --------------------------------------------------------------------
 
 def build_excel(scansioni, soglia, percorso="report_bandi_fondi.xlsx"):
@@ -601,7 +602,7 @@ def build_excel(scansioni, soglia, percorso="report_bandi_fondi.xlsx"):
 
     wb = Workbook()
 
-    # ---------------- Foglio 1: Riepilogo ----------------
+    # ---------------- Sheet 1: Riepilogo ----------------
     ws1 = wb.active
     ws1.title = "Riepilogo"
     intesta(ws1, ["Fondo", "URL elenco", "Stato", "Bandi analizzati", "Target trovati"])
@@ -624,7 +625,7 @@ def build_excel(scansioni, soglia, percorso="report_bandi_fondi.xlsx"):
     ws1.cell(nota_riga, 1, value=f"Scansione del {oggi}  |  Soglia importo: € {soglia:,.0f}".replace(",", "."))
     ws1.cell(nota_riga, 1).font = Font(name="Calibri", italic=True, size=9, color="666666")
 
-    # ---------------- Foglio 2: Tutti i Bandi ----------------
+    # ---------------- Sheet 2: Tutti i Bandi ----------------
     ws2 = wb.create_sheet("Tutti i Bandi")
     intesta(ws2, ["Fondo", "Titolo", "Importo (€)", "Confidenza", "Frammento importo",
                   "FNC3", "Target", "Stato dettaglio", "Link"])
@@ -657,7 +658,7 @@ def build_excel(scansioni, soglia, percorso="report_bandi_fondi.xlsx"):
     imposta_larghezze(ws2, {"A": 24, "B": 42, "C": 16, "D": 12, "E": 42,
                             "F": 8, "G": 9, "H": 18, "I": 46})
 
-    # ---------------- Foglio 3: Target (>soglia, non-FNC3) ----------------
+    # ---------------- Sheet 3: Target (>threshold, non-FNC3) ----------------
     ws3 = wb.create_sheet(f"Target sopra {int(soglia)//1000}k")
     intesta(ws3, ["Fondo", "Titolo", "Importo (€)", "Confidenza", "Link"])
     target = [
@@ -682,7 +683,7 @@ def build_excel(scansioni, soglia, percorso="report_bandi_fondi.xlsx"):
     imposta_larghezze(ws3, {"A": 26, "B": 46, "C": 16, "D": 12, "E": 50})
 
     wb.save(percorso)
-    print(f"\nExcel salvato in: {percorso}")
+    print(f"\nExcel saved to: {percorso}")
     return len(target)
 
 
@@ -723,21 +724,21 @@ def salva_report_txt(scansioni, soglia, percorso="report_bandi.txt"):
                 f.write(f"  - {b['titolo']}  |  {importo_fmt}  |  {fnc3_fmt}\n")
                 f.write(f"    {b['link']}\n")
             f.write("\n")
-    print(f"Report testuale salvato in: {percorso}")
+    print(f"Text report saved to: {percorso}")
 
 
 # --------------------------------------------------------------------
-# 8) PROGRAMMA PRINCIPALE
+# 8) MAIN PROGRAM
 # --------------------------------------------------------------------
 
 def analizza_argomenti():
     parser = argparse.ArgumentParser(
-        description="Cerca bandi dei Fondi Interprofessionali non-FNC3 sopra una soglia di importo."
+        description="Searches Interprofessional Funds calls that are non-FNC3 above an amount threshold."
     )
     parser.add_argument("--soglia", type=float, default=SOGLIA_IMPORTO_DEFAULT,
-                         help=f"Soglia minima in euro (default: {SOGLIA_IMPORTO_DEFAULT})")
+                         help=f"Minimum threshold in euros (default: {SOGLIA_IMPORTO_DEFAULT})")
     parser.add_argument("--includi-fnc3", action="store_true",
-                         help="Se presente, NON esclude i bandi legati a FNC3 dal foglio target")
+                         help="If set, does NOT exclude FNC3-related calls from the target sheet")
     return parser.parse_args()
 
 
@@ -747,20 +748,20 @@ def main():
     escludi_fnc3 = not args.includi_fnc3
 
     print("=" * 70)
-    print(" SCRAPER BANDI - Fondi Interprofessionali")
-    print(f" Soglia importo: € {soglia:,.0f}  |  Esclude FNC3: {escludi_fnc3}".replace(",", "."))
+    print(" FUNDING CALL SCRAPER - Interprofessional Funds")
+    print(f" Amount threshold: € {soglia:,.0f}  |  Excludes FNC3: {escludi_fnc3}".replace(",", "."))
     print("=" * 70)
 
     if not PDF_DISPONIBILE:
-        print("[i] pdfplumber non installato: i bandi pubblicati solo in PDF "
-              "non verranno letti (pip install pdfplumber --break-system-packages).")
+        print("[i] pdfplumber not installed: calls published only as PDF "
+              "will not be read (pip install pdfplumber --break-system-packages).")
 
     sessione = crea_sessione()
     scansioni = []
 
     for indice, (nome_sito, url) in enumerate(SITI_TARGET, start=1):
         if not CONTATORE.puo_procedere():
-            print(f"\n[!] Tetto di {MAX_RICHIESTE_TOTALI} richieste raggiunto: scansione interrotta.")
+            print(f"\n[!] Cap of {MAX_RICHIESTE_TOTALI} requests reached: scan interrupted.")
             break
         print(f"\n[{indice}/{len(SITI_TARGET)}]", end="")
         scansioni.append(scansiona_sito(sessione, nome_sito, url, soglia, escludi_fnc3))
@@ -774,14 +775,14 @@ def main():
 
     print("=" * 70)
     if n_target:
-        print(f"TROVATI {n_target} bando/i sopra € {soglia:,.0f} e non legati a FNC3.".replace(",", "."))
-        print("Vedi il foglio 'Target...' nell'Excel per i dettagli, e VERIFICA SEMPRE")
-        print("a vista il frammento di testo da cui e' stato estratto l'importo.")
+        print(f"FOUND {n_target} call(s) above € {soglia:,.0f} and not linked to FNC3.".replace(",", "."))
+        print("See the 'Target...' sheet in the Excel for details, and ALWAYS VERIFY")
+        print("by eye the text fragment the amount was extracted from.")
     else:
-        print("Nessun bando target trovato con i parametri attuali.")
-        print("Suggerimenti: aumenta MAX_DETTAGLI_PER_SITO, controlla il foglio")
-        print("'Tutti i Bandi' per casi vicini alla soglia, o aggiungi altre pagine")
-        print("'avvisi aperti' ai fondi non ancora coperti in SITI_TARGET.")
+        print("No target calls found with the current parameters.")
+        print("Suggestions: increase MAX_DETTAGLI_PER_SITO, check the")
+        print("'Tutti i Bandi' sheet for cases close to the threshold, or add more")
+        print("'avvisi aperti' pages for funds not yet covered in SITI_TARGET.")
     print("=" * 70)
 
 

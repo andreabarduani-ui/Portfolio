@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Aggiunge un foglio 'Calcolatore' al file BDG_AUTOMATICO.xlsx,
-collegandosi ai totali del foglio 'BDG PROGETTO' gia' esistente.
-NON modifica il foglio BDG PROGETTO originale: lo lascia identico.
+Adds a 'Calcolatore' sheet to the BDG_AUTOMATICO.xlsx file,
+linking to the totals of the existing 'BDG PROGETTO' sheet.
+Does NOT modify the original BDG PROGETTO sheet: it is left unchanged.
 """
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -10,7 +10,7 @@ from openpyxl.formatting.rule import CellIsRule
 
 FILE = "BDG_AUTOMATICO.xlsx"
 
-# Stili
+# Styles
 TITLE = Font(name="Calibri", size=14, bold=True, color="FFFFFF")
 HEAD  = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
 BOLD  = Font(bold=True)
@@ -31,17 +31,17 @@ LEF = Alignment(horizontal="left",  vertical="center", wrap_text=True)
 RIG = Alignment(horizontal="right", vertical="center")
 
 wb = openpyxl.load_workbook(FILE)
-# Rimuovi eventuale Calcolatore vecchio
+# Remove any old Calcolatore sheet
 if "Calcolatore" in wb.sheetnames:
     del wb["Calcolatore"]
-ws = wb.create_sheet("Calcolatore", 0)   # in prima posizione
+ws = wb.create_sheet("Calcolatore", 0)   # in first position
 
 ws.sheet_view.showGridLines = False
 for col, w in {"A":4, "B":42, "C":16, "D":16, "E":16, "F":4, "G":16}.items():
     ws.column_dimensions[col].width = w
 
 def S(coord):
-    """Riferimento al foglio BDG PROGETTO."""
+    """Reference to the BDG PROGETTO sheet."""
     return f"'BDG PROGETTO'!{coord}"
 
 def put(coord, value=None, font=None, fill=None, align=None, fmt=None, border=True):
@@ -54,16 +54,16 @@ def put(coord, value=None, font=None, fill=None, align=None, fmt=None, border=Tr
     if border: c.border = BORD
     return c
 
-# Titolo
+# Title
 ws.merge_cells("B2:G2")
 put("B2", "CALCOLATORE SCHEDA FINANZIARIA", TITLE, NAVY, CEN, border=False)
 ws.row_dimensions[2].height = 28
 
-# --- Parametri ---
+# --- Parameters ---
 ws.merge_cells("B4:G4")
 put("B4", "PARAMETRI  (celle gialle = da compilare)", HEAD, BLUE, LEF)
 put("B5", "Target E — finanziamento da raggiungere", font=BOLD, align=LEF)
-put("C5", 10349, font=INPUT, fill=YEL, align=RIG, fmt=EUR)   # input manuale
+put("C5", 10349, font=INPUT, fill=YEL, align=RIG, fmt=EUR)   # manual input
 TARGET = "$C$5"
 put("B6", "D % su C — costi indiretti (max 25%)", font=BOLD, align=LEF)
 put("C6", 0.25, font=INPUT, fill=YEL, align=RIG, fmt=PCT)
@@ -75,7 +75,7 @@ put("C8", f"=35%*{TARGET}", font=BOLD, fill=GREY, align=RIG, fmt=EUR)
 put("B9", "B minimo (40% di E)", font=BOLD, align=LEF)
 put("C9", f"=40%*{TARGET}", font=BOLD, fill=GREY, align=RIG, fmt=EUR)
 
-# --- Stato attuale (dal BDG PROGETTO) ---
+# --- Current status (from BDG PROGETTO) ---
 ws.merge_cells("B11:G11")
 put("B11", "STATO ATTUALE DELLA SCHEDA  (dal foglio BDG PROGETTO)", HEAD, BLUE, LEF)
 put("B12", "Totale A  (dal BDG PROGETTO, cella M16)", font=BOLD, align=LEF)
@@ -90,7 +90,7 @@ put("B16", "E calcolato (C + D)", font=BIG, align=LEF)
 put("C16", "=C14+C15", font=BIG, fill=YEL, align=RIG, fmt=EUR)
 ECALC = "$C$16"
 
-# --- Obiettivo ---
+# --- Goal ---
 put("B18", "E target (riferimento)", font=BOLD, align=LEF)
 put("C18", f"={TARGET}", font=BOLD, align=RIG, fmt=EUR)
 put("B19", "Differenza (E calcolato - E target)", font=BOLD, align=LEF)
@@ -99,7 +99,7 @@ put("B20", "STATO OBIETTIVO", font=BOLD, align=LEF)
 put("C20", f'=IF(ABS(C19)<0.5,"✓ RAGGIUNTO","Δ "&TEXT(C19,"0.00")&" €")',
      font=BOLD, align=CEN)
 
-# --- Semafori vincoli ---
+# --- Constraint status lights ---
 ws.merge_cells("B22:G22")
 put("B22", "CONTROLLI VINCOLI DEL FONDO", HEAD, BLUE, LEF)
 put("B23", "A ≤ 35% di E", font=BOLD, align=LEF)
@@ -118,7 +118,7 @@ ws.conditional_formatting.add("C20",
 ws.conditional_formatting.add("C20",
     CellIsRule(operator="notContains", formula=['"RAGGIUNTO"'], fill=RED))
 
-# --- Simulatore ore ---
+# --- Hours simulator ---
 ws.merge_cells("B27:G27")
 put("B27", "SIMULATORE — quante ore mancano al target?", HEAD, BLUE, LEF)
 put("B28", "Residuo al target (C target - C attuale)", font=BOLD, align=LEF)
@@ -129,7 +129,7 @@ put("B30", "ORE necessarie per chiudere = residuo / costo orario",
      font=BOLD, align=LEF)
 put("C30", '=IF(C29=0,"",C28/C29)', font=BIG, fill=YEL, align=RIG, fmt='#,##0.00 "h"')
 
-# --- Note ---
+# --- Notes ---
 ws.merge_cells("B32:G32")
 put("B32", "COME SI USA", Font(bold=True, color="1F3864"), GREY, LEF)
 note = [
@@ -145,5 +145,5 @@ for i, t in enumerate(note):
 
 ws.freeze_panes = "A4"
 wb.save(FILE)
-print("Foglio Calcolatore aggiunto a:", FILE)
-print("Fogli ora presenti:", wb.sheetnames)
+print("Calcolatore sheet added to:", FILE)
+print("Sheets now present:", wb.sheetnames)
