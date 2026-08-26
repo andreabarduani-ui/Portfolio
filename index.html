@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfcf9'/><text x='50' y='70' font-family='Arial,sans-serif' font-size='54' text-anchor='middle' fill='%230d5794'>AB</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #26231f;
@@ -22,7 +22,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     color: var(--ink);
     background: var(--bg);
     line-height: 1.62;
@@ -46,7 +46,7 @@
   /* ---------- Hero ---------- */
   .hero { padding: 72px 0 56px; }
   .hero .kicker { font-size: .82rem; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-soft); margin-bottom: 18px; }
-  .hero h1 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); line-height: 1.18; max-width: 640px; }
+  .hero h1 { font-size: clamp(1.75rem, 4.3vw, 2.5rem); line-height: 1.2; max-width: 660px; }
   .hero p.lead { margin-top: 20px; font-size: 1.08rem; color: var(--ink-soft); max-width: 620px; }
   .hero .ctas { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {
@@ -95,15 +95,15 @@
   @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
   .card { padding: 20px 0; border-bottom: 1px solid var(--line); }
   .card .tag { font-size: .72rem; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-soft); }
-  .card h4 { margin-top: 3px; font-size: 1.06rem; }
+  .card h4 { margin-top: 3px; font-size: 1.02rem; }
   .card p { margin-top: 7px; font-size: .92rem; color: var(--ink-soft); }
-  .card .tech { margin-top: 10px; font-size: .84rem; color: var(--ink); }
+  .card .tech { margin-top: 10px; font-size: .84rem; color: var(--ink); font-weight: 600; }
   .card .code { display: inline-block; margin-top: 8px; font-size: .86rem; font-weight: 600; text-decoration: none; }
   .card .code:hover { text-decoration: underline; }
 
   /* ---------- Skills ---------- */
-  .skills-list { font-size: 1.02rem; line-height: 2; max-width: 640px; }
-  .skills-list span { white-space: nowrap; }
+  .skills-list { font-size: 1rem; line-height: 2.1; max-width: 640px; }
+  .skills-list span { white-space: nowrap; font-weight: 600; }
   .skills-list span::after { content: " ·"; color: var(--ink-soft); }
   .skills-list span:last-child::after { content: ""; }
 
