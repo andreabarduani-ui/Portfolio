@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andrea Barduani — Process Automation Portfolio</title>
+<meta name="description" content="Portfolio of 13 Python automation tools covering the full lifecycle of funded training programs: launch, delivery and reporting.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+<style>
+  :root {
+    --accent: #4f46e5;
+    --accent-soft: #eef2ff;
+    --ink: #0f172a;
+    --ink-soft: #475569;
+    --line: #e2e8f0;
+    --bg: #ffffff;
+    --bg-soft: #f8fafc;
+    --launch: #059669;
+    --launch-soft: #ecfdf5;
+    --delivery: #d97706;
+    --delivery-soft: #fffbeb;
+    --reporting: #7c3aed;
+    --reporting-soft: #f5f3ff;
+    --utility: #0284c7;
+    --utility-soft: #f0f9ff;
+    --radius: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.65;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav .brand { font-weight: 700; font-size: 1.02rem; color: var(--ink); text-decoration: none; }
+  .nav .brand span { color: var(--accent); }
+  .nav ul { display: flex; gap: 26px; list-style: none; }
+  .nav a { color: var(--ink-soft); text-decoration: none; font-size: .92rem; font-weight: 500; }
+  .nav a:hover { color: var(--accent); }
+  @media (max-width: 640px) { .nav ul { gap: 16px; } .nav a { font-size: .85rem; } }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 84px 0 64px; background:
+    radial-gradient(1200px 400px at 70% -10%, var(--accent-soft), transparent); }
+  .hero .kicker {
+    display: inline-block; font-size: .8rem; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--accent);
+    background: var(--accent-soft); border: 1px solid #e0e7ff;
+    padding: 5px 14px; border-radius: 999px; margin-bottom: 20px;
+  }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.15; font-weight: 800; letter-spacing: -.02em; }
+  .hero p.lead { margin-top: 18px; font-size: clamp(1.02rem, 2.2vw, 1.2rem); color: var(--ink-soft); max-width: 720px; }
+  .hero .ctas { margin-top: 30px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 11px 22px; border-radius: 10px;
+    font-weight: 600; font-size: .95rem; text-decoration: none;
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: #4338ca; }
+  .btn.ghost { border: 1px solid var(--line); color: var(--ink); background: #fff; }
+  .btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- Stats ---------- */
+  .stats { border-block: 1px solid var(--line); background: var(--bg-soft); }
+  .stats .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding: 30px 0; }
+  .stat { text-align: center; }
+  .stat b { display: block; font-size: 1.9rem; font-weight: 800; color: var(--accent); letter-spacing: -.02em; }
+  .stat span { font-size: .85rem; color: var(--ink-soft); }
+  @media (max-width: 640px) { .stats .grid { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- Sections ---------- */
+  section { padding: 70px 0; }
+  section.alt { background: var(--bg-soft); border-block: 1px solid var(--line); }
+  .sec-head { max-width: 680px; margin-bottom: 40px; }
+  .sec-head h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); font-weight: 800; letter-spacing: -.015em; }
+  .sec-head p { margin-top: 10px; color: var(--ink-soft); }
+
+  /* ---------- Process ---------- */
+  .process { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .phase { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .phase .num { font-size: .78rem; font-weight: 700; letter-spacing: .06em; }
+  .phase h3 { margin-top: 6px; font-size: 1.08rem; font-weight: 700; }
+  .phase p { margin-top: 8px; font-size: .92rem; color: var(--ink-soft); }
+  .phase.p1 { border-top: 3px solid var(--launch); } .phase.p1 .num { color: var(--launch); }
+  .phase.p2 { border-top: 3px solid var(--delivery); } .phase.p2 .num { color: var(--delivery); }
+  .phase.p3 { border-top: 3px solid var(--reporting); } .phase.p3 .num { color: var(--reporting); }
+  @media (max-width: 780px) { .process { grid-template-columns: 1fr; } }
+
+  /* ---------- Projects ---------- */
+  .group-head { display: flex; align-items: baseline; gap: 12px; margin: 46px 0 18px; }
+  .group-head:first-of-type { margin-top: 0; }
+  .group-head h3 { font-size: 1.15rem; font-weight: 750; }
+  .group-head .dot { width: 10px; height: 10px; border-radius: 50%; align-self: center; }
+  .group-head small { color: var(--ink-soft); font-size: .88rem; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 900px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .cards { grid-template-columns: 1fr; } }
+  .card {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; display: flex; flex-direction: column;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(15,23,42,.08); border-color: #cbd5e1; }
+  .card .tag {
+    align-self: flex-start; font-size: .7rem; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 12px;
+  }
+  .tag.launch    { color: var(--launch);    background: var(--launch-soft); }
+  .tag.delivery  { color: var(--delivery);  background: var(--delivery-soft); }
+  .tag.reporting { color: var(--reporting); background: var(--reporting-soft); }
+  .tag.utility   { color: var(--utility);   background: var(--utility-soft); }
+  .card h4 { font-size: 1.02rem; font-weight: 700; letter-spacing: -.01em; }
+  .card p { margin-top: 8px; font-size: .9rem; color: var(--ink-soft); flex: 1; }
+  .card .tech { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .card .tech span {
+    font-size: .72rem; font-weight: 600; color: var(--ink-soft);
+    background: var(--bg-soft); border: 1px solid var(--line);
+    padding: 2px 9px; border-radius: 6px;
+  }
+
+  /* ---------- Skills ---------- */
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chips span {
+    background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    padding: 8px 18px; font-size: .9rem; font-weight: 550; color: var(--ink);
+  }
+  .chips span:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- About ---------- */
+  .about { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: start; }
+  @media (max-width: 780px) { .about { grid-template-columns: 1fr; } }
+  .about p { color: var(--ink-soft); margin-bottom: 14px; }
+  .principles { list-style: none; display: grid; gap: 12px; }
+  .principles li {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; font-size: .92rem;
+  }
+  .principles li b { display: block; font-size: .95rem; }
+  .principles li span { color: var(--ink-soft); font-size: .87rem; }
+
+  /* ---------- Footer ---------- */
+  footer { background: #0f172a; color: #cbd5e1; padding: 56px 0 40px; }
+  footer h2 { color: #fff; font-size: 1.4rem; font-weight: 750; margin-bottom: 10px; }
+  footer p { max-width: 560px; font-size: .95rem; }
+  footer .links { margin-top: 22px; display: flex; gap: 14px; flex-wrap: wrap; }
+  footer .links a {
+    color: #fff; text-decoration: none; font-weight: 600; font-size: .93rem;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    padding: 9px 18px; border-radius: 9px;
+  }
+  footer .links a:hover { background: var(--accent); border-color: var(--accent); }
+  footer .copy { margin-top: 36px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.12); font-size: .82rem; color: #64748b; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">Andrea <span>Barduani</span></a>
+    <ul>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<div class="hero" id="top">
+  <div class="wrap">
+    <span class="kicker">Business Process Automation · Python</span>
+    <h1>I turn repetitive administrative<br>workflows into reliable software.</h1>
+    <p class="lead">
+      I design and build Python automation tools for the administration of funded
+      vocational training programs — 13 custom tools that cover the entire program
+      lifecycle, replacing hours of manual document handling with seconds of
+      automated, verifiable processing.
+    </p>
+    <div class="ctas">
+      <a class="btn primary" href="#projects">View the projects</a>
+      <a class="btn ghost" href="#process">How it fits together</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STATS ============ -->
+<div class="stats">
+  <div class="wrap grid">
+    <div class="stat"><b>13</b><span>automation tools built</span></div>
+    <div class="stat"><b>3</b><span>program lifecycle phases covered</span></div>
+    <div class="stat"><b>9</b><span>funding bodies monitored</span></div>
+    <div class="stat"><b>17</b><span>versions of the e-learning monitor</span></div>
+  </div>
+</div>
+
+<!-- ============ PROCESS ============ -->
+<section id="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>One pipeline, three phases</h2>
+      <p>Every funded training program goes through the same administrative
+         lifecycle. I automated each phase end-to-end.</p>
+    </div>
+    <div class="process">
+      <div class="phase p1">
+        <div class="num">PHASE 1</div>
+        <h3>Program Launch</h3>
+        <p>Enrollment files, adhesion letters, apprenticeship quotes and financial
+           plans — prepared in minutes instead of days, straight from raw data.</p>
+      </div>
+      <div class="phase p2">
+        <div class="num">PHASE 2</div>
+        <h3>Delivery</h3>
+        <p>While the course runs: attendance registers filled automatically,
+           e-learning hours tracked with excess-time detection, tutoring hours
+           distributed within regulatory constraints.</p>
+      </div>
+      <div class="phase p3">
+        <div class="num">PHASE 3</div>
+        <h3>Reporting</h3>
+        <p>When it ends: certificates generated per participant and sorted per
+           company, transparency documents and project timesheets compiled
+           automatically.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section id="projects" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>The projects</h2>
+      <p>Each tool was born from a real, recurring pain in daily operations —
+         then generalized into a reusable command-line tool.</p>
+    </div>
+
+    <!-- Phase 1 -->
+    <div class="group-head">
+      <span class="dot" style="background:var(--launch)"></span>
+      <h3>Program Launch</h3>
+      <small>getting a course up and running</small>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <span class="tag launch">Launch</span>
+        <h4>Student Import Generator</h4>
+        <p>Converts the student data-collection spreadsheet into the
+           platform-ready import file, automatically enriching each record by
+           parsing the Italian tax ID: gender, birth town and province, resolved
+           through an embedded national municipality database.</p>
+        <div class="tech"><span>Python</span><span>pandas</span><span>openpyxl</span></div>
+      </div>
+      <div class="card">
+        <span class="tag launch">Launch</span>
+        <h4>Adhesion Letter Compiler</h4>
+        <p>Fills the official Word adhesion-letter template from Excel data,
+           producing one personalized letter per trainee–company pair with
+           pixel-accurate field alignment — the original template is never
+           modified.</p>
+        <div class="tech"><span>Python</span><span>python-docx</span><span>openpyxl</span></div>
+      </div>
+      <div class="card">
+        <span class="tag launch">Launch</span>
+        <h4>Apprenticeship Quote Generator</h4>
+        <p>Generates complete economic offers for apprenticeship courses:
+           price calculation with rounding rules, automatic progressive offer
+           numbering per year, and course calendars rebuilt from Excel into
+           formatted Word tables.</p>
+        <div class="tech"><span>Python</span><span>python-docx</span><span>openpyxl</span></div>
+      </div>
+      <div class="card">
+        <span class="tag launch">Launch</span>
+        <h4>Financial Plan Builder</h4>
+        <p>Builds live-formula Excel budget templates with the funding body's
+           official cost items, traffic-light constraint checks (teaching ≤ 35%,
+           delivery ≥ 40%, overhead ≤ 25%) and a simulator for closing the gap
+           to target.</p>
+        <div class="tech"><span>Python</span><span>openpyxl</span><span>Excel formulas</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="group-head">
+      <span class="dot" style="background:var(--delivery)"></span>
+      <h3>Delivery</h3>
+      <small>monitoring while the course runs</small>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <span class="tag delivery">Delivery</span>
+        <h4>E-Learning Hours Monitor</h4>
+        <p>~1,800 lines across 17 released versions. Computes each student's
+           actual e-learning hours by automatically stripping excess time —
+           evenings, weekends, early mornings, daily cap — and produces a
+           monthly workbook with a full summary. Includes fuzzy matching for
+           truncated names.</p>
+        <div class="tech"><span>Python</span><span>pandas</span><span>openpyxl</span><span>fuzzy matching</span></div>
+      </div>
+      <div class="card">
+        <span class="tag delivery">Delivery</span>
+        <h4>Tutoring Hours Distributor</h4>
+        <p>Distributes tutoring hours across the months of an internship,
+           always starting from the internship start date and respecting every
+           constraint: monthly caps, allowed time windows, weekends and the
+           tutor's actual availability.</p>
+        <div class="tech"><span>Python</span><span>openpyxl</span><span>fuzzy matching</span></div>
+      </div>
+      <div class="card">
+        <span class="tag delivery">Delivery</span>
+        <h4>Attendance Register Filler</h4>
+        <p>Fills the official PDF attendance register from the session Excel
+           reports: recognizes student names — even with typos — and writes
+           PRESENT/ABSENT in the exact position on the page. Ships with a
+           double-click launcher, so anyone can run it without technical skills.</p>
+        <div class="tech"><span>Python</span><span>pdfplumber</span><span>PyMuPDF</span><span>openpyxl</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="group-head">
+      <span class="dot" style="background:var(--reporting)"></span>
+      <h3>Reporting</h3>
+      <small>closing out and certifying the program</small>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <span class="tag reporting">Reporting</span>
+        <h4>Certificate Manager</h4>
+        <p>A four-command pipeline for certificate handling: splits the
+           bulk-print PDF into one file per person, reads each name from the
+           document itself, sorts certificates into company folders via an
+           Excel directory, and rebuilds a cross-edition company view.</p>
+        <div class="tech"><span>Python</span><span>pypdf</span><span>pandas</span><span>fuzzy matching</span></div>
+      </div>
+      <div class="card">
+        <span class="tag reporting">Reporting</span>
+        <h4>Transparency Certificates</h4>
+        <p>Generates the end-of-course "acquired skills" certificates — one Word
+           document per participant — by filling the template's tables from the
+           master Excel file, leaving institution data untouched.</p>
+        <div class="tech"><span>Python</span><span>python-docx</span><span>openpyxl</span></div>
+      </div>
+      <div class="card">
+        <span class="tag reporting">Reporting</span>
+        <h4>Project Timesheet Generator</h4>
+        <p>Compiles the official monthly timesheets of internship projects from
+           intern records and tutor hour reports — one file per month or a
+           single multi-sheet workbook — with project-level configuration.</p>
+        <div class="tech"><span>Python</span><span>openpyxl</span><span>PyYAML</span></div>
+      </div>
+    </div>
+
+    <!-- Utilities -->
+    <div class="group-head">
+      <span class="dot" style="background:var(--utility)"></span>
+      <h3>Cross-cutting Utilities</h3>
+      <small>tools that serve every phase</small>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <span class="tag utility">Utility</span>
+        <h4>Funding Call Scraper</h4>
+        <p>A two-level web scraper monitoring the sites of nine interprofessional
+           funding bodies: discovers every open call, opens each detail page,
+           extracts the budget and flags calls above a configurable threshold —
+           all exported to a ready-to-read Excel report.</p>
+        <div class="tech"><span>Python</span><span>requests</span><span>BeautifulSoup</span><span>pandas</span></div>
+      </div>
+      <div class="card">
+        <span class="tag utility">Utility</span>
+        <h4>Regulation Search Engine</h4>
+        <p>An interactive search engine inside funding-body manuals and calls:
+           predefined research categories (variations, reporting deadlines,
+           eligible costs, state aid…) plus free-text search, always returning
+           page number and surrounding context.</p>
+        <div class="tech"><span>Python</span><span>pdfplumber</span></div>
+      </div>
+      <div class="card">
+        <span class="tag utility">Utility</span>
+        <h4>Social Graphics Pipeline</h4>
+        <p>Programmatic generation of LinkedIn graphics — cards and carousels —
+           from a centralized brand kit, with automatic platform format
+           adaptation and a duplicate-post registry. Work in progress.</p>
+        <div class="tech"><span>Python</span><span>Pillow</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Skills &amp; technologies</h2>
+      <p>Built and battle-tested on real administrative workflows.</p>
+    </div>
+    <div class="chips">
+      <span>Python</span><span>pandas</span><span>openpyxl</span><span>python-docx</span>
+      <span>pdfplumber</span><span>PyMuPDF</span><span>pypdf</span><span>requests</span>
+      <span>BeautifulSoup</span><span>Pillow</span><span>PyYAML</span>
+      <span>Excel automation</span><span>Word &amp; PDF generation</span>
+      <span>Web scraping</span><span>Fuzzy matching</span>
+      <span>Document parsing</span><span>Process automation</span><span>Git</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="alt">
+  <div class="wrap about">
+    <div>
+      <div class="sec-head" style="margin-bottom:24px">
+        <h2>About this portfolio</h2>
+      </div>
+      <p>
+        I work in the administration of funded vocational training programs.
+        Every tool on this page was built to solve a real, recurring problem in
+        my daily work — not as an exercise.
+      </p>
+      <p>
+        The result: manual processes that used to take hours now run in seconds,
+        with consistent output that can be verified and audited. The tools
+        operate on Word, Excel and PDF files, which is where training
+        administration actually lives.
+      </p>
+      <p>
+        All tools run locally, process personal data responsibly and never
+        modify the original files they work on.
+      </p>
+    </div>
+    <ul class="principles">
+      <li><b>Source files are sacred</b><span>Every tool works on copies; originals are never modified, and inputs are archived after processing.</span></li>
+      <li><b>Robustness against messy data</b><span>Truncated names, typos, Italian number formats and broken exports are handled by design, not by luck.</span></li>
+      <li><b>Usable by anyone</b><span>The most-used tools ship with double-click launchers, so colleagues without technical skills can run them.</span></li>
+      <li><b>Iterated in the field</b><span>The e-learning monitor reached version 17 through real-world feedback — each version fixing an actual edge case.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ FOOTER / CONTACT ============ -->
+<footer id="contact">
+  <div class="wrap">
+    <h2>Get in touch</h2>
+    <p>
+      Want to know how one of these tools works, or how the same approach could
+      automate your administrative processes? I'm happy to talk about it.
+    </p>
+    <!-- TODO: replace with your real email / LinkedIn profile URL before publishing -->
+    <div class="links">
+      <a href="mailto:your.email@example.com">Email</a>
+      <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/andreabarduani-ui" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="copy">© 2026 Andrea Barduani — Process Automation Portfolio.</div>
+  </div>
+</footer>
+
+</body>
+</html>
