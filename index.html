@@ -8,7 +8,8 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfcf9'/><text x='50' y='70' font-family='Arial,sans-serif' font-size='54' text-anchor='middle' fill='%230d5794'>AB</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
 <style>
   :root {
     --ink: #26231f;
@@ -18,8 +19,16 @@
     --paper: #ffffff;
     --accent: #0d5794;
     --accent-dark: #093f6e;
+    --term-bg: #23201b;
+    --term-bar: #2d2923;
+    --term-text: #efe9dc;
+    --term-green: #8fce7a;
+    --term-blue: #82b8e8;
+    --term-dim: #8f8875;
+    --term-yellow: #e5c07b;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html { scroll-behavior: smooth; }
   body {
     font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -29,25 +38,30 @@
     font-size: 16.5px;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 0 22px; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 22px; }
   h1, h2, h3, h4 { font-weight: 700; letter-spacing: -.018em; line-height: 1.25; }
   a { color: var(--accent); }
   a:hover { color: var(--accent-dark); }
+  ::selection { background: #cfe3f4; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 
   /* ---------- Header ---------- */
-  header { border-bottom: 1px solid var(--line); background: var(--bg); }
+  header { border-bottom: 1px solid var(--line); background: var(--bg); position: sticky; top: 0; z-index: 50; }
   .nav { display: flex; align-items: baseline; justify-content: space-between; padding: 18px 0; }
   .nav .brand { font-size: 1.1rem; color: var(--ink); text-decoration: none; font-weight: 700; letter-spacing: -.01em; }
   .nav ul { display: flex; gap: 22px; list-style: none; }
   .nav a { color: var(--ink-soft); text-decoration: none; font-size: .92rem; }
   .nav a:hover { color: var(--accent); text-decoration: underline; }
+  .nav a.active { color: var(--accent); font-weight: 600; }
   @media (max-width: 640px) { .nav { flex-direction: column; gap: 6px; } }
 
   /* ---------- Hero ---------- */
-  .hero { padding: 72px 0 56px; }
+  .hero { padding: 64px 0 56px; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 44px; align-items: center; }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .hero { padding-top: 48px; } }
   .hero .kicker { font-size: .82rem; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-soft); margin-bottom: 18px; }
-  .hero h1 { font-size: clamp(1.75rem, 4.3vw, 2.5rem); line-height: 1.2; max-width: 660px; }
-  .hero p.lead { margin-top: 20px; font-size: 1.08rem; color: var(--ink-soft); max-width: 620px; }
+  .hero h1 { font-size: clamp(1.75rem, 4.3vw, 2.5rem); line-height: 1.2; }
+  .hero p.lead { margin-top: 20px; font-size: 1.05rem; color: var(--ink-soft); }
   .hero .ctas { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
   .btn {
     display: inline-block; padding: 10px 20px; border-radius: 4px;
@@ -57,13 +71,39 @@
   .btn.primary:hover { background: var(--accent-dark); color: #fff; }
   .btn.ghost { border: 1px solid var(--ink); color: var(--ink); background: transparent; }
   .btn.ghost:hover { background: var(--ink); color: var(--bg); }
+  .hero-term-caption { margin-top: 10px; font-size: .78rem; color: var(--ink-soft); text-align: center; }
+
+  /* ---------- Terminal window ---------- */
+  .term {
+    background: var(--term-bg); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 14px 34px rgba(38, 35, 31, .22), 0 2px 6px rgba(38, 35, 31, .12);
+    font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  }
+  .term-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: var(--term-bar); }
+  .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+  .dot.r { background: #e0655a; } .dot.y { background: #e0b04d; } .dot.g { background: #78b860; }
+  .term-title { margin-left: 8px; color: var(--term-dim); font-size: .72rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .term-body { padding: 14px 16px 16px; font-size: .78rem; line-height: 1.62; min-height: 132px; }
+  .hero .term-body { min-height: 196px; }
+  .tline { white-space: pre-wrap; word-break: break-word; color: var(--term-text); }
+  .tline .ps { color: var(--term-green); font-weight: 700; }
+  .tline.prompt .ps { color: var(--term-blue); }
+  .tline.ok { color: var(--term-green); }
+  .tline.ok .ps { color: var(--term-green); }
+  .tline.dim { color: var(--term-dim); }
+  .tline.result { color: var(--term-yellow); font-weight: 500; }
+  .tline.out { color: var(--term-text); }
+  .tline.cursor { min-height: 1.62em; }
+  .tline.cursor::after { content: "▋"; color: var(--term-green); animation: blink 1.05s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (max-width: 640px) { .term-body { font-size: .7rem; } }
 
   /* ---------- Stats ---------- */
   .stats { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .stats .grid { display: grid; grid-template-columns: repeat(4, 1fr); }
   .stat { padding: 22px 8px; text-align: center; border-left: 1px solid var(--line); }
   .stat:first-child { border-left: none; }
-  .stat b { display: block; font-size: 1.65rem; font-weight: 800; letter-spacing: -.02em; }
+  .stat b { display: block; font-size: 1.65rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
   .stat span { font-size: .8rem; color: var(--ink-soft); }
   @media (max-width: 640px) {
     .stats .grid { grid-template-columns: repeat(2, 1fr); }
@@ -79,33 +119,140 @@
 
   /* ---------- Process ---------- */
   .process { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
-  .phase { border-top: 2px solid var(--ink); padding-top: 14px; }
+  .phase { border-top: 2px solid var(--ink); padding-top: 14px; transition: border-color .2s; }
+  .phase:hover { border-top-color: var(--accent); }
   .phase .num { font-size: .76rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); }
   .phase h3 { margin-top: 4px; font-size: 1.05rem; }
   .phase p { margin-top: 8px; font-size: .9rem; color: var(--ink-soft); }
   @media (max-width: 780px) { .process { grid-template-columns: 1fr; } }
 
-  /* ---------- Projects ---------- */
-  #projects { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .group-head { margin: 44px 0 6px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  /* ---------- Filter chips ---------- */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 26px; }
+  .chip {
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink-soft);
+    border-radius: 999px; padding: 6px 14px; font: inherit; font-size: .84rem; font-weight: 500;
+    cursor: pointer; transition: all .18s;
+  }
+  .chip:hover { border-color: var(--ink-soft); color: var(--ink); }
+  .chip.active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .chip sup { margin-left: 4px; font-size: .68rem; opacity: .65; }
+
+  /* ---------- Project cards ---------- */
+  #projects { background: var(--bg); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .group-head { margin: 44px 0 18px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
   .group-head:first-of-type { margin-top: 0; }
   .group-head h3 { font-size: 1.1rem; }
   .group-head small { color: var(--ink-soft); font-size: .88rem; font-family: inherit; font-style: italic; }
-  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px; }
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
   @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
-  .card { padding: 20px 0; border-bottom: 1px solid var(--line); }
-  .card .tag { font-size: .72rem; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-soft); }
-  .card h4 { margin-top: 3px; font-size: 1.02rem; }
-  .card p { margin-top: 7px; font-size: .92rem; color: var(--ink-soft); }
-  .card .tech { margin-top: 10px; font-size: .84rem; color: var(--ink); font-weight: 600; }
-  .card .code { display: inline-block; margin-top: 8px; font-size: .86rem; font-weight: 600; text-decoration: none; }
+  .card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+    padding: 20px 20px 16px; display: flex; flex-direction: column;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(38, 35, 31, .09); border-color: #d5cfc2; }
+  .tag {
+    display: inline-block; font-size: .68rem; text-transform: uppercase; letter-spacing: .09em;
+    font-weight: 600; border-radius: 999px; padding: 2px 10px; margin-bottom: 8px; width: fit-content;
+  }
+  .tag.launch { background: #e8f0f8; color: #0d5794; }
+  .tag.delivery { background: #e9f2e2; color: #3d7a2f; }
+  .tag.reporting { background: #f1eaf8; color: #7a4d9e; }
+  .tag.utility { background: #faf1df; color: #8a5a00; }
+  .tag.uni { background: #edeae3; color: var(--ink-soft); }
+  .card h4 { margin-top: 2px; font-size: 1.02rem; }
+  .card p { margin-top: 6px; font-size: .89rem; color: var(--ink-soft); }
+  .card .tech { margin-top: 10px; font-size: .8rem; color: var(--ink); font-weight: 600; }
+  .card .card-foot { margin-top: auto; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card .code { font-size: .84rem; font-weight: 600; text-decoration: none; }
   .card .code:hover { text-decoration: underline; }
+  .run {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--accent); color: var(--accent); background: transparent;
+    border-radius: 4px; padding: 5px 12px; font: inherit; font-size: .82rem; font-weight: 600;
+    cursor: pointer; transition: all .18s;
+  }
+  .run:hover { background: var(--accent); color: #fff; }
+  .run .arr { display: inline-block; transition: transform .2s; font-size: .72rem; }
+  .run.open { background: var(--accent); color: #fff; }
+  .run.open .arr { transform: rotate(90deg); }
+
+  /* ---------- Expandable panel ---------- */
+  .panel { margin-top: 14px; animation: panelIn .28s ease; }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+  .tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 10px; }
+  .tab {
+    border: none; background: var(--paper); color: var(--ink-soft); font: inherit;
+    font-size: .78rem; font-weight: 600; padding: 5px 14px; cursor: pointer;
+  }
+  .tab + .tab { border-left: 1px solid var(--line); }
+  .tab.active { background: var(--ink); color: var(--bg); }
+
+  /* ---------- Output previews ---------- */
+  .out { font-size: .84rem; }
+  .mini-table { width: 100%; border-collapse: collapse; }
+  .mini-table th {
+    text-align: left; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--ink-soft); border-bottom: 1px solid var(--line); padding: 4px 8px; font-weight: 600;
+  }
+  .mini-table td { padding: 5px 8px; border-bottom: 1px solid #f0ede6; }
+  .mini-table tr:last-child td { border-bottom: none; }
+  .mini-table .num { font-family: "JetBrains Mono", Consolas, monospace; font-size: .76rem; }
+  .pill {
+    display: inline-block; padding: 1px 9px; border-radius: 999px;
+    font-size: .7rem; font-weight: 600; white-space: nowrap;
+  }
+  .pill.ok { background: #e5f2df; color: #2f6b27; }
+  .pill.warn { background: #faf1df; color: #8a5a00; }
+  .pill.bad { background: #f9e3e0; color: #a33a2e; }
+  .pill.mid { background: #e8f0f8; color: #0d5794; }
+  .tree {
+    font-family: "JetBrains Mono", Consolas, monospace; font-size: .76rem; line-height: 1.75;
+    background: #faf8f3; border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px;
+  }
+  .tree .dir { color: var(--accent); font-weight: 700; }
+  .tree .dim { color: var(--ink-soft); }
+  .doc-preview {
+    border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; background: #fff;
+    box-shadow: 0 3px 10px rgba(38,35,31,.05);
+  }
+  .doc-preview .doc-title {
+    text-align: center; font-weight: 700; font-size: .78rem; letter-spacing: .1em;
+    text-transform: uppercase; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--line);
+  }
+  .doc-preview .row { display: flex; gap: 14px; padding: 2px 0; font-size: .82rem; }
+  .doc-preview .row b { width: 88px; flex: none; color: var(--ink-soft); font-weight: 500; }
+  .file-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .file-chip {
+    font-family: "JetBrains Mono", Consolas, monospace; font-size: .7rem;
+    background: #f3f0e9; border: 1px solid var(--line); border-radius: 5px; padding: 2px 8px;
+  }
+  .out-note { margin-top: 10px; font-size: .74rem; color: var(--ink-soft); }
+  .out-note a { font-weight: 600; }
+
+  /* ---------- University cards ---------- */
+  .uni-thumb {
+    width: 100%; height: 150px; object-fit: cover; object-position: top;
+    border-radius: 8px; border: 1px solid var(--line); display: block;
+    transition: transform .25s ease;
+  }
+  a.thumb-link { display: block; border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+  a.thumb-link:hover .uni-thumb { transform: scale(1.03); }
+  .ds-mock { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 14px; background: #fff; }
+  .ds-mock svg { display: block; width: 100%; height: 150px; }
+  .wip {
+    display: inline-block; margin-left: 8px; font-size: .68rem; font-weight: 600;
+    color: #8a5a00; background: #faf1df; border-radius: 999px; padding: 1px 9px; vertical-align: middle;
+  }
 
   /* ---------- Skills ---------- */
-  .skills-list { font-size: 1rem; line-height: 2.1; max-width: 640px; }
-  .skills-list span { white-space: nowrap; font-weight: 600; }
-  .skills-list span::after { content: " ·"; color: var(--ink-soft); }
-  .skills-list span:last-child::after { content: ""; }
+  .skills-list { display: flex; flex-wrap: wrap; gap: 8px; max-width: 700px; }
+  .skills-list span {
+    white-space: nowrap; font-weight: 600; font-size: .88rem;
+    border: 1px solid var(--line); background: var(--paper);
+    border-radius: 999px; padding: 5px 14px; transition: all .18s;
+  }
+  .skills-list span:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 
   /* ---------- About ---------- */
   .about { display: grid; grid-template-columns: 1.35fr 1fr; gap: 44px; align-items: start; }
@@ -125,6 +272,26 @@
   footer .links a:hover { text-decoration: underline; }
   footer .links .label { color: var(--ink-soft); font-weight: 400; display: inline-block; width: 84px; }
   footer .copy { margin-top: 34px; font-size: .82rem; color: var(--ink-soft); }
+
+  /* ---------- Back to top ---------- */
+  #toTop {
+    position: fixed; right: 22px; bottom: 22px; z-index: 60;
+    width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink); font-size: 1rem; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(38,35,31,.14);
+    opacity: 0; pointer-events: none; transform: translateY(8px); transition: all .25s;
+  }
+  #toTop.show { opacity: 1; pointer-events: auto; transform: none; }
+  #toTop:hover { background: var(--ink); color: var(--bg); }
+
+  /* ---------- Reveal on scroll ---------- */
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
+  .js .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+    .tline.cursor::after { animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -144,18 +311,29 @@
 
 <!-- ============ HERO ============ -->
 <div class="hero" id="top">
-  <div class="wrap">
-    <p class="kicker">Business process automation · Python</p>
-    <h1>I turn repetitive administrative workflows into reliable software.</h1>
-    <p class="lead">
-      I design and build Python automation tools for the administration of funded
-      vocational training programs — 13 custom tools that cover the entire program
-      lifecycle, replacing hours of manual document handling with seconds of
-      automated, verifiable processing.
-    </p>
-    <div class="ctas">
-      <a class="btn primary" href="#projects">View the projects</a>
-      <a class="btn ghost" href="#process">How it fits together</a>
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">Business process automation · Python</p>
+      <h1>I turn repetitive administrative workflows into reliable software.</h1>
+      <p class="lead">
+        13 Python tools covering the entire lifecycle of funded vocational
+        training programs — hours of manual document handling become seconds
+        of automated, verifiable processing.
+      </p>
+      <div class="ctas">
+        <a class="btn primary" href="#projects">View the projects</a>
+        <a class="btn ghost" href="#process">How it fits together</a>
+      </div>
+    </div>
+    <div>
+      <div class="term hero-term">
+        <div class="term-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="term-title">elearning_hours_monitor.py</span>
+        </div>
+        <div class="term-body"></div>
+      </div>
+      <p class="hero-term-caption">Live console sessions from the real tools — every project card below has its own ▸ demo.</p>
     </div>
   </div>
 </div>
@@ -163,36 +341,36 @@
 <!-- ============ STATS ============ -->
 <div class="stats">
   <div class="wrap grid">
-    <div class="stat"><b>13</b><span>automation tools built</span></div>
-    <div class="stat"><b>3</b><span>lifecycle phases covered</span></div>
-    <div class="stat"><b>9</b><span>funding bodies monitored</span></div>
-    <div class="stat"><b>17</b><span>versions of the e-learning monitor</span></div>
+    <div class="stat"><b data-count="13">0</b><span>automation tools built</span></div>
+    <div class="stat"><b data-count="3">0</b><span>lifecycle phases covered</span></div>
+    <div class="stat"><b data-count="9">0</b><span>funding bodies monitored</span></div>
+    <div class="stat"><b data-count="17">0</b><span>versions of the e-learning monitor</span></div>
   </div>
 </div>
 
 <!-- ============ PROCESS ============ -->
 <section id="process">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <h2>One pipeline, three phases</h2>
       <p>Every funded training program goes through the same administrative
          lifecycle. I automated each phase end-to-end.</p>
     </div>
     <div class="process">
-      <div class="phase">
+      <div class="phase reveal">
         <div class="num">Phase 1</div>
         <h3>Program Launch</h3>
         <p>Enrollment files, adhesion letters, apprenticeship quotes and financial
            plans — prepared in minutes instead of days, straight from raw data.</p>
       </div>
-      <div class="phase">
+      <div class="phase reveal">
         <div class="num">Phase 2</div>
         <h3>Delivery</h3>
         <p>While the course runs: attendance registers filled automatically,
            e-learning hours tracked with excess-time detection, tutoring hours
            distributed within regulatory constraints.</p>
       </div>
-      <div class="phase">
+      <div class="phase reveal">
         <div class="num">Phase 3</div>
         <h3>Reporting</h3>
         <p>When it ends: certificates generated per participant and sorted per
@@ -206,206 +384,275 @@
 <!-- ============ PROJECTS ============ -->
 <section id="projects">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <h2>The projects</h2>
       <p>Each tool was born from a real, recurring pain in daily operations —
-         then generalized into a reusable command-line tool. The full source
-         code and a sample output of every project are published in
+         then generalized into a reusable command-line tool. Full source code
+         and sample outputs live in
          <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">the repository</a>.</p>
     </div>
 
+    <div class="chips reveal" role="group" aria-label="Filter projects by phase">
+      <button class="chip active" data-filter="all">All <sup>16</sup></button>
+      <button class="chip" data-filter="launch">Launch <sup>4</sup></button>
+      <button class="chip" data-filter="delivery">Delivery <sup>3</sup></button>
+      <button class="chip" data-filter="reporting">Reporting <sup>3</sup></button>
+      <button class="chip" data-filter="utility">Utilities <sup>3</sup></button>
+      <button class="chip" data-filter="university">University <sup>3</sup></button>
+    </div>
+
     <!-- Phase 1 -->
-    <div class="group-head">
+    <div class="group-head reveal" data-group="launch">
       <h3>Program Launch <small>— getting a course up and running</small></h3>
     </div>
     <div class="cards">
-      <div class="card">
-        <span class="tag">Launch</span>
+      <div class="card reveal" data-phase="launch" data-demo="student-import-generator">
+        <span class="tag launch">Launch</span>
         <h4>Student Import Generator</h4>
-        <p>Converts the student data-collection spreadsheet into the
-           platform-ready import file, automatically enriching each record by
-           parsing the Italian tax ID: gender, birth town and province, resolved
-           through an embedded national municipality database.</p>
+        <p>Spreadsheet → platform-ready import file, with gender and birth town
+           parsed automatically from each Italian tax ID.</p>
         <div class="tech">Python · pandas · openpyxl</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/student-import-generator" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/student-import-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Launch</span>
+      <div class="card reveal" data-phase="launch" data-demo="adhesion-letter-compiler">
+        <span class="tag launch">Launch</span>
         <h4>Adhesion Letter Compiler</h4>
-        <p>Fills the official Word adhesion-letter template from Excel data,
-           producing one personalized letter per trainee–company pair with
-           pixel-accurate field alignment — the original template is never
-           modified.</p>
+        <p>One personalized Word adhesion letter per trainee–company pair,
+           filled from Excel with pixel-accurate field alignment.</p>
         <div class="tech">Python · python-docx · openpyxl</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/adhesion-letter-compiler" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/adhesion-letter-compiler" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Launch</span>
+      <div class="card reveal" data-phase="launch" data-demo="apprenticeship-quote-generator">
+        <span class="tag launch">Launch</span>
         <h4>Apprenticeship Quote Generator</h4>
-        <p>Generates complete economic offers for apprenticeship courses:
-           price calculation with rounding rules, automatic progressive offer
-           numbering per year, and course calendars rebuilt from Excel into
-           formatted Word tables.</p>
+        <p>Complete economic offers with progressive numbering, rounding rules
+           and course calendars rebuilt into Word tables.</p>
         <div class="tech">Python · python-docx · openpyxl</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/apprenticeship-quote-generator" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/apprenticeship-quote-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Launch</span>
+      <div class="card reveal" data-phase="launch" data-demo="financial-plan-builder">
+        <span class="tag launch">Launch</span>
         <h4>Financial Plan Builder</h4>
-        <p>Builds live-formula Excel budget templates with the funding body's
-           official cost items, traffic-light constraint checks (teaching ≤ 35%,
-           delivery ≥ 40%, overhead ≤ 25%) and a simulator for closing the gap
-           to target.</p>
+        <p>Live-formula Excel budgets with traffic-light constraint checks and
+           a gap-closing simulator.</p>
         <div class="tech">Python · openpyxl · Excel formulas</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/financial-plan-builder" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/financial-plan-builder" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
     </div>
 
     <!-- Phase 2 -->
-    <div class="group-head">
+    <div class="group-head reveal" data-group="delivery">
       <h3>Delivery <small>— monitoring while the course runs</small></h3>
     </div>
     <div class="cards">
-      <div class="card">
-        <span class="tag">Delivery</span>
+      <div class="card reveal" data-phase="delivery" data-demo="elearning-hours-monitor">
+        <span class="tag delivery">Delivery</span>
         <h4>E-Learning Hours Monitor</h4>
-        <p>~1,800 lines across 17 released versions. Computes each student's
-           actual e-learning hours by automatically stripping excess time —
-           evenings, weekends, early mornings, daily cap — and produces a
-           monthly workbook with a full summary. Includes fuzzy matching for
-           truncated names.</p>
+        <p>~1,800 lines across 17 versions: computes each student's real
+           e-learning hours by stripping evenings, weekends and daily excess.
+           Fuzzy matching for truncated names.</p>
         <div class="tech">Python · pandas · openpyxl · fuzzy matching</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Delivery</span>
+      <div class="card reveal" data-phase="delivery" data-demo="tutoring-hours-distributor">
+        <span class="tag delivery">Delivery</span>
         <h4>Tutoring Hours Distributor</h4>
-        <p>Distributes tutoring hours across the months of an internship,
-           always starting from the internship start date and respecting every
-           constraint: monthly caps, allowed time windows, weekends and the
-           tutor's actual availability.</p>
+        <p>Distributes tutoring hours across internship months, respecting
+           caps, allowed time windows and tutor availability.</p>
         <div class="tech">Python · openpyxl · fuzzy matching</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/tutoring-hours-distributor" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/tutoring-hours-distributor" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Delivery</span>
+      <div class="card reveal" data-phase="delivery" data-demo="attendance-register-filler">
+        <span class="tag delivery">Delivery</span>
         <h4>Attendance Register Filler</h4>
-        <p>Fills the official PDF attendance register from the session Excel
-           reports: recognizes student names — even with typos — and writes
-           PRESENT/ABSENT in the exact position on the page. Ships with a
-           double-click launcher, so anyone can run it without technical skills.</p>
+        <p>Writes PRESENT/ABSENT into the official PDF register — fuzzy name
+           matching included, ships with a double-click launcher.</p>
         <div class="tech">Python · pdfplumber · PyMuPDF · openpyxl</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/attendance-register-filler" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/attendance-register-filler" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
     </div>
 
     <!-- Phase 3 -->
-    <div class="group-head">
+    <div class="group-head reveal" data-group="reporting">
       <h3>Reporting <small>— closing out and certifying the program</small></h3>
     </div>
     <div class="cards">
-      <div class="card">
-        <span class="tag">Reporting</span>
+      <div class="card reveal" data-phase="reporting" data-demo="certificate-manager">
+        <span class="tag reporting">Reporting</span>
         <h4>Certificate Manager</h4>
-        <p>A four-command pipeline for certificate handling: splits the
-           bulk-print PDF into one file per person, reads each name from the
-           document itself, sorts certificates into company folders via an
-           Excel directory, and rebuilds a cross-edition company view.</p>
+        <p>Four-command pipeline: split the bulk-print PDF, read each name,
+           sort into company folders, rebuild cross-edition views.</p>
         <div class="tech">Python · pypdf · pandas · fuzzy matching</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/certificate-manager" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/certificate-manager" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Reporting</span>
+      <div class="card reveal" data-phase="reporting" data-demo="transparency-certificates">
+        <span class="tag reporting">Reporting</span>
         <h4>Transparency Certificates</h4>
-        <p>Generates the end-of-course "acquired skills" certificates — one Word
-           document per participant — by filling the template's tables from the
-           master Excel file, leaving institution data untouched.</p>
+        <p>One "acquired skills" Word certificate per participant, filled from
+           the master Excel — template and institution data untouched.</p>
         <div class="tech">Python · python-docx · openpyxl</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/transparency-certificates" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/transparency-certificates" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Reporting</span>
+      <div class="card reveal" data-phase="reporting" data-demo="timesheet-generator">
+        <span class="tag reporting">Reporting</span>
         <h4>Project Timesheet Generator</h4>
-        <p>Compiles the official monthly timesheets of internship projects from
-           intern records and tutor hour reports — one file per month or a
-           single multi-sheet workbook — with project-level configuration.</p>
+        <p>Official monthly timesheets compiled from intern records and tutor
+           reports — one file per month or one multi-sheet workbook.</p>
         <div class="tech">Python · openpyxl · PyYAML</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/timesheet-generator" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/timesheet-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
     </div>
 
     <!-- Utilities -->
-    <div class="group-head">
+    <div class="group-head reveal" data-group="utility">
       <h3>Cross-cutting Utilities <small>— tools that serve every phase</small></h3>
     </div>
     <div class="cards">
-      <div class="card">
-        <span class="tag">Utility</span>
+      <div class="card reveal" data-phase="utility" data-demo="funding-call-scraper">
+        <span class="tag utility">Utility</span>
         <h4>Funding Call Scraper</h4>
-        <p>A two-level web scraper monitoring the sites of nine interprofessional
-           funding bodies: discovers every open call, opens each detail page,
-           extracts the budget and flags calls above a configurable threshold —
-           all exported to a ready-to-read Excel report.</p>
+        <p>Two-level scraper of nine funding bodies: every open call discovered,
+           budget extracted, above-threshold calls flagged to Excel.</p>
         <div class="tech">Python · requests · BeautifulSoup · pandas</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Utility</span>
+      <div class="card reveal" data-phase="utility" data-demo="regulation-search">
+        <span class="tag utility">Utility</span>
         <h4>Regulation Search Engine</h4>
-        <p>An interactive search engine inside funding-body manuals and calls:
-           predefined research categories (variations, reporting deadlines,
-           eligible costs, state aid…) plus free-text search, always returning
-           page number and surrounding context.</p>
+        <p>Search inside funding manuals and calls by category or free text —
+           every answer cites the page number and its context.</p>
         <div class="tech">Python · pdfplumber</div>
-        <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search" target="_blank" rel="noopener">Source &amp; sample output &rarr;</a>
+        <div class="panel-slot"></div>
+        <div class="card-foot">
+          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">Utility</span>
-        <h4>Social Graphics Pipeline</h4>
-        <p>Programmatic generation of LinkedIn graphics — cards and carousels —
-           from a centralized brand kit, with automatic platform format
-           adaptation and a duplicate-post registry. Work in progress.</p>
+      <div class="card reveal" data-phase="utility">
+        <span class="tag utility">Utility</span>
+        <h4>Social Graphics Pipeline <span class="wip">work in progress</span></h4>
+        <p>LinkedIn cards and carousels generated programmatically from a
+           centralized brand kit, with automatic platform format adaptation
+           and a duplicate-post registry.</p>
         <div class="tech">Python · Pillow</div>
+        <div class="card-foot">
+          <span class="out-note" style="margin-top:0">Demo coming when v1 ships.</span>
+        </div>
       </div>
     </div>
 
     <!-- University projects -->
-    <div class="group-head">
+    <div class="group-head reveal" data-group="university">
       <h3>University Projects <small>— academic work worth showing</small></h3>
     </div>
     <div class="cards">
-      <div class="card">
-        <span class="tag">University</span>
+      <div class="card reveal" data-phase="university">
+        <a class="thumb-link" href="files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">
+          <img class="uni-thumb" src="files/img/thumb-nbc.png" alt="NBC Store marketing analysis — title slide" loading="lazy">
+        </a>
+        <span class="tag uni">University</span>
         <h4>NBC Store — Marketing Analysis</h4>
-        <p>Project work for Sapienza University's Organizational &amp; Corporate
-           Communication course: a full marketing analysis of the NBC Store in
-           New York — digital corporate communication audit, target profiling
-           (tourists and fans from home), PESTLE and SWOT, competitor
-           benchmarking with points of parity and difference, and strategies
-           proposed to grow both the physical store and the e-commerce.
-           42-slide Canva presentation.</p>
-        <div class="tech">Market research · Competitor analysis · PESTLE / SWOT · Canva</div>
-        <a class="code" href="https://andreabarduani-ui.github.io/Portfolio/files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
+        <p>Sapienza University project work: communication audit, target
+           profiling, PESTLE and SWOT, competitor benchmarking and growth
+           strategies for the New York store and e-commerce. 42 slides.</p>
+        <div class="tech">Market research · PESTLE / SWOT · Canva</div>
+        <div class="card-foot">
+          <a class="code" href="files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">University</span>
+      <div class="card reveal" data-phase="university">
+        <a class="thumb-link" href="files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">
+          <img class="uni-thumb" src="files/img/thumb-milano-sport.png" alt="Future Moves — Milano Sport research presentation" loading="lazy">
+        </a>
+        <span class="tag uni">University</span>
         <h4>Future Moves — Milano Sport</h4>
-        <p>Market research for Milano Sport (group project): macro-trends of the
-           fitness industry, best practices from innovative sports centers in
-           Italy and abroad, a focus on aquatic activities, emerging target
-           audiences — and new course formats proposed for the 2026 season.
-           44-slide Canva presentation.</p>
+        <p>Group market research: fitness industry macro-trends, best practices
+           from innovative sports centers, aquatic activities focus and new
+           course formats for the 2026 season. 44 slides.</p>
         <div class="tech">Market research · Trend analysis · Canva</div>
-        <a class="code" href="https://andreabarduani-ui.github.io/Portfolio/files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
+        <div class="card-foot">
+          <a class="code" href="files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
+        </div>
       </div>
-      <div class="card">
-        <span class="tag">University</span>
+      <div class="card reveal" data-phase="university">
+        <div class="ds-mock" aria-hidden="true">
+          <svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice">
+            <rect width="300" height="150" fill="#ffffff"/>
+            <rect x="14" y="14" width="120" height="56" rx="5" fill="#f4f7fa" stroke="#e4e0d8"/>
+            <text x="24" y="34" font-family="Poppins,Arial" font-size="10" fill="#5c574f">Sessions by city</text>
+            <rect x="24" y="52" width="16" height="10" rx="2" fill="#0d5794"/>
+            <rect x="44" y="44" width="16" height="18" rx="2" fill="#0d5794" opacity=".75"/>
+            <rect x="64" y="38" width="16" height="24" rx="2" fill="#0d5794" opacity=".55"/>
+            <rect x="84" y="30" width="16" height="32" rx="2" fill="#0d5794" opacity=".4"/>
+            <rect x="150" y="14" width="136" height="56" rx="5" fill="#f4f7fa" stroke="#e4e0d8"/>
+            <text x="160" y="34" font-family="Poppins,Arial" font-size="10" fill="#5c574f">Conversion trend</text>
+            <polyline points="160,58 180,50 200,54 220,42 240,46 262,32 276,36" fill="none" stroke="#0d5794" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="276" cy="36" r="3.2" fill="#0d5794"/>
+            <rect x="14" y="82" width="86" height="54" rx="5" fill="#f4f7fa" stroke="#e4e0d8"/>
+            <text x="24" y="100" font-family="Poppins,Arial" font-size="10" fill="#5c574f">Devices</text>
+            <circle cx="56" cy="117" r="13" fill="none" stroke="#e4e0d8" stroke-width="6"/>
+            <circle cx="56" cy="117" r="13" fill="none" stroke="#0d5794" stroke-width="6" stroke-dasharray="46 82" stroke-linecap="round" transform="rotate(-90 56 117)"/>
+            <rect x="112" y="82" width="86" height="54" rx="5" fill="#f4f7fa" stroke="#e4e0d8"/>
+            <text x="122" y="100" font-family="Poppins,Arial" font-size="10" fill="#5c574f">Avg. time</text>
+            <text x="122" y="124" font-family="Poppins,Arial" font-size="20" font-weight="700" fill="#26231f">4m 12s</text>
+            <rect x="210" y="82" width="76" height="54" rx="5" fill="#f4f7fa" stroke="#e4e0d8"/>
+            <text x="220" y="100" font-family="Poppins,Arial" font-size="10" fill="#5c574f">New users</text>
+            <text x="220" y="124" font-family="Poppins,Arial" font-size="20" font-weight="700" fill="#0d5794">+18%</text>
+          </svg>
+        </div>
+        <span class="tag uni">University</span>
         <h4>Data Studio Dashboard</h4>
-        <p>Interactive data dashboard built with Google Data Studio (Looker
-           Studio): connected data sources, dynamic filters and charts for
-           exploring the data behind the analysis.</p>
+        <p>Interactive dashboard built with Google Data Studio (Looker Studio):
+           connected data sources, dynamic filters and charts for exploring
+           the data behind the analysis.</p>
         <div class="tech">Google Data Studio · Data visualization</div>
-        <a class="code" href="https://datastudio.google.com/reporting/d787ca46-5f8c-449d-9c3d-47bf7164d82f/page/3ucKF" target="_blank" rel="noopener">Open the dashboard &rarr;</a>
+        <div class="card-foot">
+          <a class="code" href="https://datastudio.google.com/reporting/d787ca46-5f8c-449d-9c3d-47bf7164d82f/page/3ucKF" target="_blank" rel="noopener">Open the dashboard &rarr;</a>
+        </div>
       </div>
     </div>
   </div>
@@ -414,11 +661,11 @@
 <!-- ============ SKILLS ============ -->
 <section id="skills">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <h2>Skills &amp; technologies</h2>
       <p>Built and battle-tested on real administrative workflows.</p>
     </div>
-    <p class="skills-list">
+    <p class="skills-list reveal">
       <span>Python</span><span>pandas</span><span>openpyxl</span><span>python-docx</span>
       <span>pdfplumber</span><span>PyMuPDF</span><span>pypdf</span><span>requests</span>
       <span>BeautifulSoup</span><span>Pillow</span><span>PyYAML</span>
@@ -432,7 +679,7 @@
 <!-- ============ ABOUT ============ -->
 <section id="about">
   <div class="wrap about">
-    <div>
+    <div class="reveal">
       <div class="sec-head" style="margin-bottom:22px">
         <h2>About this portfolio</h2>
       </div>
@@ -452,7 +699,7 @@
         modify the original files they work on.
       </p>
     </div>
-    <ul class="principles">
+    <ul class="principles reveal">
       <li><b>Source files are sacred</b><span>Every tool works on copies; originals are never modified, and inputs are archived after processing.</span></li>
       <li><b>Robustness against messy data</b><span>Truncated names, typos, Italian number formats and broken exports are handled by design, not by luck.</span></li>
       <li><b>Usable by anyone</b><span>The most-used tools ship with double-click launchers, so colleagues without technical skills can run them.</span></li>
@@ -477,6 +724,459 @@
     <div class="copy">© 2026 Andrea Barduani — Process Automation Portfolio.</div>
   </div>
 </footer>
+
+<button id="toTop" aria-label="Back to top">↑</button>
+
+<script>
+(function () {
+  'use strict';
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var REPO = 'https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/';
+
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  /* ============ Demo data (from each project's published sample output) ============ */
+  var DEMOS = {
+
+    'student-import-generator': {
+      file: 'student_import_generator.py',
+      lines: [
+        ['cmd', 'py student_import_generator.py'],
+        ['ok', 'Read 4 students from Richiesta_dati_allievi.xlsx'],
+        ['ok', 'Parsed tax IDs: 4/4 — gender + birth place resolved'],
+        ['ok', 'Written: modello-importazione-corsisti.xlsx (4 rows, ready for import)']
+      ],
+      out: '<table class="mini-table"><tr><th>Cognome</th><th>Nome</th><th>Codice Fiscale</th><th>Sesso</th><th>Comune</th><th>Prov.</th></tr>' +
+           '<tr><td>ROSSI</td><td>MARIA</td><td class="num">RSSMRA80A01H501Z</td><td>F</td><td>ROMA</td><td>RM</td></tr>' +
+           '<tr><td>BIANCHI</td><td>LUCA</td><td class="num">BNCLCU85C22D612X</td><td>M</td><td>MILANO</td><td>MI</td></tr>' +
+           '<tr><td>FERRARI</td><td>ANNA</td><td class="num">FRRNNA92B41A944W</td><td>F</td><td>FIRENZE</td><td>FI</td></tr></table>' +
+           '<p class="out-note">Sesso, Comune and Province are derived automatically by parsing the tax ID (gender digits + Belfiore municipality code).</p>'
+    },
+
+    'adhesion-letter-compiler': {
+      file: 'adhesion_letter_compiler.py',
+      lines: [
+        ['cmd', 'py adhesion_letter_compiler.py'],
+        ['ok', 'Read 3 people (rows 3-5) and 3 companies (rows 20-22)'],
+        ['ok', '3 letters generated — original template untouched']
+      ],
+      out: '<div class="doc-preview"><div class="doc-title">Admission to the training program</div>' +
+           '<div class="row"><b>Trainee</b><span>Maria Rossi — born in Rome, 01/01/1980</span></div>' +
+           '<div class="row"><b>Company</b><span>Example Logistics S.r.l.</span></div>' +
+           '<div class="row"><b>Course</b><span>Warehouse logistics — 1st year</span></div>' +
+           '<div class="row"><b>Date</b><span>15/09/2026</span></div></div>' +
+           '<div class="file-chips"><span class="file-chip">Lettera Adesione_Example Logistics.docx</span><span class="file-chip">Lettera Adesione_Demo Services.docx</span><span class="file-chip">Lettera Adesione_Sample Consulting.docx</span></div>' +
+           '<p class="out-note">Fields are horizontally centered via tab stops computed from the original PDF geometry.</p>'
+    },
+
+    'apprenticeship-quote-generator': {
+      file: 'apprenticeship_quote_generator.py',
+      lines: [
+        ['cmd', 'py apprenticeship_quote_generator.py'],
+        ['prompt', 'Calendar agreed? (s/n): s'],
+        ['prompt', 'Participants: 6'],
+        ['prompt', 'Year (1/2): 1'],
+        ['prompt', 'Company: Example Manufacturing S.r.l.'],
+        ['result', 'Offer number:  20260044  (progressive, auto-incremented)'],
+        ['result', 'Total:          2.880,00 EUR'],
+        ['result', 'Best offer:     2.600,00 EUR  (x 0.90, rounded to 100)'],
+        ['ok', 'Written: output/Offerta_Example_Manufacturing_20260827.docx']
+      ],
+      out: '<table class="mini-table"><tr><th>Date</th><th>Time</th><th>Hours</th><th>Module</th><th>Mode</th></tr>' +
+           '<tr><td class="num">05/10/2026</td><td class="num">09:00–13:00</td><td class="num">4</td><td>Workplace safety</td><td>Classroom</td></tr>' +
+           '<tr><td class="num">07/10/2026</td><td class="num">14:00–18:00</td><td class="num">4</td><td>Logistics basics</td><td>Classroom</td></tr>' +
+           '<tr><td class="num">12/10/2026</td><td class="num">09:00–13:00</td><td class="num">4</td><td>…</td><td>…</td></tr></table>' +
+           '<p class="out-note">Course calendar rebuilt from Excel into a Word table — embedded in the offer while the calendar is still being agreed.</p>'
+    },
+
+    'financial-plan-builder': {
+      file: 'financial_plan_builder.py',
+      lines: [
+        ['cmd', 'py financial_plan_builder.py'],
+        ['ok', 'Scheda finanziaria built — official cost items A1–A10, B1–B10'],
+        ['ok', 'Live formulas wired: change any input, every total recalculates'],
+        ['cmd', 'py add_budget_calculator.py'],
+        ['ok', 'Constraint checker added (Calcolatore sheet, traffic lights)']
+      ],
+      out: '<table class="mini-table"><tr><th>Rule</th><th>Status</th><th>Value</th></tr>' +
+           '<tr><td>Teaching costs A ≤ 35%</td><td><span class="pill ok">OK</span></td><td class="num">31.2%</td></tr>' +
+           '<tr><td>Delivery costs B ≥ 40%</td><td><span class="pill ok">OK</span></td><td class="num">44.7%</td></tr>' +
+           '<tr><td>Overhead D ≤ 25%</td><td><span class="pill bad">OVER</span></td><td class="num">26.1% → add 18 delivery hours to fix</td></tr></table>' +
+           '<p class="out-note">The repo ships a real generated workbook: <a href="https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/financial-plan-builder/Scheda_Finanziaria_Template.xlsx" target="_blank" rel="noopener">Scheda_Finanziaria_Template.xlsx</a>.</p>'
+    },
+
+    'elearning-hours-monitor': {
+      file: 'elearning_hours_monitor.py',
+      lines: [
+        ['cmd', 'py elearning_hours_monitor.py'],
+        ['ok', 'Input detected: Report_Accessi.csv + Presenze.pdf (LUL, mode B)'],
+        ['ok', 'Months processed: 6 — students: 28'],
+        ['dim', 'Excess stripped: evenings >19:00 · weekends · 06:00–07:40 · >8h/day'],
+        ['ok', 'Written: Monitoraggio_26-08-2026.xlsx']
+      ],
+      out: '<table class="mini-table"><tr><th>Student</th><th>Accrued (effective)</th><th>Cap</th><th>Status</th></tr>' +
+           '<tr><td>ROSSI MARIA</td><td class="num">148:15</td><td class="num">150h</td><td><span class="pill ok">in cap</span></td></tr>' +
+           '<tr><td>BIANCHI LUCA</td><td class="num">150:00</td><td class="num">150h</td><td><span class="pill warn">cap reached</span></td></tr>' +
+           '<tr><td>LOMBARDINI BEATRICE</td><td class="num">153:30</td><td class="num">150h</td><td><span class="pill bad">+3:30 over cap</span></td></tr></table>' +
+           '<p class="out-note">"Riepilogo Generale" sheet — accrued hours vs the 150-hour per-student cap. One sheet per month, cell notes record the excess breakdown.</p>'
+    },
+
+    'tutoring-hours-distributor': {
+      file: 'tutoring_hours_distributor.py',
+      lines: [
+        ['cmd', 'py tutoring_hours_distributor.py'],
+        ['ok', 'Tutor A — year 2025'],
+        ['out', 'Maria Rossi   Feb 4h [cap 4h] · Mar 4h · Apr 4h · May 4h   → 16h'],
+        ['out', 'Luca Bianchi  Mar–Jul 19h assigned, 1h residue flagged'],
+        ['result', 'SUMMARY: 2 interns, 35h assigned, 1h non-assignable (weekend window)'],
+        ['ok', 'Written: Proposta ore tutoraggio.xlsx + Report ore tutoraggio.txt']
+      ],
+      out: '<div class="tree">TUTOR: Tutor A — year 2025\n\n' +
+           '<span class="dim">Intern:</span> Maria Rossi <span class="dim">(10/02 → 30/09, matched fuzzily 0.94)</span>\n' +
+           '  Feb 2025: 4h  <span class="dim">[cap 4h]  slots: Wed 15:00-17:00, Fri 10:00-12:00</span>\n' +
+           '  Mar 2025: 4h  <span class="dim">[cap 4h]</span>\n' +
+           '  TOTAL ASSIGNED: 16h — non-assignable residue: 0h</div>' +
+           '<p class="out-note">The proposal workbook mirrors the official timesheet grid — the two-step workflow guarantees no original file is ever modified.</p>'
+    },
+
+    'attendance-register-filler': {
+      file: 'attendance_register_filler.py',
+      lines: [
+        ['cmd', 'py attendance_register_filler.py'],
+        ['out', '[1/5] Register found: Registro.pdf (3 pages/session, 57 students)'],
+        ['out', '[3/5] Reading 14 session Excel reports'],
+        ['out', '[4/5] Matching students (surname+name, similarity ≥ 80%)'],
+        ['dim', '      GIORDANETTI ALSSANDRO ~ GIORDANETTI ALESSANDRO  fuzzy 0.97'],
+        ['out', '[5/5] Compiled PDF: output/Registro_compilato.pdf'],
+        ['result', 'Sessions: 14 — PRESENT labels: 612 — ABSENT labels: 186']
+      ],
+      out: '<table class="mini-table"><tr><th>#</th><th>Student</th><th>Entry</th><th>Exit</th></tr>' +
+           '<tr><td class="num">1</td><td>BIANCHI LUCA</td><td><span class="pill ok">PRESENTE</span></td><td><span class="pill ok">PRESENTE</span></td></tr>' +
+           '<tr><td class="num">2</td><td>FERRARI ANNA</td><td><span class="pill bad">ASSENTE</span></td><td><span class="pill bad">ASSENTE</span></td></tr>' +
+           '<tr><td class="num">3</td><td>GIORDANETTI ALESSANDRO</td><td><span class="pill ok">PRESENTE</span></td><td><span class="pill ok">PRESENTE</span></td></tr></table>' +
+           '<p class="out-note">Inputs are archived in elaborati/&lt;timestamp&gt;/, never deleted; a JSON report records every match decision for auditing.</p>'
+    },
+
+    'certificate-manager': {
+      file: 'certificate_manager.py',
+      lines: [
+        ['cmd', 'py certificate_manager.py dividi'],
+        ['ok', 'Input: stampa_massiva.pdf (26 pages = 13 people, front+back)'],
+        ['out', 'attestati_output/  01_Maria_Rossi.pdf … 13 files (names read from text)'],
+        ['cmd', 'py certificate_manager.py organizza'],
+        ['ok', 'Sorted into company folders — 12 exact, 1 fuzzy (~), 1 to verify']
+      ],
+      out: '<div class="tree"><span class="dir">CORSO10/</span>\n' +
+           '  <span class="dir">Example Logistics S.r.l./</span> 01_Maria_Rossi.pdf\n' +
+           '  <span class="dir">Demo Services S.p.A./</span>     02_Luca_Bianchi.pdf\n' +
+           '  <span class="dir">Sample Consulting S.r.l./</span> 03_Anna_Ferrari.pdf\n' +
+           '  <span class="dir">_DA_VERIFICARE/</span>          07_persona_7.pdf  <span class="dim">(name not in directory)</span></div>' +
+           '<p class="out-note">Fuzzy matches are flagged with ~ in the log, so a human double-checks only the uncertain ones. riorganizza rebuilds the cross-edition company view.</p>'
+    },
+
+    'transparency-certificates': {
+      file: 'transparency_certificates.py',
+      lines: [
+        ['cmd', 'py transparency_certificates.py'],
+        ['ok', 'Template: Attestato Apprendimenti Acquisiti_.docx (4 tables)'],
+        ['ok', 'Master file: File madre.xlsx — 24 participants found'],
+        ['ok', '24 certificates generated in Attestati_Generati/'],
+        ['ok', 'Institution/responsible data fields: untouched (by design)']
+      ],
+      out: '<div class="doc-preview"><div class="doc-title">Attestato Apprendimenti Acquisiti</div>' +
+           '<div class="row"><b>Student</b><span>Maria Rossi — born in Rome, 01/01/1990</span></div>' +
+           '<div class="row"><b>Experience</b><span>Warehouse logistics, 150 effective hours, 09/2026–12/2026</span></div>' +
+           '<div class="row"><b>Skills</b><span>Goods handling · Safety compliance · Inventory IT tools</span></div>' +
+           '<div class="row"><b>Assessment</b><span>Written test passed (28/30) · Practical evaluation passed</span></div></div>' +
+           '<p class="out-note">Only the empty value cells of the template are filled: layout, headers and signature blocks stay exactly as in the original model.</p>'
+    },
+
+    'timesheet-generator': {
+      file: 'timesheet_generator.py',
+      lines: [
+        ['cmd', 'py timesheet_generator.py --dry-run'],
+        ['ok', 'Interns read from registry: 6 (4 PROGRAM_A, 2 PROGRAM_B)'],
+        ['out', 'Maria Rossi    PROGRAM_A  5 months  est. 22 rows'],
+        ['out', 'Anna Ferrari   PROGRAM_B  7 months  est. 30 rows'],
+        ['dim', '(no files written — dry run)'],
+        ['ok', 'py timesheet_generator.py  →  1 file/month + UNICO multi-sheet workbook']
+      ],
+      out: '<table class="mini-table"><tr><th>Day</th><th>Morning</th><th>Afternoon</th><th>Total</th><th>Activity</th></tr>' +
+           '<tr><td class="num">03/09/2026</td><td class="num">09:00–13:00</td><td class="num">—</td><td class="num">4h</td><td>Warehouse procedures</td></tr>' +
+           '<tr><td class="num">04/09/2026</td><td class="num">09:00–13:00</td><td class="num">14:00–16:00</td><td class="num">6h</td><td>Inventory tools</td></tr>' +
+           '<tr><td class="num">10/09/2026</td><td class="num">—</td><td class="num">14:00–18:00</td><td class="num">4h</td><td>Safety refresher</td></tr></table>' +
+           '<p class="out-note">The official template is extended with the project-name row on a copy ("v2") — the original template file is never modified.</p>'
+    },
+
+    'funding-call-scraper': {
+      file: 'funding_calls_scraper.py',
+      lines: [
+        ['cmd', 'py funding_calls_scraper.py'],
+        ['ok', 'Scraping 9 funding bodies (2 levels: list page → call detail)'],
+        ['ok', 'robots.txt respected on all sites'],
+        ['out', 'FonARCom ......... 4 calls read, 1 above threshold'],
+        ['out', 'Fonditalia ....... 7 calls read, 2 above threshold'],
+        ['result', '38 calls total — report_bandi_fondi.xlsx written']
+      ],
+      out: '<table class="mini-table"><tr><th>Fund</th><th>Budget</th><th>Confidence</th><th>Restricted</th></tr>' +
+           '<tr><td>Fonditalia</td><td class="num">€2,500,000</td><td><span class="pill ok">High</span></td><td>No</td></tr>' +
+           '<tr><td>FonARCom</td><td class="num">€1,100,000</td><td><span class="pill warn">Medium</span></td><td>Yes</td></tr>' +
+           '<tr><td>Fondir</td><td class="num">€950,000</td><td><span class="pill bad">Low</span></td><td>No</td></tr></table>' +
+           '<p class="out-note">"Target" sheet (calls above €800,000). Confidence reflects how explicitly each budget is stated; Italian number formats parsed (dot = thousands).</p>'
+    },
+
+    'regulation-search': {
+      file: 'regulation_search.py',
+      lines: [
+        ['cmd', 'py regulation_search.py manual.pdf'],
+        ['out', 'Indexed: 148 pages'],
+        ['prompt', 'Choice: 3  (eligible costs)'],
+        ['out', 'p. 41  «trainee costs are eligible up to the hourly rate'],
+        ['out', '        defined in Annex B…»          [match: eligible costs]'],
+        ['out', 'p. 55  «catering is eligible only for full-day sessions…»'],
+        ['result', '3 hits on 3 pages — every result cites the page number']
+      ],
+      out: '<div class="tree"><span class="dim">$</span> py regulation_search.py manual.pdf\n\n' +
+           '  CATEGORIES\n' +
+           '   1. Plan variations    2. Reporting deadlines\n' +
+           '   3. Eligible costs     4. Training modes\n' +
+           '   5. State aid regimes  0. Free text search\n\n' +
+           '<span class="dim">Choice: 0 →</span> "variations deadline"\n' +
+           '  p. 17  «variation requests must be submitted at least 30\n' +
+           '          days before the end of the program…»</div>' +
+           '<p class="out-note">The page number is always returned, so the answer can be verified on the source PDF immediately.</p>'
+    }
+  };
+
+  /* ============ Terminal typing engine ============ */
+  function buildLine(data) {
+    var type = data[0], text = data[1];
+    var line = mk('div', 'tline ' + type);
+    var pref = { cmd: '$', ok: '>>', prompt: '?' }[type];
+    if (pref) line.appendChild(mk('span', 'ps', pref + ' '));
+    line.appendChild(mk('span', 'tx', text));
+    return line;
+  }
+
+  function playTerm(body, demo, token) {
+    body.textContent = '';
+    var cursor = mk('div', 'tline cursor');
+    body.appendChild(cursor);
+    var alive = function () { return token.alive; };
+
+    if (REDUCED) {
+      demo.lines.forEach(function (l) { body.insertBefore(buildLine(l), cursor); });
+      return Promise.resolve();
+    }
+
+    return demo.lines.reduce(function (p, data) {
+      return p.then(function () {
+        if (!alive()) return;
+        if (data[0] === 'cmd') {
+          var line = buildLine(data);
+          var tx = line.querySelector('.tx');
+          tx.textContent = '';
+          body.insertBefore(line, cursor);
+          var chars = data[1].split('');
+          return chars.reduce(function (q, ch) {
+            return q.then(function () {
+              if (!alive()) return;
+              tx.textContent += ch;
+              return sleep(13);
+            });
+          }, Promise.resolve()).then(function () { return sleep(300); });
+        }
+        body.insertBefore(buildLine(data), cursor);
+        return sleep(data[0] === 'result' ? 150 : data[0] === 'ok' ? 115 : 70);
+      });
+    }, Promise.resolve());
+  }
+
+  /* ============ Build expandable panels ============ */
+  document.querySelectorAll('[data-demo]').forEach(function (card) {
+    var slug = card.dataset.demo;
+    var demo = DEMOS[slug];
+    if (!demo) return;
+    var slot = card.querySelector('.panel-slot');
+    var runBtn = card.querySelector('.run');
+
+    var panel = mk('div', 'panel');
+    panel.id = 'panel-' + slug;
+    panel.hidden = true;
+
+    var tabs = mk('div', 'tabs');
+    var tTerm = mk('button', 'tab active', 'Terminal');
+    var tOut = mk('button', 'tab', 'Output');
+    tTerm.type = tOut.type = 'button';
+    tTerm.dataset.tab = 'term'; tOut.dataset.tab = 'out';
+    tabs.appendChild(tTerm); tabs.appendChild(tOut);
+
+    var term = mk('div', 'term');
+    var bar = mk('div', 'term-bar');
+    bar.appendChild(mk('span', 'dot r'));
+    bar.appendChild(mk('span', 'dot y'));
+    bar.appendChild(mk('span', 'dot g'));
+    var title = mk('span', 'term-title', demo.file);
+    bar.appendChild(title);
+    var tbody = mk('div', 'term-body');
+    term.appendChild(bar); term.appendChild(tbody);
+
+    var out = mk('div', 'out');
+    out.hidden = true;
+    out.innerHTML = demo.out;
+    var foot = mk('p', 'out-note');
+    var link = mk('a', null, 'Full sample output on GitHub →');
+    link.href = REPO + slug; link.target = '_blank'; link.rel = 'noopener';
+    foot.appendChild(document.createTextNode('Illustrative excerpt, fictional data · '));
+    foot.appendChild(link);
+    out.appendChild(foot);
+
+    panel.appendChild(tabs); panel.appendChild(term); panel.appendChild(out);
+    slot.appendChild(panel);
+    if (runBtn) runBtn.setAttribute('aria-controls', panel.id);
+
+    var token = { alive: false };
+
+    function selectTab(which) {
+      tTerm.classList.toggle('active', which === 'term');
+      tOut.classList.toggle('active', which === 'out');
+      term.hidden = which !== 'term';
+      out.hidden = which !== 'out';
+    }
+    tTerm.addEventListener('click', function () { selectTab('term'); });
+    tOut.addEventListener('click', function () { selectTab('out'); });
+
+    if (runBtn) runBtn.addEventListener('click', function () {
+      var open = panel.hidden;
+      panel.hidden = !open;
+      runBtn.setAttribute('aria-expanded', String(open));
+      runBtn.classList.toggle('open', open);
+      runBtn.querySelector('.lbl').textContent = open ? 'Hide' : 'See it run';
+      if (open) {
+        token.alive = false;
+        token = { alive: true };
+        playTerm(tbody, demo, token);
+      } else {
+        token.alive = false;
+      }
+    });
+  });
+
+  /* ============ Hero terminal loop ============ */
+  var HERO = [
+    { file: 'elearning_hours_monitor.py', lines: DEMOS['elearning-hours-monitor'].lines },
+    { file: 'attendance_register_filler.py', lines: DEMOS['attendance-register-filler'].lines },
+    { file: 'funding_calls_scraper.py', lines: DEMOS['funding-call-scraper'].lines },
+    { file: 'student_import_generator.py', lines: DEMOS['student-import-generator'].lines }
+  ];
+  (function heroLoop() {
+    var heroTerm = document.querySelector('.hero-term');
+    var body = document.querySelector('.hero-term .term-body');
+    var title = document.querySelector('.hero-term .term-title');
+    if (!heroTerm || !body) return;
+
+    if (REDUCED) {
+      title.textContent = HERO[0].file;
+      playTerm(body, HERO[0], { alive: true });
+      return;
+    }
+    var visible = true;
+    new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(heroTerm);
+
+    var i = 0;
+    (function next() {
+      title.textContent = HERO[i].file;
+      playTerm(body, HERO[i], { alive: true }).then(function () {
+        setTimeout(function () {
+          var wait = function () {
+            if (visible) { i = (i + 1) % HERO.length; next(); }
+            else setTimeout(wait, 400);
+          };
+          wait();
+        }, 3000);
+      });
+    })();
+  })();
+
+  /* ============ Filter chips ============ */
+  var chips = document.querySelectorAll('.chip');
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      chips.forEach(function (c) { c.classList.toggle('active', c === chip); });
+      var f = chip.dataset.filter;
+      document.querySelectorAll('#projects .card').forEach(function (card) {
+        card.hidden = f !== 'all' && card.dataset.phase !== f;
+      });
+      document.querySelectorAll('#projects .group-head').forEach(function (gh) {
+        gh.hidden = f !== 'all' && gh.dataset.group !== f;
+      });
+    });
+  });
+
+  /* ============ Stats count-up ============ */
+  function countUp(el) {
+    var target = +el.dataset.count;
+    if (REDUCED) { el.textContent = target; return; }
+    var t0 = null, dur = 1100;
+    function step(now) {
+      if (!t0) t0 = now;
+      var p = Math.min(1, (now - t0) / dur);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var statsDone = false;
+  var statsIo = new IntersectionObserver(function (en) {
+    if (en[0].isIntersecting && !statsDone) {
+      statsDone = true;
+      document.querySelectorAll('.stat b').forEach(function (el, i) {
+        setTimeout(function () { countUp(el); }, i * 130);
+      });
+      statsIo.disconnect();
+    }
+  });
+  var statsEl = document.querySelector('.stats');
+  if (statsEl) statsIo.observe(statsEl);
+
+  /* ============ Scroll-spy ============ */
+  var spy = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      document.querySelectorAll('.nav ul a').forEach(function (a) {
+        a.classList.toggle('active', a.hash === '#' + en.target.id);
+      });
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  ['process', 'projects', 'skills', 'about', 'contact'].forEach(function (id) {
+    var s = document.getElementById(id);
+    if (s) spy.observe(s);
+  });
+
+  /* ============ Reveal on scroll ============ */
+  var ro = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); }
+    });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(function (el) { ro.observe(el); });
+
+  /* ============ Back to top ============ */
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function () {
+    toTop.classList.toggle('show', window.scrollY > 700);
+  }, { passive: true });
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+  });
+})();
+</script>
 
 </body>
 </html>
