@@ -412,20 +412,37 @@
     })();
   }
 
-  /* ============ Filter chips ============ */
+  /* ============ Filter chips (new taxonomy python|web|data|strategy + deep-link) ============ */
+  function applyFilter(chips, f, pushHash) {
+    chips.forEach(function (c) { c.classList.toggle('active', c.dataset.filter === f); });
+    var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
+    cards.forEach(function (card) {
+      var show = f === 'all' || card.dataset.phase === f;
+      if (!REDUCED && !show) { card.classList.add('filtering'); }
+      card.hidden = !show;
+      if (show) { card.classList.remove('filtering'); void card.offsetWidth; }
+    });
+    document.querySelectorAll('#projects .group-head').forEach(function (gh) {
+      gh.hidden = f !== 'all' && gh.dataset.group !== f;
+    });
+    var i = 0;
+    cards.forEach(function (card) {
+      if (!card.hidden) { card.style.setProperty('--i', String(i % 6)); i++; }
+    });
+    if (pushHash && history.replaceState) {
+      history.replaceState(null, '', f === 'all' ? '#projects' : '#projects-' + f);
+    }
+  }
   function initChips() {
-    var chips = document.querySelectorAll('.chip');
+    var chips = document.querySelectorAll('#projects .chip');
     chips.forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        chips.forEach(function (c) { c.classList.toggle('active', c === chip); });
-        var f = chip.dataset.filter;
-        document.querySelectorAll('#projects .card').forEach(function (card) {
-          card.hidden = f !== 'all' && card.dataset.phase !== f;
-        });
-        document.querySelectorAll('#projects .group-head').forEach(function (gh) {
-          gh.hidden = f !== 'all' && gh.dataset.group !== f;
-        });
-      });
+      chip.addEventListener('click', function () { applyFilter(chips, chip.dataset.filter, true); });
+    });
+    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
+    if (m) { applyFilter(chips, m[1] || 'all', false); }
+    window.addEventListener('hashchange', function () {
+      var mm = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
+      if (mm) { applyFilter(chips, mm[1] || 'all', false); }
     });
   }
 
@@ -478,8 +495,11 @@
     });
   }
 
-  /* ============ Reveal on scroll ============ */
+  /* ============ Reveal + stagger + AOS (CDN, offline fallback) ============ */
   function initReveal() {
+    document.querySelectorAll('#projects .card').forEach(function (card, idx) {
+      card.style.setProperty('--i', String(idx % 6));
+    });
     if (!('IntersectionObserver' in window) || REDUCED) {
       document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
       return;
@@ -490,15 +510,62 @@
       });
     }, { threshold: 0.06 });
     document.querySelectorAll('.reveal').forEach(function (el) { ro.observe(el); });
+    // AOS pattern from references/animations/aos — once, offset 80
+    var boot = function () {
+      if (REDUCED) return;
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js';
+      s.defer = true;
+      s.onload = function () {
+        try { if (window.AOS) { window.AOS.init({ once: true, offset: 80, duration: 600 }); } } catch (e) {}
+      };
+      document.head.appendChild(s);
+    };
+    if ('requestIdleCallback' in window) { requestIdleCallback(boot); }
+    else { setTimeout(boot, 1200); }
   }
 
-  /* ============ Back to top ============ */
+  /* ============ Tilt (pointer:fine) + scroll progress ============ */
+  function initMotion() {
+    if (!REDUCED && window.matchMedia('(pointer: fine)').matches) {
+      document.querySelectorAll('#projects .card').forEach(function (card) {
+        var raf = null;
+        card.addEventListener('pointermove', function (ev) {
+          if (raf) return;
+          raf = requestAnimationFrame(function () {
+            var r = card.getBoundingClientRect();
+            var px = (ev.clientX - r.left) / r.width - 0.5;
+            var py = (ev.clientY - r.top) / r.height - 0.5;
+            card.style.setProperty('--ry', (px * 5).toFixed(2) + 'deg');
+            card.style.setProperty('--rx', (-py * 5).toFixed(2) + 'deg');
+            card.classList.add('tilt');
+            raf = null;
+          });
+        });
+        card.addEventListener('pointerleave', function () {
+          card.classList.remove('tilt');
+          card.style.setProperty('--rx', '0deg');
+          card.style.setProperty('--ry', '0deg');
+        });
+      });
+    }
+  }
+
+  /* ============ Progress bar + Back to top ============ */
   function initToTop() {
     var toTop = document.getElementById('toTop');
     if (!toTop) return;
-    window.addEventListener('scroll', function () {
+    var prog = document.getElementById('scrollProgress');
+    var onScroll = function () {
       toTop.classList.toggle('show', window.scrollY > 700);
-    }, { passive: true });
+      if (prog && !REDUCED) {
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        var p = h > 0 ? Math.min(1, window.scrollY / h) : 0;
+        prog.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
     toTop.addEventListener('click', function () {
       window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
     });
@@ -511,5 +578,6 @@
   initStats();
   initSpy();
   initReveal();
+  initMotion();
   initToTop();
 })();

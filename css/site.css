@@ -425,6 +425,10 @@ footer .copy { margin-top: 34px; font-size: .82rem; color: var(--ink-soft); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   .card:hover, .social a:hover { transform: none; }
+  .js .hero-enter { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .js .float-soft, .hero-blob { animation: none !important; }
+  #scrollProgress { display: none !important; }
+  .js .reveal { transition-delay: 0ms !important; }
 }
 
 /* Print */
@@ -437,3 +441,55 @@ footer .copy { margin-top: 34px; font-size: .82rem; color: var(--ink-soft); }
   a { color: #000; text-decoration: none; }
   .wrap { max-width: none; }
 }
+
+/* ============================================================
+   Phase 3 — New taxonomy + motion pack (mirrors index.html inline)
+   Patterns studied in references/animations/{aos,anime,rellax}.
+   AOS via CDN cdnjs 2.3.4 (once, offset 80); anime.js 3.2.2
+   stagger idea via --i; rellax idea via .hero-blob drift.
+   All CSS-only fallback: page works offline without CDN.
+   ============================================================ */
+.tag.python { background: #e8f0f8; color: #0d5794; }
+.tag.web { background: #e6e9fb; color: #3b46a3; }
+.tag.strategy { background: #edeae3; color: var(--ink-soft); }
+.kaidra-thumb {
+  height: 150px; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 14px;
+  background: linear-gradient(135deg, #0A0F1E 0%, #2E6BF0 55%, #43E0B8 100%);
+  position: relative; overflow: hidden; display: block;
+}
+.kaidra-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.kaidra-thumb .kaidra-fallback {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 1.6rem; letter-spacing: -.02em;
+}
+#scrollProgress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 100%;
+  background: linear-gradient(90deg, var(--accent), #1f8a70);
+  transform-origin: 0 50%; transform: scaleX(0); z-index: 80;
+}
+.hero-blob {
+  position: absolute; width: 420px; height: 420px; border-radius: 50%;
+  filter: blur(70px); opacity: .16; pointer-events: none;
+  background: radial-gradient(circle at 30% 30%, #0d5794, transparent 65%),
+              radial-gradient(circle at 70% 70%, #1f8a70, transparent 65%);
+  animation: blobDrift 14s ease-in-out infinite alternate;
+}
+.hero { position: relative; overflow: hidden; }
+.hero .hero-grid { position: relative; z-index: 1; }
+@keyframes blobDrift { from { transform: translate(-30px, -10px) scale(1); } to { transform: translate(30px, 20px) scale(1.08); } }
+.js .hero-enter { opacity: 0; transform: translateY(16px); animation: heroIn .7s ease forwards; }
+.js .hero-enter.d1 { animation-delay: .08s; } .js .hero-enter.d2 { animation-delay: .18s; }
+.js .hero-enter.d3 { animation-delay: .28s; } .js .hero-enter.d4 { animation-delay: .4s; }
+@keyframes heroIn { to { opacity: 1; transform: none; } }
+.js .float-soft { animation: floatSoft 7s ease-in-out infinite; }
+@keyframes floatSoft { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.js .reveal { transition-delay: calc(var(--i, 0) * 60ms); }
+#projects .card { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, opacity .25s ease; }
+#projects .card.filtering { opacity: 0; transform: scale(.96) translateY(6px); }
+#projects .group-head { transition: opacity .25s ease; }
+@media (pointer: fine) {
+  #projects .card.tilt { transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px); }
+}
+.btn, .chip, .run { transition: transform .16s ease, background .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease; }
+.btn:active, .chip:active, .run:active { transform: scale(.97); }
+.btn.primary:hover, .run:hover { box-shadow: 0 6px 16px rgba(13,87,148,.22); }

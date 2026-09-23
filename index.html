@@ -18,6 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"></noscript>
 <script>document.documentElement.classList.add('js')</script>
 <style>
   :root {
@@ -294,6 +296,57 @@
   #toTop.show { opacity: 1; pointer-events: auto; transform: none; }
   #toTop:hover { background: var(--ink); color: var(--bg); }
 
+  /* ---------- New taxonomy tags ---------- */
+  .tag.python { background: #e8f0f8; color: #0d5794; }
+  .tag.web { background: #e6e9fb; color: #3b46a3; }
+  .tag.strategy { background: #edeae3; color: var(--ink-soft); }
+  .kaidra-thumb {
+    height: 150px; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 14px;
+    background: linear-gradient(135deg, #0A0F1E 0%, #2E6BF0 55%, #43E0B8 100%);
+    position: relative; overflow: hidden; display: block;
+  }
+  .kaidra-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .kaidra-thumb .kaidra-fallback {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 1.6rem; letter-spacing: -.02em;
+  }
+
+  /* ---------- Motion pack (AOS fallback-first, sober) ---------- */
+  #scrollProgress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 100%;
+    background: linear-gradient(90deg, var(--accent), #1f8a70);
+    transform-origin: 0 50%; transform: scaleX(0); z-index: 80;
+  }
+  .hero-blob {
+    position: absolute; width: 420px; height: 420px; border-radius: 50%;
+    filter: blur(70px); opacity: .16; pointer-events: none;
+    background: radial-gradient(circle at 30% 30%, #0d5794, transparent 65%),
+                radial-gradient(circle at 70% 70%, #1f8a70, transparent 65%);
+    animation: blobDrift 14s ease-in-out infinite alternate;
+  }
+  .hero { position: relative; overflow: hidden; }
+  .hero .hero-grid { position: relative; z-index: 1; }
+  @keyframes blobDrift { from { transform: translate(-30px, -10px) scale(1); } to { transform: translate(30px, 20px) scale(1.08); } }
+  .js .hero-enter { opacity: 0; transform: translateY(16px); animation: heroIn .7s ease forwards; }
+  .js .hero-enter.d1 { animation-delay: .08s; } .js .hero-enter.d2 { animation-delay: .18s; }
+  .js .hero-enter.d3 { animation-delay: .28s; } .js .hero-enter.d4 { animation-delay: .4s; }
+  @keyframes heroIn { to { opacity: 1; transform: none; } }
+  .js .float-soft { animation: floatSoft 7s ease-in-out infinite; }
+  @keyframes floatSoft { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  /* stagger: delay via --i set from JS */
+  .js .reveal { transition-delay: calc(var(--i, 0) * 60ms); }
+  /* filter transition FLIP-lite: fade + scale */
+  #projects .card { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, opacity .25s ease; }
+  #projects .card.filtering { opacity: 0; transform: scale(.96) translateY(6px); }
+  #projects .group-head { transition: opacity .25s ease; }
+  /* tilt (JS adds --rx/--ry, only pointer:fine) */
+  @media (pointer: fine) {
+    #projects .card.tilt { transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px); }
+  }
+  .btn, .chip, .run { transition: transform .16s ease, background .16s ease, color .16s ease, border-color .16s ease, box-shadow .16s ease; }
+  .btn:active, .chip:active, .run:active { transform: scale(.97); }
+  .btn.primary:hover, .run:hover { box-shadow: 0 6px 16px rgba(13,87,148,.22); }
+
   /* ---------- Reveal on scroll ---------- */
   .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
   .js .reveal.in { opacity: 1; transform: none; }
@@ -301,10 +354,14 @@
     .js .reveal { opacity: 1; transform: none; transition: none; }
     html { scroll-behavior: auto; }
     .tline.cursor::after { animation: none; }
+    .js .hero-enter { opacity: 1; transform: none; animation: none; }
+    .js .float-soft, .hero-blob { animation: none; }
+    #scrollProgress { display: none; }
   }
 </style>
 </head>
 <body>
+<div id="scrollProgress" aria-hidden="true"></div>
 <a class="skip-link" href="#projects" style="position:absolute;left:12px;top:-48px;z-index:100;background:#26231f;color:#fdfcf9;padding:8px 14px;border-radius:6px;font-size:.85rem;font-weight:600;text-decoration:none" onfocus="this.style.top='12px'" onblur="this.style.top='-48px'">Skip to projects</a>
 
 <header>
@@ -323,30 +380,31 @@
 
 <!-- ============ HERO ============ -->
 <div class="hero" id="top">
+  <div class="hero-blob" aria-hidden="true"></div>
   <div class="wrap hero-grid">
     <div>
-      <p class="kicker">Business process automation · Python</p>
-      <h1>I turn repetitive administrative workflows into reliable software.</h1>
-      <p class="lead">
+      <p class="kicker hero-enter">Business process automation · Python</p>
+      <h1 class="hero-enter d1">I turn repetitive administrative workflows into reliable software.</h1>
+      <p class="lead hero-enter d2">
         13 Python tools covering the entire lifecycle of funded vocational
         training programs — hours of manual document handling become seconds
         of automated, verifiable processing. Plus an energy &amp; emissions
         dashboard built from BigQuery marts and Power BI models.
       </p>
-      <div class="ctas">
+      <div class="ctas hero-enter d3">
         <a class="btn primary" href="#projects">View the projects</a>
         <a class="btn primary" href="dashboard/" style="background:#1f8a70">View Energy Dashboard</a>
         <a class="btn ghost" href="#process">How it fits together</a>
       </div>
-      <p style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+      <p class="hero-enter d4" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
         <span class="tag data" style="margin:0">BigQuery</span>
         <span class="tag data" style="margin:0">Power BI</span>
         <span class="tag data" style="margin:0">Chart.js</span>
         <span class="tag uni" style="margin:0">Personal design project — not official thesis</span>
       </p>
     </div>
-    <div>
-      <div class="term hero-term">
+    <div class="hero-enter d2">
+      <div class="term hero-term float-soft">
         <div class="term-bar">
           <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
           <span class="term-title">elearning_hours_monitor.py</span>
@@ -406,28 +464,28 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>The projects</h2>
-      <p>Each tool was born from a real, recurring pain in daily operations —
-         then generalized into a reusable command-line tool. Full source code
-         and sample outputs live in
+      <p>18 projects across four areas — 13 Python automations, 1 UI/UX web concept
+         (Kaidra), 2 data dashboards and 2 strategy research decks. Use the filters
+         or deep-links like <a href="#projects-python">#projects-python</a>,
+         <a href="#projects-web">#projects-web</a>, <a href="#projects-data">#projects-data</a>,
+         <a href="#projects-strategy">#projects-strategy</a>. Full source and sample outputs live in
          <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">the repository</a>.</p>
     </div>
 
-    <div class="chips reveal" role="group" aria-label="Filter projects by phase">
-      <button class="chip active" data-filter="all">All <sup>17</sup></button>
-      <button class="chip" data-filter="launch">Launch <sup>4</sup></button>
-      <button class="chip" data-filter="delivery">Delivery <sup>3</sup></button>
-      <button class="chip" data-filter="reporting">Reporting <sup>3</sup></button>
-      <button class="chip" data-filter="utility">Utilities <sup>3</sup></button>
-      <button class="chip" data-filter="university">University <sup>3</sup></button>
-      <button class="chip" data-filter="data">Data &amp; Energy <sup>1</sup></button>
+    <div class="chips reveal" role="group" aria-label="Filter projects by area">
+      <button class="chip active" data-filter="all">All <sup>18</sup></button>
+      <button class="chip" data-filter="python">Python Automations <sup>13</sup></button>
+      <button class="chip" data-filter="web">UI/UX Web <sup>1</sup></button>
+      <button class="chip" data-filter="data">Data <sup>2</sup></button>
+      <button class="chip" data-filter="strategy">University-Corporate Strategy <sup>2</sup></button>
     </div>
 
-    <!-- Phase 1 -->
-    <div class="group-head reveal" data-group="launch">
-      <h3>Program Launch <small>— getting a course up and running</small></h3>
+    <!-- Python Automations (13 tools) -->
+    <div class="group-head reveal" data-group="python">
+      <h3>Python Automations <small>— launch → delivery → reporting + utilities (13 tools)</small></h3>
     </div>
     <div class="cards">
-      <div class="card reveal" data-phase="launch" data-demo="student-import-generator">
+      <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="student-import-generator">
         <span class="tag launch">Launch</span>
         <h4>Student Import Generator</h4>
         <p>Spreadsheet → platform-ready import file, with gender and birth town
@@ -439,7 +497,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/student-import-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="launch" data-demo="adhesion-letter-compiler">
+      <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="adhesion-letter-compiler">
         <span class="tag launch">Launch</span>
         <h4>Adhesion Letter Compiler</h4>
         <p>One personalized Word adhesion letter per trainee–company pair,
@@ -451,7 +509,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/adhesion-letter-compiler" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="launch" data-demo="apprenticeship-quote-generator">
+      <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="apprenticeship-quote-generator">
         <span class="tag launch">Launch</span>
         <h4>Apprenticeship Quote Generator</h4>
         <p>Complete economic offers with progressive numbering, rounding rules
@@ -463,7 +521,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/apprenticeship-quote-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="launch" data-demo="financial-plan-builder">
+      <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="financial-plan-builder">
         <span class="tag launch">Launch</span>
         <h4>Financial Plan Builder</h4>
         <p>Live-formula Excel budgets with traffic-light constraint checks and
@@ -475,14 +533,8 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/financial-plan-builder" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-    </div>
-
-    <!-- Phase 2 -->
-    <div class="group-head reveal" data-group="delivery">
-      <h3>Delivery <small>— monitoring while the course runs</small></h3>
-    </div>
-    <div class="cards">
-      <div class="card reveal" data-phase="delivery" data-demo="elearning-hours-monitor">
+    <!-- Delivery (merged into Python Automations grid) -->
+      <div class="card reveal" data-phase="python" data-subphase="delivery" data-group="python" data-demo="elearning-hours-monitor">
         <span class="tag delivery">Delivery</span>
         <h4>E-Learning Hours Monitor</h4>
         <p>~1,800 lines across 17 versions: computes each student's real
@@ -495,7 +547,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="delivery" data-demo="tutoring-hours-distributor">
+      <div class="card reveal" data-phase="python" data-subphase="delivery" data-group="python" data-demo="tutoring-hours-distributor">
         <span class="tag delivery">Delivery</span>
         <h4>Tutoring Hours Distributor</h4>
         <p>Distributes tutoring hours across internship months, respecting
@@ -507,7 +559,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/tutoring-hours-distributor" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="delivery" data-demo="attendance-register-filler">
+      <div class="card reveal" data-phase="python" data-subphase="delivery" data-group="python" data-demo="attendance-register-filler">
         <span class="tag delivery">Delivery</span>
         <h4>Attendance Register Filler</h4>
         <p>Writes PRESENT/ABSENT into the official PDF register — fuzzy name
@@ -519,14 +571,8 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/attendance-register-filler" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-    </div>
-
-    <!-- Phase 3 -->
-    <div class="group-head reveal" data-group="reporting">
-      <h3>Reporting <small>— closing out and certifying the program</small></h3>
-    </div>
-    <div class="cards">
-      <div class="card reveal" data-phase="reporting" data-demo="certificate-manager">
+    <!-- Reporting (merged into Python Automations grid) -->
+      <div class="card reveal" data-phase="python" data-subphase="reporting" data-group="python" data-demo="certificate-manager">
         <span class="tag reporting">Reporting</span>
         <h4>Certificate Manager</h4>
         <p>Four-command pipeline: split the bulk-print PDF, read each name,
@@ -538,7 +584,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/certificate-manager" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="reporting" data-demo="transparency-certificates">
+      <div class="card reveal" data-phase="python" data-subphase="reporting" data-group="python" data-demo="transparency-certificates">
         <span class="tag reporting">Reporting</span>
         <h4>Transparency Certificates</h4>
         <p>One "acquired skills" Word certificate per participant, filled from
@@ -550,7 +596,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/transparency-certificates" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="reporting" data-demo="timesheet-generator">
+      <div class="card reveal" data-phase="python" data-subphase="reporting" data-group="python" data-demo="timesheet-generator">
         <span class="tag reporting">Reporting</span>
         <h4>Project Timesheet Generator</h4>
         <p>Official monthly timesheets compiled from intern records and tutor
@@ -562,14 +608,8 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/timesheet-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-    </div>
-
-    <!-- Utilities -->
-    <div class="group-head reveal" data-group="utility">
-      <h3>Cross-cutting Utilities <small>— tools that serve every phase</small></h3>
-    </div>
-    <div class="cards">
-      <div class="card reveal" data-phase="utility" data-demo="funding-call-scraper">
+    <!-- Utilities (merged into Python Automations grid) -->
+      <div class="card reveal" data-phase="python" data-subphase="utility" data-group="python" data-demo="funding-call-scraper">
         <span class="tag utility">Utility</span>
         <h4>Funding Call Scraper</h4>
         <p>Two-level scraper of nine funding bodies: every open call discovered,
@@ -581,7 +621,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="utility" data-demo="regulation-search">
+      <div class="card reveal" data-phase="python" data-subphase="utility" data-group="python" data-demo="regulation-search">
         <span class="tag utility">Utility</span>
         <h4>Regulation Search Engine</h4>
         <p>Search inside funding manuals and calls by category or free text —
@@ -593,7 +633,7 @@
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="utility">
+      <div class="card reveal" data-phase="python" data-subphase="utility" data-group="python">
         <span class="tag utility">Utility</span>
         <h4>Social Graphics Pipeline <span class="wip">work in progress</span></h4>
         <p>LinkedIn cards and carousels generated programmatically from a
@@ -606,40 +646,49 @@
       </div>
     </div>
 
-    <!-- University projects -->
-    <div class="group-head reveal" data-group="university">
-      <h3>University Projects <small>— academic work worth showing</small></h3>
+    <!-- UI/UX Web -->
+    <div class="group-head reveal" data-group="web">
+      <h3>UI/UX Web <small>— interface concept for identity governance</small></h3>
     </div>
     <div class="cards">
-      <div class="card reveal" data-phase="university">
-        <a class="thumb-link" href="files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">
-          <img class="uni-thumb" src="files/img/thumb-nbc.png" alt="NBC Store marketing analysis — title slide" loading="lazy">
+      <div class="card reveal" data-phase="web" data-group="web">
+        <a class="thumb-link" href="../kaidra-concept/index.html" target="_blank" rel="noopener">
+          <span class="kaidra-thumb">
+            <img src="../kaidra-concept/assets/figma-og.png" alt="Kaidra identity governance console — preview" loading="lazy" onerror="this.remove()">
+            <span class="kaidra-fallback" aria-hidden="true">kaidra</span>
+          </span>
         </a>
-        <span class="tag uni">University</span>
-        <h4>NBC Store — Marketing Analysis</h4>
-        <p>Sapienza University project work: communication audit, target
-           profiling, PESTLE and SWOT, competitor benchmarking and growth
-           strategies for the New York store and e-commerce. 42 slides.</p>
-        <div class="tech">Market research · PESTLE / SWOT · Canva</div>
+        <span class="tag web">UI</span>
+        <h4>Kaidra — Identity Visibility Concept</h4>
+        <p>Concept web app that unifies identity data into one source of truth.
+           Monitor, certify and remediate access in real time. EU-hosted.</p>
+        <div class="tech">HTML · CSS · JavaScript</div>
         <div class="card-foot">
-          <a class="code" href="files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
+          <a class="code" href="../kaidra-concept/index.html" target="_blank" rel="noopener">Open the live concept &rarr;</a>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Source &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="university">
-        <a class="thumb-link" href="files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">
-          <img class="uni-thumb" src="files/img/thumb-milano-sport.png" alt="Future Moves — Milano Sport research presentation" loading="lazy">
-        </a>
-        <span class="tag uni">University</span>
-        <h4>Future Moves — Milano Sport</h4>
-        <p>Group market research: fitness industry macro-trends, best practices
-           from innovative sports centers, aquatic activities focus and new
-           course formats for the 2026 season. 44 slides.</p>
-        <div class="tech">Market research · Trend analysis · Canva</div>
+    </div>
+
+    <!-- Data -->
+    <div class="group-head reveal" data-group="data">
+      <h3>Data <small>— energy &amp; analytics dashboards</small></h3>
+    </div>
+    <div class="cards">
+      <div class="card reveal energy" data-phase="data" data-group="data" style="border-top:4px solid #1f8a70">
+        <div class="metric" style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><b style="font-size:1.35rem;font-weight:800">260</b><span style="font-size:.76rem;color:var(--ink-soft)">countries · 5,000 companies · 2015–2018</span></div>
+        <span class="tag data">Data</span>
+        <h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="vertical-align:-3px"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg> CSR Energy &amp; Emissions Intelligence</h4>
+        <p>Interactive dashboard on energy use and emissions intensity across listed
+           energy-intensive sectors — KPIs, top-15 ranking, trends and SIC breakdown.</p>
+        <div class="tech">BigQuery · Power BI · Chart.js</div>
         <div class="card-foot">
-          <a class="code" href="files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
+          <a class="code" href="dashboard/">Open the dedicated page &rarr;</a>
+          <a class="code" href="projects/csr-energy-dashboard/" target="_blank" rel="noopener">Legacy Pages URL &rarr;</a>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/csr-energy-dashboard" target="_blank" rel="noopener">Source &amp; data &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="university">
+      <div class="card reveal" data-phase="data" data-group="data">
         <div class="ds-mock" aria-hidden="true">
           <svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice">
             <rect width="300" height="150" fill="#ffffff"/>
@@ -665,7 +714,7 @@
             <text x="220" y="124" font-family="Poppins,Arial" font-size="20" font-weight="700" fill="#0d5794">+18%</text>
           </svg>
         </div>
-        <span class="tag uni">University</span>
+        <span class="tag data">Data</span>
         <h4>Data Studio Dashboard</h4>
         <p>Interactive dashboard built with Google Data Studio (Looker Studio):
            connected data sources, dynamic filters and charts for exploring
@@ -677,22 +726,37 @@
       </div>
     </div>
 
-    <!-- Data & Energy -->
-    <div class="group-head reveal" data-group="data">
-      <h3>Data &amp; Energy <small>— thesis research, visualized for the web</small></h3>
+    <!-- University-Corporate Strategy -->
+    <div class="group-head reveal" data-group="strategy">
+      <h3>University-Corporate Strategy <small>— market &amp; strategy research</small></h3>
     </div>
     <div class="cards">
-      <div class="card reveal energy" data-phase="data" style="border-top:4px solid #1f8a70">
-        <div class="metric" style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><b style="font-size:1.35rem;font-weight:800">260</b><span style="font-size:.76rem;color:var(--ink-soft)">countries · 5,000 companies · 2015–2018</span></div>
-        <span class="tag data">Data</span>
-        <h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="vertical-align:-3px"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg> CSR Energy &amp; Emissions Intelligence</h4>
-        <p>Interactive dashboard on energy use and emissions intensity across listed
-           energy-intensive sectors — KPIs, top-15 ranking, trends and SIC breakdown.</p>
-        <div class="tech">BigQuery · Power BI · Chart.js</div>
+      <div class="card reveal" data-phase="strategy" data-group="strategy">
+        <a class="thumb-link" href="files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">
+          <img class="uni-thumb" src="files/img/thumb-nbc.png" alt="NBC Store marketing analysis — title slide" loading="lazy">
+        </a>
+        <span class="tag strategy">Strategy</span>
+        <h4>NBC Store — Marketing Analysis</h4>
+        <p>Sapienza University project work: communication audit, target
+           profiling, PESTLE and SWOT, competitor benchmarking and growth
+           strategies for the New York store and e-commerce. 42 slides.</p>
+        <div class="tech">Market research · PESTLE / SWOT · Canva</div>
         <div class="card-foot">
-          <a class="code" href="dashboard/">Open the dedicated page &rarr;</a>
-          <a class="code" href="projects/csr-energy-dashboard/" target="_blank" rel="noopener">Legacy Pages URL &rarr;</a>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/csr-energy-dashboard" target="_blank" rel="noopener">Source &amp; data &rarr;</a>
+          <a class="code" href="files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
+        </div>
+      </div>
+      <div class="card reveal" data-phase="strategy" data-group="strategy">
+        <a class="thumb-link" href="files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">
+          <img class="uni-thumb" src="files/img/thumb-milano-sport.png" alt="Future Moves — Milano Sport research presentation" loading="lazy">
+        </a>
+        <span class="tag strategy">Strategy</span>
+        <h4>Future Moves — Milano Sport</h4>
+        <p>Group market research: fitness industry macro-trends, best practices
+           from innovative sports centers, aquatic activities focus and new
+           course formats for the 2026 season. 44 slides.</p>
+        <div class="tech">Market research · Trend analysis · Canva</div>
+        <div class="card-foot">
+          <a class="code" href="files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
         </div>
       </div>
     </div>
@@ -712,7 +776,7 @@
       <span>BeautifulSoup</span><span>Pillow</span><span>PyYAML</span>
       <span>Excel automation</span><span>Word &amp; PDF generation</span>
       <span>Web scraping</span><span>Fuzzy matching</span>
-      <span>Document parsing</span><span>Process automation</span><span>Git</span>
+      <span>Document parsing</span><span>Process automation</span><span>Git</span><span>HTML</span><span>CSS</span><span>JavaScript</span><span>UI/UX concept</span>
     </p>
   </div>
 </section>
@@ -1152,19 +1216,44 @@
     })();
   })();
 
-  /* ============ Filter chips ============ */
-  var chips = document.querySelectorAll('.chip');
-  chips.forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      chips.forEach(function (c) { c.classList.toggle('active', c === chip); });
-      var f = chip.dataset.filter;
-      document.querySelectorAll('#projects .card').forEach(function (card) {
-        card.hidden = f !== 'all' && card.dataset.phase !== f;
-      });
-      document.querySelectorAll('#projects .group-head').forEach(function (gh) {
-        gh.hidden = f !== 'all' && gh.dataset.group !== f;
-      });
+  /* ============ Filter chips (new taxonomy + FLIP-lite + deep-link) ============ */
+  var chips = document.querySelectorAll('#projects .chip');
+  function applyFilter(f, pushHash) {
+    chips.forEach(function (c) { c.classList.toggle('active', c.dataset.filter === f); });
+    var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
+    cards.forEach(function (card) {
+      var show = f === 'all' || card.dataset.phase === f;
+      if (!REDUCED && !show) { card.classList.add('filtering'); }
+      card.hidden = !show;
+      if (show) {
+        card.classList.remove('filtering');
+        void card.offsetWidth;
+      }
     });
+    document.querySelectorAll('#projects .group-head').forEach(function (gh) {
+      gh.hidden = f !== 'all' && gh.dataset.group !== f;
+    });
+    // stagger re-trigger for visible cards
+    var i = 0;
+    cards.forEach(function (card) {
+      if (!card.hidden) { card.style.setProperty('--i', String(i % 6)); i++; }
+    });
+    if (pushHash && history.replaceState) {
+      var h = f === 'all' ? '#projects' : '#projects-' + f;
+      history.replaceState(null, '', h);
+    }
+  }
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () { applyFilter(chip.dataset.filter, true); });
+  });
+  // deep-link: #projects, #projects-python|web|data|strategy
+  (function deepLink() {
+    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
+    if (m) { applyFilter(m[1] || 'all', false); }
+  })();
+  window.addEventListener('hashchange', function () {
+    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
+    if (m) { applyFilter(m[1] || 'all', false); }
   });
 
   /* ============ Stats count-up ============ */
@@ -1207,19 +1296,70 @@
     if (s) spy.observe(s);
   });
 
-  /* ============ Reveal on scroll ============ */
+  /* ============ Reveal on scroll + stagger + AOS progressive enhancement ============ */
+  document.querySelectorAll('#projects .card').forEach(function (card, idx) {
+    card.style.setProperty('--i', String(idx % 6));
+  });
   var ro = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
       if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); }
     });
   }, { threshold: 0.06 });
   document.querySelectorAll('.reveal').forEach(function (el) { ro.observe(el); });
+  // AOS via CDN (patterns from references/animations/aos): once, offset 80, disabled on reduced-motion.
+  // CSS-only .reveal above is the offline fallback — page works without this script.
+  function initAOS() {
+    if (REDUCED) return;
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js';
+    s.defer = true;
+    s.onload = function () {
+      try {
+        if (window.AOS) { window.AOS.init({ once: true, offset: 80, duration: 600, disable: function () { return REDUCED; } }); }
+      } catch (e) {}
+    };
+    document.head.appendChild(s);
+  }
+  if ('requestIdleCallback' in window) { requestIdleCallback(initAOS); }
+  else { setTimeout(initAOS, 1200); }
 
-  /* ============ Back to top ============ */
+  /* ============ Card tilt (pointer:fine only, sober) ============ */
+  if (!REDUCED && window.matchMedia('(pointer: fine)').matches) {
+    document.querySelectorAll('#projects .card').forEach(function (card) {
+      var raf = null;
+      card.addEventListener('pointermove', function (ev) {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          var r = card.getBoundingClientRect();
+          var px = (ev.clientX - r.left) / r.width - 0.5;
+          var py = (ev.clientY - r.top) / r.height - 0.5;
+          card.style.setProperty('--ry', (px * 5).toFixed(2) + 'deg');
+          card.style.setProperty('--rx', (-py * 5).toFixed(2) + 'deg');
+          card.classList.add('tilt');
+          raf = null;
+        });
+      });
+      card.addEventListener('pointerleave', function () {
+        card.classList.remove('tilt');
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+      });
+    });
+  }
+
+  /* ============ Scroll progress + Back to top ============ */
   var toTop = document.getElementById('toTop');
-  window.addEventListener('scroll', function () {
+  var prog = document.getElementById('scrollProgress');
+  function onScroll() {
     toTop.classList.toggle('show', window.scrollY > 700);
-  }, { passive: true });
+    if (prog && !REDUCED) {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      var p = h > 0 ? Math.min(1, window.scrollY / h) : 0;
+      prog.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
   toTop.addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
   });
