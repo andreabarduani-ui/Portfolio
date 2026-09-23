@@ -1,0 +1,34 @@
+# Netlify — static drag-drop, no build. Compatible with GitHub Pages paths.
+[build]
+  publish = "."
+  command = ""
+
+# Clean URL: /dashboard -> /dashboard/ (folder page)
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard/"
+  status = 301
+  force = true
+
+# Long cache for dashboard JSON (immutable data, 2015-2018 window)
+[[headers]]
+  for = "/dashboard/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "*.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Light CSP: self + Chart.js CDN + Google Fonts only
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Andrea Barduani — Process Automation Portfolio</title>
-<meta name="description" content="Portfolio of 13 Python automation tools covering the full lifecycle of funded training programs: launch, delivery and reporting.">
+<meta name="description" content="Portfolio of 13 Python automation tools covering the full lifecycle of funded training programs: launch, delivery and reporting. Plus CSR Energy & Emissions Intelligence dashboard (BigQuery, Power BI, Chart.js).">
+<link rel="canonical" href="./">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Andrea Barduani — Process Automation Portfolio">
+<meta property="og:description" content="13 Python tools for funded training programs + CSR Energy & Emissions Intelligence dashboard.">
+<meta property="og:image" content="files/img/thumb-nbc.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Andrea Barduani — Process Automation Portfolio">
+<meta name="twitter:description" content="Python automation for training programs + Energy & Emissions dashboard.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Andrea Barduani","jobTitle":"Process Automation Specialist","email":"mailto:andrea.barduani@gmail.com","url":"./","sameAs":["https://www.linkedin.com/in/andrea-barduani-b76a7719a/","https://github.com/andreabarduani-ui"]}</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfcf9'/><text x='50' y='70' font-family='Arial,sans-serif' font-size='54' text-anchor='middle' fill='%230d5794'>AB</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -296,6 +305,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#projects" style="position:absolute;left:12px;top:-48px;z-index:100;background:#26231f;color:#fdfcf9;padding:8px 14px;border-radius:6px;font-size:.85rem;font-weight:600;text-decoration:none" onfocus="this.style.top='12px'" onblur="this.style.top='-48px'">Skip to projects</a>
 
 <header>
   <div class="wrap nav">
@@ -303,6 +313,7 @@
     <ul>
       <li><a href="#process">Process</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="dashboard/">Energy Dashboard</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -319,12 +330,20 @@
       <p class="lead">
         13 Python tools covering the entire lifecycle of funded vocational
         training programs — hours of manual document handling become seconds
-        of automated, verifiable processing.
+        of automated, verifiable processing. Plus an energy &amp; emissions
+        dashboard built from BigQuery marts and Power BI models.
       </p>
       <div class="ctas">
         <a class="btn primary" href="#projects">View the projects</a>
+        <a class="btn primary" href="dashboard/" style="background:#1f8a70">View Energy Dashboard</a>
         <a class="btn ghost" href="#process">How it fits together</a>
       </div>
+      <p style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+        <span class="tag data" style="margin:0">BigQuery</span>
+        <span class="tag data" style="margin:0">Power BI</span>
+        <span class="tag data" style="margin:0">Chart.js</span>
+        <span class="tag uni" style="margin:0">Personal design project — not official thesis</span>
+      </p>
     </div>
     <div>
       <div class="term hero-term">
@@ -663,14 +682,16 @@
       <h3>Data &amp; Energy <small>— thesis research, visualized for the web</small></h3>
     </div>
     <div class="cards">
-      <div class="card reveal" data-phase="data">
+      <div class="card reveal energy" data-phase="data" style="border-top:4px solid #1f8a70">
+        <div class="metric" style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><b style="font-size:1.35rem;font-weight:800">260</b><span style="font-size:.76rem;color:var(--ink-soft)">countries · 5,000 companies · 2015–2018</span></div>
         <span class="tag data">Data</span>
-        <h4>CSR Energy &amp; Emissions Intelligence</h4>
+        <h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="vertical-align:-3px"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg> CSR Energy &amp; Emissions Intelligence</h4>
         <p>Interactive dashboard on energy use and emissions intensity across listed
            energy-intensive sectors — KPIs, top-15 ranking, trends and SIC breakdown.</p>
         <div class="tech">BigQuery · Power BI · Chart.js</div>
         <div class="card-foot">
-          <a class="code" href="projects/csr-energy-dashboard/" target="_blank" rel="noopener">Open the live dashboard &rarr;</a>
+          <a class="code" href="dashboard/">Open the dedicated page &rarr;</a>
+          <a class="code" href="projects/csr-energy-dashboard/" target="_blank" rel="noopener">Legacy Pages URL &rarr;</a>
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/csr-energy-dashboard" target="_blank" rel="noopener">Source &amp; data &rarr;</a>
         </div>
       </div>
@@ -740,8 +761,15 @@
       <div><span class="label">Email</span><a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a></div>
       <div><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">linkedin.com/in/andrea-barduani</a></div>
       <div><span class="label">GitHub</span><a href="https://github.com/andreabarduani-ui" target="_blank" rel="noopener">github.com/andreabarduani-ui</a></div>
+      <div><span class="label">CV</span><a href="files/Andrea_Barduani_CV.pdf">Download CV (PDF)</a> <span style="color:var(--ink-soft);font-size:.82rem">— add your file at files/Andrea_Barduani_CV.pdf</span></div>
+      <div><span class="label">Energy</span><a href="dashboard/">CSR Energy &amp; Emissions Intelligence</a></div>
     </div>
-    <div class="copy">© 2026 Andrea Barduani — Process Automation Portfolio.</div>
+    <p style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+      <a href="mailto:andrea.barduani@gmail.com" aria-label="Email" style="text-decoration:none">✉️ Email</a>
+      <a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener" aria-label="LinkedIn" style="text-decoration:none">in LinkedIn</a>
+      <a href="https://github.com/andreabarduani-ui" target="_blank" rel="noopener" aria-label="GitHub" style="text-decoration:none">⬢ GitHub</a>
+    </p>
+    <div class="copy">© 2026 Andrea Barduani — Process Automation Portfolio. Personal design projects; CSR dashboard is not an official thesis.</div>
   </div>
 </footer>
 
