@@ -131,13 +131,13 @@ section { padding: 60px 0; }
 .chip:hover { border-color: var(--ink-soft); color: var(--ink); }
 .chip.active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .chip sup { margin-left: 4px; font-size: .68rem; opacity: .65; }
+.chip .chip-sub { display: block; font-size: .68rem; font-weight: 400; opacity: .72; line-height: 1.3; }
+.chip.active .chip-sub { opacity: .8; }
+/* group-head removed from DOM — kept hidden as safety if reintroduced */
+.group-head { display: none !important; }
 
 /* ---------- Project cards ---------- */
 #projects { background: var(--bg); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.group-head { margin: 44px 0 18px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
-.group-head:first-of-type { margin-top: 0; }
-.group-head h3 { font-size: 1.1rem; }
-.group-head small { color: var(--ink-soft); font-size: .88rem; font-family: inherit; font-style: italic; }
 .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
 @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
 .card {
@@ -486,7 +486,7 @@ footer .copy { margin-top: 34px; font-size: .82rem; color: var(--ink-soft); }
 .js .reveal { transition-delay: calc(var(--i, 0) * 60ms); }
 #projects .card { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, opacity .25s ease; }
 #projects .card.filtering { opacity: 0; transform: scale(.96) translateY(6px); }
-#projects .group-head { transition: opacity .25s ease; }
+/* .group-head removed from DOM: no show/hide logic needed (single filtered grid) */
 @media (pointer: fine) {
   #projects .card.tilt { transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px); }
 }

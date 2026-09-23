@@ -412,25 +412,31 @@
     })();
   }
 
-  /* ============ Filter chips (new taxonomy python|web|data|strategy + deep-link) ============ */
+  /* ============ Filter chips (python|web|data|strategy, default python, single grid) ============ */
+  function normFilter(f) {
+    return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy') ? f : 'python';
+  }
   function applyFilter(chips, f, pushHash) {
-    chips.forEach(function (c) { c.classList.toggle('active', c.dataset.filter === f); });
+    f = normFilter(f);
+    chips.forEach(function (c) {
+      var on = c.dataset.filter === f;
+      c.classList.toggle('active', on);
+      c.setAttribute('aria-pressed', String(on));
+    });
     var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
     cards.forEach(function (card) {
-      var show = f === 'all' || card.dataset.phase === f;
+      var show = card.dataset.phase === f;
       if (!REDUCED && !show) { card.classList.add('filtering'); }
       card.hidden = !show;
       if (show) { card.classList.remove('filtering'); void card.offsetWidth; }
     });
-    document.querySelectorAll('#projects .group-head').forEach(function (gh) {
-      gh.hidden = f !== 'all' && gh.dataset.group !== f;
-    });
+    // no .group-head in DOM anymore: single filtered grid, context lives in chips
     var i = 0;
     cards.forEach(function (card) {
       if (!card.hidden) { card.style.setProperty('--i', String(i % 6)); i++; }
     });
     if (pushHash && history.replaceState) {
-      history.replaceState(null, '', f === 'all' ? '#projects' : '#projects-' + f);
+      history.replaceState(null, '', '#projects-' + f);
     }
   }
   function initChips() {
@@ -439,10 +445,10 @@
       chip.addEventListener('click', function () { applyFilter(chips, chip.dataset.filter, true); });
     });
     var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
-    if (m) { applyFilter(chips, m[1] || 'all', false); }
+    applyFilter(chips, m ? (m[1] || 'python') : 'python', false);
     window.addEventListener('hashchange', function () {
       var mm = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
-      if (mm) { applyFilter(chips, mm[1] || 'all', false); }
+      if (mm) { applyFilter(chips, mm[1] || 'python', false); }
     });
   }
 

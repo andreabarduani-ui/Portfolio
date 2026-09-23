@@ -147,13 +147,13 @@
   .chip:hover { border-color: var(--ink-soft); color: var(--ink); }
   .chip.active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
   .chip sup { margin-left: 4px; font-size: .68rem; opacity: .65; }
+  .chip .chip-sub { display: block; font-size: .68rem; font-weight: 400; opacity: .72; line-height: 1.3; }
+  .chip.active .chip-sub { opacity: .8; }
+  /* group-head removed from DOM — kept hidden as safety if reintroduced */
+  .group-head { display: none !important; }
 
   /* ---------- Project cards ---------- */
   #projects { background: var(--bg); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .group-head { margin: 44px 0 18px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
-  .group-head:first-of-type { margin-top: 0; }
-  .group-head h3 { font-size: 1.1rem; }
-  .group-head small { color: var(--ink-soft); font-size: .88rem; font-family: inherit; font-style: italic; }
   .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
   @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
   .card {
@@ -338,7 +338,7 @@
   /* filter transition FLIP-lite: fade + scale */
   #projects .card { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, opacity .25s ease; }
   #projects .card.filtering { opacity: 0; transform: scale(.96) translateY(6px); }
-  #projects .group-head { transition: opacity .25s ease; }
+  /* .group-head removed from DOM: no show/hide logic needed (single filtered grid) */
   /* tilt (JS adds --rx/--ry, only pointer:fine) */
   @media (pointer: fine) {
     #projects .card.tilt { transform: perspective(800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px); }
@@ -465,26 +465,23 @@
     <div class="sec-head reveal">
       <h2>The projects</h2>
       <p>18 projects across four areas — 13 Python automations, 1 UI/UX web concept
-         (Kaidra), 2 data dashboards and 2 strategy research decks. Use the filters
-         or deep-links like <a href="#projects-python">#projects-python</a>,
+         (Kaidra), 2 data dashboards and 2 strategy research decks. Default view is
+         <a href="#projects-python">Python Automations</a> — switch area via the filters
+         or deep-links <a href="#projects-python">#projects-python</a>,
          <a href="#projects-web">#projects-web</a>, <a href="#projects-data">#projects-data</a>,
          <a href="#projects-strategy">#projects-strategy</a>. Full source and sample outputs live in
          <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">the repository</a>.</p>
     </div>
 
     <div class="chips reveal" role="group" aria-label="Filter projects by area">
-      <button class="chip active" data-filter="all">All <sup>18</sup></button>
-      <button class="chip" data-filter="python">Python Automations <sup>13</sup></button>
-      <button class="chip" data-filter="web">UI/UX Web <sup>1</sup></button>
-      <button class="chip" data-filter="data">Data <sup>2</sup></button>
-      <button class="chip" data-filter="strategy">University-Corporate Strategy <sup>2</sup></button>
+      <button class="chip active" data-filter="python" title="Python Automations — launch → delivery → reporting + utilities (13 tools)" aria-pressed="true">Python Automations <span class="chip-sub">launch → delivery → reporting</span> <sup>13</sup></button>
+      <button class="chip" data-filter="web" title="UI/UX Web — interface concept for identity governance" aria-pressed="false">UI/UX Web <span class="chip-sub">identity governance concept</span> <sup>1</sup></button>
+      <button class="chip" data-filter="data" title="Data — energy & analytics dashboards" aria-pressed="false">Data <span class="chip-sub">energy &amp; analytics</span> <sup>2</sup></button>
+      <button class="chip" data-filter="strategy" title="University-Corporate Strategy — market & strategy research" aria-pressed="false">University-Corporate Strategy <span class="chip-sub">market &amp; strategy research</span> <sup>2</sup></button>
     </div>
 
-    <!-- Python Automations (13 tools) -->
-    <div class="group-head reveal" data-group="python">
-      <h3>Python Automations <small>— launch → delivery → reporting + utilities (13 tools)</small></h3>
-    </div>
-    <div class="cards">
+    <!-- Single filtered grid (no section titles): context lives in the chips above. -->
+    <div class="cards" id="projectsGrid">
       <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="student-import-generator">
         <span class="tag launch">Launch</span>
         <h4>Student Import Generator</h4>
@@ -644,17 +641,11 @@
           <span class="out-note" style="margin-top:0">Demo coming when v1 ships.</span>
         </div>
       </div>
-    </div>
-
-    <!-- UI/UX Web -->
-    <div class="group-head reveal" data-group="web">
-      <h3>UI/UX Web <small>— interface concept for identity governance</small></h3>
-    </div>
-    <div class="cards">
+    <!-- UI/UX Web card continues in the same single grid -->
       <div class="card reveal" data-phase="web" data-group="web">
-        <a class="thumb-link" href="../kaidra-concept/index.html" target="_blank" rel="noopener">
+        <a class="thumb-link" href="projects/kaidra/" target="_blank" rel="noopener">
           <span class="kaidra-thumb">
-            <img src="../kaidra-concept/assets/figma-og.png" alt="Kaidra identity governance console — preview" loading="lazy" onerror="this.remove()">
+            <img src="projects/kaidra/assets/figma-og.png" alt="Kaidra identity governance console — preview" loading="lazy" onerror="this.remove()">
             <span class="kaidra-fallback" aria-hidden="true">kaidra</span>
           </span>
         </a>
@@ -664,17 +655,11 @@
            Monitor, certify and remediate access in real time. EU-hosted.</p>
         <div class="tech">HTML · CSS · JavaScript</div>
         <div class="card-foot">
-          <a class="code" href="../kaidra-concept/index.html" target="_blank" rel="noopener">Open the live concept &rarr;</a>
+          <a class="code" href="projects/kaidra/" target="_blank" rel="noopener">Open the live concept &rarr;</a>
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Source &rarr;</a>
         </div>
       </div>
-    </div>
-
-    <!-- Data -->
-    <div class="group-head reveal" data-group="data">
-      <h3>Data <small>— energy &amp; analytics dashboards</small></h3>
-    </div>
-    <div class="cards">
+    <!-- Data cards continue in the same single grid -->
       <div class="card reveal energy" data-phase="data" data-group="data" style="border-top:4px solid #1f8a70">
         <div class="metric" style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><b style="font-size:1.35rem;font-weight:800">260</b><span style="font-size:.76rem;color:var(--ink-soft)">countries · 5,000 companies · 2015–2018</span></div>
         <span class="tag data">Data</span>
@@ -724,13 +709,7 @@
           <a class="code" href="https://datastudio.google.com/reporting/d787ca46-5f8c-449d-9c3d-47bf7164d82f/page/3ucKF" target="_blank" rel="noopener">Open the dashboard &rarr;</a>
         </div>
       </div>
-    </div>
-
-    <!-- University-Corporate Strategy -->
-    <div class="group-head reveal" data-group="strategy">
-      <h3>University-Corporate Strategy <small>— market &amp; strategy research</small></h3>
-    </div>
-    <div class="cards">
+    <!-- Strategy cards continue in the same single grid -->
       <div class="card reveal" data-phase="strategy" data-group="strategy">
         <a class="thumb-link" href="files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">
           <img class="uni-thumb" src="files/img/thumb-nbc.png" alt="NBC Store marketing analysis — title slide" loading="lazy">
@@ -1216,13 +1195,21 @@
     })();
   })();
 
-  /* ============ Filter chips (new taxonomy + FLIP-lite + deep-link) ============ */
+  /* ============ Filter chips (python|web|data|strategy, default python, single grid) ============ */
   var chips = document.querySelectorAll('#projects .chip');
+  function normFilter(f) {
+    return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy') ? f : 'python';
+  }
   function applyFilter(f, pushHash) {
-    chips.forEach(function (c) { c.classList.toggle('active', c.dataset.filter === f); });
+    f = normFilter(f);
+    chips.forEach(function (c) {
+      var on = c.dataset.filter === f;
+      c.classList.toggle('active', on);
+      c.setAttribute('aria-pressed', String(on));
+    });
     var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
     cards.forEach(function (card) {
-      var show = f === 'all' || card.dataset.phase === f;
+      var show = card.dataset.phase === f;
       if (!REDUCED && !show) { card.classList.add('filtering'); }
       card.hidden = !show;
       if (show) {
@@ -1230,30 +1217,27 @@
         void card.offsetWidth;
       }
     });
-    document.querySelectorAll('#projects .group-head').forEach(function (gh) {
-      gh.hidden = f !== 'all' && gh.dataset.group !== f;
-    });
+    // no .group-head in DOM anymore: single filtered grid, context lives in chips
     // stagger re-trigger for visible cards
     var i = 0;
     cards.forEach(function (card) {
       if (!card.hidden) { card.style.setProperty('--i', String(i % 6)); i++; }
     });
     if (pushHash && history.replaceState) {
-      var h = f === 'all' ? '#projects' : '#projects-' + f;
-      history.replaceState(null, '', h);
+      history.replaceState(null, '', '#projects-' + f);
     }
   }
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () { applyFilter(chip.dataset.filter, true); });
   });
-  // deep-link: #projects, #projects-python|web|data|strategy
+  // deep-link: #projects-python|web|data|strategy; bare #projects or unknown falls back to python
   (function deepLink() {
     var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
-    if (m) { applyFilter(m[1] || 'all', false); }
+    applyFilter(m ? (m[1] || 'python') : 'python', false);
   })();
   window.addEventListener('hashchange', function () {
     var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
-    if (m) { applyFilter(m[1] || 'all', false); }
+    if (m) { applyFilter(m[1] || 'python', false); }
   });
 
   /* ============ Stats count-up ============ */
