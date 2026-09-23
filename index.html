@@ -160,6 +160,7 @@
   .tag.reporting { background: #f1eaf8; color: #7a4d9e; }
   .tag.utility { background: #faf1df; color: #8a5a00; }
   .tag.uni { background: #edeae3; color: var(--ink-soft); }
+  .tag.data { background: #e8f0f8; color: #0d5794; }
   .card h4 { margin-top: 2px; font-size: 1.02rem; }
   .card p { margin-top: 6px; font-size: .89rem; color: var(--ink-soft); }
   .card .tech { margin-top: 10px; font-size: .8rem; color: var(--ink); font-weight: 600; }
@@ -393,12 +394,13 @@
     </div>
 
     <div class="chips reveal" role="group" aria-label="Filter projects by phase">
-      <button class="chip active" data-filter="all">All <sup>16</sup></button>
+      <button class="chip active" data-filter="all">All <sup>17</sup></button>
       <button class="chip" data-filter="launch">Launch <sup>4</sup></button>
       <button class="chip" data-filter="delivery">Delivery <sup>3</sup></button>
       <button class="chip" data-filter="reporting">Reporting <sup>3</sup></button>
       <button class="chip" data-filter="utility">Utilities <sup>3</sup></button>
       <button class="chip" data-filter="university">University <sup>3</sup></button>
+      <button class="chip" data-filter="data">Data &amp; Energy <sup>1</sup></button>
     </div>
 
     <!-- Phase 1 -->
@@ -652,6 +654,24 @@
         <div class="tech">Google Data Studio · Data visualization</div>
         <div class="card-foot">
           <a class="code" href="https://datastudio.google.com/reporting/d787ca46-5f8c-449d-9c3d-47bf7164d82f/page/3ucKF" target="_blank" rel="noopener">Open the dashboard &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data & Energy -->
+    <div class="group-head reveal" data-group="data">
+      <h3>Data &amp; Energy <small>— thesis research, visualized for the web</small></h3>
+    </div>
+    <div class="cards">
+      <div class="card reveal" data-phase="data">
+        <span class="tag data">Data</span>
+        <h4>CSR Energy &amp; Emissions Intelligence</h4>
+        <p>Interactive dashboard on energy use and emissions intensity across listed
+           energy-intensive sectors — KPIs, top-15 ranking, trends and SIC breakdown.</p>
+        <div class="tech">BigQuery · Power BI · Chart.js</div>
+        <div class="card-foot">
+          <a class="code" href="projects/csr-energy-dashboard/" target="_blank" rel="noopener">Open the live dashboard &rarr;</a>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/csr-energy-dashboard" target="_blank" rel="noopener">Source &amp; data &rarr;</a>
         </div>
       </div>
     </div>

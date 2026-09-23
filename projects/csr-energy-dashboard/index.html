@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSR Energy &amp; Emissions Intelligence — Personal Design Project</title>
+<meta name="description" content="Personal design project (not an official thesis). Energy sustainability dashboard: GHG intensity, Top-5 emitter trends 2015-2018, SEC company sample by SIC. Sources: World Bank WDI, SEC EDGAR.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfcf9'/><text x='50' y='70' font-family='Arial,sans-serif' font-size='54' text-anchor='middle' fill='%230d5794'>CE</text></svg>">
+<style>
+:root{
+  --ink:#26231f; --ink-soft:#5c574f; --line:#e4e0d8; --bg:#fdfcf9; --paper:#ffffff;
+  --accent:#0d5794; --accent-dark:#093f6e; --green:#1f8a70; --green-soft:#e3f2ec;
+  --warn:#b4452f; --chip:#f1efe9; --grid:#edebe9;
+  --shadow:0 1px 3px rgba(38,35,31,.07),0 1px 2px rgba(38,35,31,.05);
+}
+[data-theme="dark"]{
+  --ink:#e9e4d8; --ink-soft:#a8a294; --line:#35322b; --bg:#16140f; --paper:#1e1b15;
+  --accent:#5ea3d8; --accent-dark:#8fc0e6; --green:#37b894; --green-soft:#16281f;
+  --warn:#e2705a; --chip:#262219; --grid:#2c2921;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+header{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.bar{max-width:1100px;margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{line-height:1.2}
+.brand b{font-size:.95rem;letter-spacing:-.01em}
+.brand span{display:block;font-size:.7rem;color:var(--ink-soft)}
+nav.cats{display:flex;gap:4px;flex-wrap:wrap;margin-left:4px}
+nav.cats a{font-size:.82rem;color:var(--ink-soft);text-decoration:none;padding:6px 12px;border-radius:20px;border:1px solid transparent}
+nav.cats a:hover{background:var(--chip);color:var(--ink)}
+nav.cats a.active{background:var(--green-soft);border-color:var(--green);color:var(--ink);font-weight:600}
+.grow{flex:1}
+.ssearch{position:relative}
+.ssearch input{padding:7px 11px 7px 30px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:.82rem;width:190px}
+.ssearch svg{position:absolute;left:9px;top:9px;width:14px;height:14px;opacity:.5}
+.iconbtn{background:var(--chip);border:1px solid var(--line);color:var(--ink);width:34px;height:34px;border-radius:8px;font-size:15px;display:flex;align-items:center;justify-content:center}
+.wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+.hero{padding:34px 0 8px}
+.hero .kicker{font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green);font-weight:700;margin-bottom:10px}
+.hero h1{font-size:clamp(1.4rem,3.4vw,2rem);letter-spacing:-.02em;line-height:1.2}
+.hero h1 .light{color:var(--ink-soft);font-weight:400}
+.hero p.lead{margin-top:12px;color:var(--ink-soft);font-size:.98rem;max-width:820px}
+.badges{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:20px;padding:2px 12px;font-size:.72rem;color:var(--ink-soft)}
+.badge.hot{border-color:var(--green);color:var(--green);font-weight:600}
+#status{margin:16px 0;font-size:.82rem;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink-soft)}
+#status.error{border-color:var(--warn);color:var(--warn)}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:6px 0 22px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);border-top:4px solid var(--accent)}
+.kpi.g{border-top-color:var(--green)}
+.kpi .label{font-size:.68rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.kpi .value{font-size:1.55rem;font-weight:700;letter-spacing:-.02em;margin-top:4px;color:var(--ink)}
+.kpi .value small{font-size:.8rem;font-weight:400;color:var(--ink-soft)}
+.kpi .sub{font-size:.75rem;color:var(--ink-soft);margin-top:2px}
+.kpi .delta{display:inline-block;margin-top:8px;font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:12px;background:var(--green-soft);color:var(--green)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px;box-shadow:var(--shadow);margin-bottom:20px}
+.card h2{font-size:1.02rem;letter-spacing:-.01em;color:var(--accent);margin-bottom:2px}
+[data-theme="dark"] .card h2{color:var(--accent-dark)}
+.card p.desc{font-size:.82rem;color:var(--ink-soft);margin:0 0 12px}
+.chart-wrap{position:relative;height:400px}
+.chart-wrap.tall{height:500px}
+.tbl-tools{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.tbl-tools input{padding:7px 11px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font-size:.83rem;min-width:220px}
+.tbl-tools .count{font-size:.78rem;color:var(--ink-soft)}
+div.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+thead th{background:var(--accent);color:#fff;text-align:left;padding:8px 10px;position:sticky;top:0}
+tbody td{padding:7px 10px;border-bottom:1px solid var(--grid)}
+tbody tr:nth-child(even){background:var(--chip)}
+tbody tr:hover td{background:var(--green-soft)}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.note{font-size:.75rem;color:var(--ink-soft);margin-top:10px;line-height:1.55}
+footer{border-top:1px solid var(--line);background:var(--paper);margin-top:26px}
+footer .wrap{padding:18px 22px 26px;font-size:.75rem;color:var(--ink-soft);line-height:1.6}
+footer b{color:var(--ink)}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.chart-wrap{height:320px}.chart-wrap.tall{height:460px}}
+@media(max-width:640px){.ssearch input{width:130px}nav.cats{order:3;width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand"><b>CSR Energy &amp; Emissions</b><span>Intelligence · personal project</span></div>
+    <nav class="cats" aria-label="Dashboard sections">
+      <a href="#overview" class="active">Overview</a>
+      <a href="#intensity">Intensity</a>
+      <a href="#trend">Trend</a>
+      <a href="#sectors">Sectors</a>
+    </nav>
+    <div class="grow"></div>
+    <div class="ssearch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <input id="sicSearch" type="search" placeholder="Filter SIC table…" aria-label="Filter SIC table">
+    </div>
+    <button class="iconbtn" id="themeBtn" title="Toggle light/dark" aria-label="Toggle light/dark">◐</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="kicker">Energy sustainability · data-viz</div>
+    <h1>CSR Energy &amp; Emissions Intelligence <span class="light">— Personal Design Project</span></h1>
+    <p class="lead">How carbon-intensive are economies, who emits most, and which sectors dominate a 5,000-company SEC sample.
+    Main window 2015–2018 (2019–2020 excluded for coverage gaps). Open by double-click — no build, no server.</p>
+    <div class="badges">
+      <span class="badge hot">2018 default year</span>
+      <span class="badge">260 countries · 5,000 companies</span>
+      <span class="badge">WDI + SEC EDGAR</span>
+      <span class="badge">Chart.js CDN (only external)</span>
+    </div>
+  </div>
+
+  <div id="status" role="status" aria-live="polite">Loading data…</div>
+
+  <section id="overview" aria-label="Key indicators">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="label">Total GHG · 2018</div><div class="value" id="kpi-ghg">—</div><div class="sub">kt CO₂e · WDI proxy EN.ATM.GHGT.KT.CE</div><span class="delta">▲ world total</span></div>
+      <div class="kpi g"><div class="label">Avg intensity</div><div class="value" id="kpi-int">—</div><div class="sub">t CO₂e / M USD GDP (mean)</div><span class="delta">efficiency lens</span></div>
+      <div class="kpi g"><div class="label">Avg CO₂ per capita</div><div class="value" id="kpi-pc">—</div><div class="sub">tonnes per person (mean)</div><span class="delta">equity lens</span></div>
+      <div class="kpi"><div class="label">Countries / Companies</div><div class="value" id="kpi-n">—</div><div class="sub" id="kpi-n-sub">—</div><span class="delta">coverage</span></div>
+    </div>
+  </section>
+
+  <section class="card" id="intensity">
+    <h2>Top 15 countries by emission intensity (2018)</h2>
+    <p class="desc">Tonnes of CO₂e per million USD of GDP. Small economies rank high because the GDP denominator is tiny — always declare this limit. Hover a bar for absolute GHG.</p>
+    <div class="chart-wrap tall"><canvas id="barTop15" role="img" aria-label="Horizontal bar chart of top 15 emission intensities"></canvas></div>
+    <p class="note">Reading tip: intensity ≠ absolute emissions. Central African Republic leads on intensity but emits far less in absolute terms than Iran or the low-income aggregate.</p>
+  </section>
+
+  <section class="card" id="trend">
+    <h2>GHG trend — Top 5 emitters (2015–2018)</h2>
+    <p class="desc">Total GHG in kt CO₂e. China leads by a wide margin; India shows the steepest rise; Japan declines slightly. Source: WDI_proxy.</p>
+    <div class="chart-wrap"><canvas id="lineTrend" role="img" aria-label="Line chart of GHG trend for top 5 emitters"></canvas></div>
+  </section>
+
+  <section class="card" id="sectors">
+    <h2>Company sample by SIC sector</h2>
+    <p class="desc">SEC EDGAR sample: 5,000 companies. Top 40 SIC codes by company count, one example company each. Use the header search box to filter.</p>
+    <div class="tbl-tools">
+      <input id="sicSearch2" type="search" placeholder="Filter by SIC or company…" aria-label="Filter by SIC or company">
+      <span class="count" id="sicCount"></span>
+    </div>
+    <div class="tbl">
+      <table id="sicTable">
+        <thead><tr><th scope="col">SIC</th><th scope="col">Companies</th><th scope="col">Example company</th></tr></thead>
+        <tbody><tr><td colspan="3">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">SIC codes group companies by industry (e.g. 2834 pharmaceuticals, 7372 software, 1311 crude petroleum). Counts describe the sample, not the whole market.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Sources:</b> World Bank World Development Indicators — GDP (NY.GDP.MKTP.CD), total GHG (EN.ATM.GHGT.KT.CE) via BigQuery marts;
+    company sample from SEC EDGAR. Disclosure detail (CDP/GRI) not yet integrated.</p>
+    <p><b>Not an official thesis</b> — personal design project for portfolio purposes. Data files: <code>portfolio\data\kpi.json</code>,
+    <code>top15_intensity.json</code>, <code>trend_top5.json</code>, <code>sic_table.json</code> (fetched when served over HTTP, embedded fallback on double-click).
+    Colours <code>#0d5794</code> / <code>#1f8a70</code> on <code>#fdfcf9</code>; dark mode included.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+"use strict";
+// Embedded fallback = same content as portfolio\data\*.json (keeps file <200KB, works on file://).
+var EMBEDDED = {
+  kpi: {"default_year":2018,"ghg_total_kt_co2e":446565920.0,"intensity_mean_t_per_musd":1154.2645996681676,"co2_pc_mean_t":4.157869478712633,"n_countries":260,"n_companies_total":5000},
+  top15: [
+    {"country_code":"CAF","country_name":"Central African Republic","intensity_t_per_musd":25070.0,"ghg_kt_co2e":55680.0},
+    {"country_code":"TCD","country_name":"Chad","intensity_t_per_musd":7178.5,"ghg_kt_co2e":80680.0},
+    {"country_code":"AFG","country_name":"Afghanistan","intensity_t_per_musd":5479.4,"ghg_kt_co2e":98920.0},
+    {"country_code":"SOM","country_name":"Somalia","intensity_t_per_musd":4609.7,"ghg_kt_co2e":26970.0},
+    {"country_code":"UZB","country_name":"Uzbekistan","intensity_t_per_musd":4474.6,"ghg_kt_co2e":235510.0},
+    {"country_code":"MNG","country_name":"Mongolia","intensity_t_per_musd":3993.0,"ghg_kt_co2e":52620.0},
+    {"country_code":"TLS","country_name":"Timor-Leste","intensity_t_per_musd":3908.1,"ghg_kt_co2e":6190.0},
+    {"country_code":"SDN","country_name":"Sudan","intensity_t_per_musd":3540.5,"ghg_kt_co2e":109630.0},
+    {"country_code":"NER","country_name":"Niger","intensity_t_per_musd":3517.2,"ghg_kt_co2e":45050.0},
+    {"country_code":"TKM","country_name":"Turkmenistan","intensity_t_per_musd":3068.3,"ghg_kt_co2e":125080.0},
+    {"country_code":"IRN","country_name":"Iran, Islamic Rep.","intensity_t_per_musd":2813.9,"ghg_kt_co2e":828280.0},
+    {"country_code":"LBR","country_name":"Liberia","intensity_t_per_musd":2687.9,"ghg_kt_co2e":9200.0},
+    {"country_code":"LIC","country_name":"Low income","intensity_t_per_musd":2604.1,"ghg_kt_co2e":1108360.0},
+    {"country_code":"MLI","country_name":"Mali","intensity_t_per_musd":2562.3,"ghg_kt_co2e":43740.0},
+    {"country_code":"GIN","country_name":"Guinea","intensity_t_per_musd":2436.5,"ghg_kt_co2e":28890.0}
+  ],
+  trend: {"years":[2015,2016,2017,2018],"series":[
+    {"country_code":"CHN","country_name":"China","values":[11859290.0,11857180.0,12058050.0,12355240.0]},
+    {"country_code":"USA","country_name":"United States","values":[6003650.0,5907270.0,5842800.0,6023620.0]},
+    {"country_code":"IND","country_name":"India","values":[3063650.0,3103110.0,3229920.0,3374990.0]},
+    {"country_code":"RUS","country_name":"Russian Federation","values":[2475690.0,2470100.0,2494150.0,2543400.0]},
+    {"country_code":"JPN","country_name":"Japan","values":[1265070.0,1257730.0,1235370.0,1186770.0]}
+  ]},
+  sic: [
+    {"sic":"2834","n_companies":292,"example_company":"TG THERAPEUTICS, INC."},
+    {"sic":"7372","n_companies":218,"example_company":"SAP SE"},
+    {"sic":"7389","n_companies":205,"example_company":"SPAR GROUP, INC."},
+    {"sic":"1311","n_companies":149,"example_company":"TENGASCO INC"},
+    {"sic":"1000","n_companies":142,"example_company":"SOUTHERN COPPER CORP"},
+    {"sic":"6798","n_companies":140,"example_company":"IMPAC MORTGAGE HOLDINGS INC"},
+    {"sic":"6022","n_companies":131,"example_company":"KENTUCKY BANCSHARES INC"},
+    {"sic":"6770","n_companies":116,"example_company":"DIGITAL CREATIVE DEVELOPMENT CORP"},
+    {"sic":"3674","n_companies":108,"example_company":"PERICOM SEMICONDUCTOR CORP"},
+    {"sic":"3841","n_companies":96,"example_company":"KENSEY NASH CORP"},
+    {"sic":"6035","n_companies":88,"example_company":"BROADWAY FINANCIAL CORP"},
+    {"sic":"6021","n_companies":87,"example_company":"UNIONBANCAL CORP"},
+    {"sic":"1040","n_companies":77,"example_company":"GOLDEN MINERALS CO"},
+    {"sic":"6221","n_companies":73,"example_company":"ML TREND-FOLLOWING FUTURES FUND L.P."},
+    {"sic":"4911","n_companies":57,"example_company":"TUCSON ELECTRIC POWER CO"},
+    {"sic":"4813","n_companies":57,"example_company":"TELKOM INDONESIA TBK"},
+    {"sic":"8742","n_companies":56,"example_company":"WILHELMINA INTERNATIONAL, INC."},
+    {"sic":"2860","n_companies":55,"example_company":"UNION CARBIDE CORP"},
+    {"sic":"7374","n_companies":49,"example_company":"INTERNET AMERICA INC"},
+    {"sic":"2836","n_companies":48,"example_company":"NOVAVAX INC"},
+    {"sic":"7373","n_companies":46,"example_company":"OPEN TEXT CORP"},
+    {"sic":"1382","n_companies":44,"example_company":"NXT ENERGY SOLUTIONS INC."},
+    {"sic":"6331","n_companies":42,"example_company":"UNICO AMERICAN CORP"},
+    {"sic":"7371","n_companies":41,"example_company":"ADVENT SOFTWARE INC"},
+    {"sic":"6500","n_companies":40,"example_company":"SOUTHCORP CAPITAL, INC."},
+    {"sic":"8200","n_companies":38,"example_company":"LEARNING TREE INTERNATIONAL, INC."},
+    {"sic":"4899","n_companies":36,"example_company":"RADIOIO, INC."},
+    {"sic":"7370","n_companies":36,"example_company":"FACTSET RESEARCH SYSTEMS INC"},
+    {"sic":"3663","n_companies":35,"example_company":"BLONDER TONGUE LABORATORIES INC"},
+    {"sic":"3714","n_companies":35,"example_company":"PURADYN FILTER TECHNOLOGIES INC"},
+    {"sic":"7310","n_companies":32,"example_company":"THEGLOBE COM INC"},
+    {"sic":"9995","n_companies":32,"example_company":"PROTEO INC"},
+    {"sic":"6211","n_companies":32,"example_company":"LADENBURG THALMANN FINANCIAL SERVICES"},
+    {"sic":"4922","n_companies":32,"example_company":"NATIONAL GRID PLC"},
+    {"sic":"7900","n_companies":30,"example_company":"DOVER MOTORSPORTS INC"},
+    {"sic":"5812","n_companies":30,"example_company":"BJS RESTAURANTS INC"},
+    {"sic":"1381","n_companies":28,"example_company":"PRECISION DRILLING CORP"},
+    {"sic":"6282","n_companies":27,"example_company":"AFFILIATED MANAGERS GROUP, INC."},
+    {"sic":"8731","n_companies":25,"example_company":"PHARMACEUTICAL PRODUCT DEVELOPMENT INC"},
+    {"sic":"3661","n_companies":25,"example_company":"WESTELL TECHNOLOGIES INC"}
+  ]
+};
+
+function loadJson(path, fallback){
+  return fetch(path).then(function(res){
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    return res.json();
+  }).catch(function(){ return fallback; });
+}
+function fmt(n, dec){
+  if(n===null||n===undefined||isNaN(n)) return "—";
+  return Number(n).toLocaleString("en-US",{minimumFractionDigits:dec||0,maximumFractionDigits:dec||0});
+}
+function cssVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+var charts = [];
+function themeColors(){
+  var dark = document.documentElement.getAttribute("data-theme")==="dark";
+  return { grid: dark ? "#2c2921" : "#edebe9", tick: dark ? "#a8a294" : "#5c574f" };
+}
+// Light/dark pattern copied from hall-brad: data-theme attr + localStorage.
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme",t);
+  try{ localStorage.setItem("csr-theme",t); }catch(e){}
+  var c = themeColors();
+  charts.forEach(function(ch){
+    if(ch.options.scales){
+      Object.keys(ch.options.scales).forEach(function(k){
+        var s = ch.options.scales[k];
+        if(s.grid) s.grid.color = c.grid;
+        if(s.ticks) s.ticks.color = c.tick;
+        if(s.title) s.title.color = c.tick;
+      });
+    }
+    if(ch.options.plugins && ch.options.plugins.legend && ch.options.plugins.legend.labels)
+      ch.options.plugins.legend.labels.color = c.tick;
+    ch.update();
+  });
+}
+document.getElementById("themeBtn").onclick = function(){
+  applyTheme(document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark");
+};
+(function(){ var t="light"; try{ t = localStorage.getItem("csr-theme")||"light"; }catch(e){} applyTheme(t); })();
+
+// Active section highlight in category nav.
+var navLinks = Array.prototype.slice.call(document.querySelectorAll("nav.cats a"));
+function markNav(){
+  var cur = "overview";
+  ["overview","intensity","trend","sectors"].forEach(function(id){
+    var elx = document.getElementById(id);
+    if(elx && elx.getBoundingClientRect().top < 140) cur = id;
+  });
+  navLinks.forEach(function(a){ a.classList.toggle("active", a.getAttribute("href")==="#"+cur); });
+}
+window.addEventListener("scroll", markNav, {passive:true});
+
+var sicRows = [];
+function renderSic(filter){
+  var q = (filter||"").toLowerCase();
+  var tb = document.querySelector("#sicTable tbody");
+  tb.innerHTML = "";
+  var shown = 0;
+  sicRows.slice(0,40).forEach(function(r){
+    var hay = (r.sic+" "+r.example_company+" "+r.n_companies).toLowerCase();
+    if(q && hay.indexOf(q)===-1) return;
+    shown++;
+    var tr = document.createElement("tr");
+    var a = document.createElement("td"); a.textContent = r.sic;
+    var b = document.createElement("td"); b.textContent = fmt(r.n_companies,0); b.className = "num";
+    var c = document.createElement("td"); c.textContent = r.example_company;
+    tr.appendChild(a); tr.appendChild(b); tr.appendChild(c); tb.appendChild(tr);
+  });
+  if(!shown){
+    var tr = document.createElement("tr");
+    var td = document.createElement("td"); td.colSpan = 3; td.textContent = "No sectors match this filter.";
+    tr.appendChild(td); tb.appendChild(tr);
+  }
+  document.getElementById("sicCount").textContent = shown + " of " + Math.min(sicRows.length,40) + " sectors";
+}
+function bindSearch(id){
+  document.getElementById(id).addEventListener("input", function(e){
+    var v = e.target.value;
+    var o1 = document.getElementById("sicSearch"); var o2 = document.getElementById("sicSearch2");
+    if(o1 && o1.id!==id) o1.value = v;
+    if(o2 && o2.id!==id) o2.value = v;
+    renderSic(v);
+  });
+}
+bindSearch("sicSearch"); bindSearch("sicSearch2");
+
+function main(){
+  var status = document.getElementById("status");
+  Promise.all([
+    loadJson("./data/kpi.json", EMBEDDED.kpi),
+    loadJson("./data/top15_intensity.json", EMBEDDED.top15),
+    loadJson("./data/trend_top5.json", EMBEDDED.trend),
+    loadJson("./data/sic_table.json", EMBEDDED.sic)
+  ]).then(function(vals){
+    var kpi = vals[0], top15 = vals[1], trend = vals[2], sic = vals[3];
+    document.getElementById("kpi-ghg").textContent = fmt(kpi.ghg_total_kt_co2e,0);
+    document.getElementById("kpi-int").textContent = fmt(kpi.intensity_mean_t_per_musd,1);
+    document.getElementById("kpi-pc").textContent = fmt(kpi.co2_pc_mean_t,1);
+    document.getElementById("kpi-n").textContent = fmt(kpi.n_countries,0)+" / "+fmt(kpi.n_companies_total,0);
+    document.getElementById("kpi-n-sub").textContent = "Year "+kpi.default_year+" · 2015–2018 window";
+
+    sicRows = sic;
+    renderSic("");
+
+    if(typeof Chart==="undefined"){
+      status.textContent = "Charts need internet once for the Chart.js CDN. KPI cards and the SIC table above are live from local data.";
+      status.classList.add("error");
+      return;
+    }
+    var c = themeColors();
+    var BLUE = cssVar("--accent") || "#0d5794";
+    var GREEN = cssVar("--green") || "#1f8a70";
+    var palette = [BLUE, GREEN, "#3b8fbf", "#7fb3d5", "#2f3e4d"];
+    Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif';
+    Chart.defaults.color = c.tick;
+
+    charts.push(new Chart(document.getElementById("barTop15"), {
+      type: "bar",
+      data: { labels: top15.map(function(r){ return r.country_name; }),
+        datasets: [{ label: "Intensity t/M USD (2018)",
+          data: top15.map(function(r){ return r.intensity_t_per_musd; }),
+          backgroundColor: top15.map(function(_,i){ return i===0 ? "#b4452f" : (i<3 ? GREEN : BLUE); }),
+          borderWidth: 0 }]},
+      options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
+        plugins: { legend: {display:false},
+          tooltip: { callbacks: { afterLabel: function(ctx){ var r=top15[ctx.dataIndex]; return "GHG: "+fmt(r.ghg_kt_co2e,0)+" kt"; } } } },
+        scales: {
+          x: { grid:{color:c.grid}, ticks:{color:c.tick}, title:{display:true,text:"t CO₂e / M USD",color:c.tick} },
+          y: { grid:{display:false}, ticks:{color:c.tick,autoSkip:false} } } }
+    }));
+
+    charts.push(new Chart(document.getElementById("lineTrend"), {
+      type: "line",
+      data: { labels: trend.years.map(String),
+        datasets: trend.series.map(function(s,i){
+          var col = palette[i%palette.length];
+          return { label:s.country_name, data:s.values, borderColor:col, backgroundColor:col, borderWidth:2, pointRadius:3, tension:0.2 };
+        })},
+      options: { responsive:true, maintainAspectRatio:false,
+        plugins: { legend:{position:"top",align:"end",labels:{color:c.tick}} },
+        scales: {
+          x: { grid:{color:c.grid}, ticks:{color:c.tick}, title:{display:true,text:"Year",color:c.tick} },
+          y: { grid:{color:c.grid}, ticks:{color:c.tick}, title:{display:true,text:"kt CO₂e",color:c.tick} } } }
+    }));
+
+    status.textContent = "Data loaded (external JSON over HTTP, embedded fallback on double-click). Default year 2018.";
+    markNav();
+  });
+}
+main();
+</script>
+</body>
+</html>
