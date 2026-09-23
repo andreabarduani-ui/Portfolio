@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaidra · Collect, understand and govern who can access what everywhere</title>
+  <meta name="description" content="Kaidra unifies identity data from every system into one source of truth. Monitor, certify and remediate access in real time. EU-hosted.">
+  <meta property="og:title" content="Kaidra · Identity visibility and intelligence">
+  <meta property="og:description" content="One identity graph across HR, directories and business apps. See who can access what, why, and fix it from one console.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/figma-og.png">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0F1E'/%3E%3Ccircle cx='16' cy='16' r='6.5' fill='%232E6BF0'/%3E%3Ccircle cx='23' cy='9' r='3' fill='%2343E0B8'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=6">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a class="wordmark" href="#top" aria-label="Kaidra home">
+        <svg class="wordmark-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" class="mark-bg"/><circle cx="16" cy="16" r="6.5" class="mark-primary"/><circle cx="23" cy="9" r="3" class="mark-accent"/></svg>
+        <span>kaidra</span>
+      </a>
+
+      <nav class="site-nav" id="siteNav" aria-label="Main">
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#visibility">Platform</a></li>
+          <li><a href="#demo">Live demo</a></li>
+          <li><a href="#graph">Identity graph</a></li>
+          <li><a href="#integrations">Integrations</a></li>
+          <li><a href="#events">Events</a></li>
+          <li><a href="#guides">Resources</a></li>
+        </ul>
+        <a class="btn btn-primary btn-sm nav-cta" href="#cta">Get a demo</a>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="top" data-variant="a">
+      <img class="hero-art" src="assets/figma-hero-graph.png" alt="" aria-hidden="true">
+      <canvas id="graphCanvas" class="hero-canvas" aria-hidden="true"></canvas>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="hero-kicker">Identity visibility and intelligence</p>
+          <h1 class="hero-title">Collect, understand and govern <span class="hero-title-dim">who can access what</span> everywhere.</h1>
+          <p class="hero-sub">Kaidra unifies identity data from every system into one source of truth. Monitor, certify and fix access in real time, from one console.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#cta">
+              Book a demo
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+            <a class="btn btn-ghost" href="#how">Explore the platform</a>
+          </div>
+          <ul class="hero-badges" aria-label="Compliance certifications">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>NIS 2</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>ISO 27001</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>SOC 2 Type II</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>GDPR</li>
+          </ul>
+        </div>
+
+        <!-- Interactive dashboard mockup -->
+        <div class="hero-panel">
+          <div class="window-back" id="windowBack" aria-hidden="true"></div>
+          <div class="window" id="heroWindow" aria-label="Kaidra insights, simulated: 12,482 identities, 1.2 million entitlements, 37 at-risk accounts, 5 active review campaigns">
+            <div class="window-bar">
+              <span class="window-dot" aria-hidden="true"></span><span class="window-dot" aria-hidden="true"></span><span class="window-dot" aria-hidden="true"></span>
+              <span class="window-url">kaidra.app/insights</span>
+              <div class="seg" role="tablist" aria-label="Insights view">
+                <button class="seg-btn is-active" data-view="overview" role="tab" aria-selected="true" id="seg-overview" aria-controls="riskChartBlock">Overview</button>
+                <button class="seg-btn" data-view="identities" role="tab" aria-selected="false" id="seg-identities" aria-controls="riskChartBlock">Identities</button>
+              </div>
+            </div>
+            <div class="window-body">
+              <div class="app-rail" aria-hidden="true">
+                <span class="rail-logo"></span>
+                <span class="rail-ic is-active"><svg viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/></svg></span>
+                <span class="rail-ic"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                <span class="rail-ic"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+                <span class="rail-ic"><svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                <span class="rail-ic rail-bottom"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+              </div>
+              <div class="window-main">
+                <div class="kpi-grid">
+                  <div class="kpi">
+                    <span class="kpi-label">Identities</span>
+                    <span class="kpi-value"><span class="count" data-count-to="12482" data-format="grouped">0</span></span>
+                    <span class="kpi-row"><svg class="kpi-spark" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,15 10,13 20,14 30,10 40,11 50,7 60,5"/></svg><span class="kpi-trend up">+1.1% this week</span></span>
+                  </div>
+                  <div class="kpi">
+                    <span class="kpi-label">Entitlements</span>
+                    <span class="kpi-value"><span class="count" data-count-to="1208440" data-format="grouped">0</span></span>
+                    <span class="kpi-row"><svg class="kpi-spark" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,14 10,14 20,11 30,12 40,8 50,6 60,4"/></svg><span class="kpi-trend up">+3.2% this week</span></span>
+                  </div>
+                  <div class="kpi">
+                    <span class="kpi-label">At-risk accounts</span>
+                    <span class="kpi-value kpi-warn"><span class="count" data-count-to="37">0</span></span>
+                    <span class="kpi-row"><svg class="kpi-spark" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,5 10,7 20,6 30,10 40,9 50,13 60,15"/></svg><span class="kpi-trend down">-8 since Monday</span></span>
+                  </div>
+                  <div class="kpi">
+                    <span class="kpi-label">Active campaigns</span>
+                    <span class="kpi-value"><span class="count" data-count-to="5">0</span></span>
+                    <span class="kpi-row"><svg class="kpi-spark" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,10 10,10 20,12 30,9 40,11 50,10 60,9"/></svg><span class="kpi-trend">2 due Friday</span></span>
+                  </div>
+                </div>
+
+                <div class="chart-block" id="riskChartBlock" role="tabpanel" aria-labelledby="seg-overview">
+                  <p class="mock-caption" id="riskChartCaption">At-risk accounts · 12 weeks</p>
+                  <svg class="risk-chart" viewBox="0 0 280 70" preserveAspectRatio="none" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="riskFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#FC7E4F" stop-opacity="0.22"/>
+                        <stop offset="100%" stop-color="#FC7E4F" stop-opacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    <g class="risk-dataset is-active" data-dataset="overview">
+                      <path class="risk-area" d="M0,24 L28,20 L56,28 L84,18 L112,32 L140,26 L168,38 L196,33 L224,46 L252,42 L280,52 L280,70 L0,70 Z"/>
+                      <path class="risk-line" d="M0,24 L28,20 L56,28 L84,18 L112,32 L140,26 L168,38 L196,33 L224,46 L252,42 L280,52"/>
+                    </g>
+                    <g class="risk-dataset" data-dataset="identities">
+                      <path class="risk-area alt" d="M0,52 L28,47 L56,51 L84,42 L112,46 L140,36 L168,40 L196,28 L224,32 L252,20 L280,14 L280,70 L0,70 Z"/>
+                      <path class="risk-line alt" d="M0,52 L28,47 L56,51 L84,42 L112,46 L140,36 L168,40 L196,28 L224,32 L252,20 L280,14"/>
+                    </g>
+                  </svg>
+                  <div class="chart-legend">
+                    <span class="lg-dot"></span><span id="riskChartLegend">37 flagged · 9 orphans · 12 toxic combos</span>
+                  </div>
+                </div>
+
+                <div class="source-block">
+                  <p class="mock-caption">Access by source</p>
+                  <ul class="source-bars">
+                    <li><span class="src-name">Entra ID</span><span class="src-track"><span class="src-fill" data-w="62"></span></span><span class="src-val">62%</span></li>
+                    <li><span class="src-name">SAP</span><span class="src-track"><span class="src-fill" data-w="21"></span></span><span class="src-val">21%</span></li>
+                    <li><span class="src-name">Workspace</span><span class="src-track"><span class="src-fill" data-w="9"></span></span><span class="src-val">9%</span></li>
+                    <li><span class="src-name">Other</span><span class="src-track"><span class="src-fill" data-w="8"></span></span><span class="src-val">8%</span></li>
+                  </ul>
+                </div>
+
+                <div class="toast" id="heroToast" role="status" aria-live="polite">
+                  <svg class="toast-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                  <p class="toast-text" id="heroToastText">Femke V. off-boarded 12 days ago. f.vosloo is still active in SAP.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant B: editorial statement hero -->
+      <div class="container hero-b" id="heroB" hidden>
+        <p class="hero-kicker">Identity visibility and intelligence</p>
+        <h1 class="hero-title-xl">Who can access what.<br><span class="hero-title-dim">Everywhere. One graph.</span></h1>
+        <p class="hero-sub">Kaidra unifies identity data from every system into one source of truth. Monitor, certify and fix access in real time.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#demo">Try the live demo
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#cta">Book a demo</a>
+        </div>
+        <ul class="hero-badges" aria-label="Compliance certifications">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>NIS 2</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>ISO 27001</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>SOC 2 Type II</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>GDPR</li>
+        </ul>
+      </div>
+
+      <div class="hero-variant-toggle" role="radiogroup" aria-label="Hero variant">
+        <span class="vt-label">Hero</span>
+        <button class="vt-btn is-active" data-set-variant="a" role="radio" aria-checked="true">A · Console</button>
+        <button class="vt-btn" data-set-variant="b" role="radio" aria-checked="false">B · Statement</button>
+      </div>
+    </section>
+
+    <!-- ============ LOGO MARQUEE ============ -->
+    <section class="marquee-section" aria-label="Customers">
+      <div class="container">
+        <p class="marquee-title">Trusted by identity teams across Europe</p>
+      </div>
+      <div class="marquee" data-marquee>
+        <ul class="marquee-track" id="marqueeTrack">
+          <li>Attentia</li><li>Descartes</li><li>Fédérale</li><li>GEOxyz</li><li>Liantis</li><li>Monuta</li><li>NMBS</li><li>Nagelmackers</li><li>Nine Altitudes</li><li>Terumo</li><li>Titeca</li><li>VUB</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ STATS LEDGER ============ -->
+    <section class="stats" aria-label="Key facts">
+      <div class="container">
+        <ul class="ledger">
+          <li class="ledger-item">
+            <span class="ledger-value">60+</span>
+            <span class="ledger-label">pre-built connectors, from SAP to Entra ID</span>
+          </li>
+          <li class="ledger-item">
+            <span class="ledger-value">&lt; 2 wks</span>
+            <span class="ledger-label">from kickoff to full deployment</span>
+          </li>
+          <li class="ledger-item">
+            <span class="ledger-value">100%</span>
+            <span class="ledger-label">EU-hosted, EU-supported, GDPR by design</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS (process rail) ============ -->
+    <section class="section section-light" id="how">
+      <div class="container">
+        <div class="section-head">
+          <h2>Three steps to total visibility.</h2>
+          <p class="section-lede">From raw sources to governed access. Select a step to see what happens.</p>
+        </div>
+
+        <div class="process" data-process>
+          <div class="process-rail" role="tablist" aria-label="How Kaidra works">
+            <button class="process-step is-active" role="tab" id="tab-connect" aria-selected="true" aria-controls="panel-connect">
+              <span class="step-no">01</span>
+              <span class="step-name">Connect</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg>
+            </button>
+            <button class="process-step" role="tab" id="tab-analyze" aria-selected="false" aria-controls="panel-analyze">
+              <span class="step-no">02</span>
+              <span class="step-name">Analyze</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </button>
+            <button class="process-step" role="tab" id="tab-act" aria-selected="false" aria-controls="panel-act">
+              <span class="step-no">03</span>
+              <span class="step-name">Act</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </button>
+          </div>
+
+          <div class="process-panels">
+            <div class="process-panel is-active" role="tabpanel" id="panel-connect" aria-labelledby="tab-connect" tabindex="0">
+              <div class="process-copy">
+                <h3>Plug in every source.</h3>
+                <p>Connectors pull HR, directory, business and SaaS data on a schedule you control. Full syncs, not samples: every identity, account and entitlement lands in one pool.</p>
+                <ul class="tick-list">
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>60+ pre-built connectors</li>
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Incremental sync, every hour or on demand</li>
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Custom connectors on request</li>
+                </ul>
+              </div>
+              <div class="process-visual mock-pane" aria-hidden="true">
+                <p class="mock-caption">Connected sources</p>
+                <ul class="mock-list">
+                  <li><span class="mock-pill ok">sync</span>Workday · HR</li>
+                  <li><span class="mock-pill ok">sync</span>Entra ID · directory</li>
+                  <li><span class="mock-pill ok">sync</span>SAP S/4HANA · business</li>
+                  <li><span class="mock-pill ok">sync</span>ServiceNow · ITSM</li>
+                  <li><span class="mock-pill ok">sync</span>SharePoint · collab</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="process-panel" role="tabpanel" id="panel-analyze" aria-labelledby="tab-analyze" tabindex="0" hidden>
+              <div class="process-copy">
+                <h3>One graph, every question.</h3>
+                <p>Kaidra links accounts, groups, roles and entitlements into a living identity graph. Toxic combinations, dormant accounts and unexplained grants surface on their own.</p>
+                <ul class="tick-list">
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Inheritance paths for every grant</li>
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Toxic combination rules out of the box</li>
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Risk scoring per identity and per source</li>
+                </ul>
+              </div>
+              <div class="process-visual mock-pane" aria-hidden="true">
+                <p class="mock-caption">Findings · this week</p>
+                <ul class="mock-list">
+                  <li><span class="mock-pill warn">risk</span>37 at-risk accounts</li>
+                  <li><span class="mock-pill warn">toxic</span>12 payment + approval combos</li>
+                  <li><span class="mock-pill warn">dormant</span>214 idle 180+ days</li>
+                  <li><span class="mock-pill warn">orphan</span>9 still active after exit</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="process-panel" role="tabpanel" id="panel-act" aria-labelledby="tab-act" tabindex="0" hidden>
+              <div class="process-copy">
+                <h3>Decide and fix, in the same place.</h3>
+                <p>Run certification campaigns, revoke orphaned access and push remediation back to the source. Every decision is logged with its reason, ready for the next audit.</p>
+                <ul class="tick-list">
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Campaigns reviewers finish in hours</li>
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>One-click revoke, with rollback</li>
+                  <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Full audit trail per decision</li>
+                </ul>
+              </div>
+              <div class="process-visual mock-pane" aria-hidden="true">
+                <p class="mock-caption">Q4 certification</p>
+                <div class="campaign-progress" aria-hidden="true">
+                  <div class="campaign-track"><span class="campaign-fill" data-w="78"></span></div>
+                  <div class="campaign-meta"><span>78% complete</span><span>due Friday</span></div>
+                </div>
+                <ul class="mock-list">
+                  <li><span class="mock-pill ok">done</span>Finance · 40/40 reviewed</li>
+                  <li><span class="mock-pill ok">done</span>HR · 22/22 reviewed</li>
+                  <li><span class="mock-pill warn">open</span>Operations · 31/40 reviewed</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VISIBILITY (split + mini graph) ============ -->
+    <section class="section section-light section-flat-top" id="visibility">
+      <div class="container split">
+        <div class="split-copy">
+          <h2>Govern everything, all at once.</h2>
+          <p class="section-lede">One inventory across every system. Not a sample, not a spreadsheet: the full picture, refreshed continuously.</p>
+          <ul class="tick-list tick-lg">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Full inventory of identities, accounts and entitlements</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Access broken down by source, owner and risk</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Orphaned and dormant account detection</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Role and attribute-based access patterns</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Continuous monitoring with alerting</li>
+          </ul>
+          <a class="text-link" href="#graph">See how the graph works</a>
+        </div>
+
+        <div class="split-visual graph-card" aria-hidden="true">
+          <svg class="mini-graph" viewBox="0 0 420 340" id="miniGraph">
+            <g class="mg-edges" id="mgEdges"></g>
+            <g class="mg-nodes" id="mgNodes"></g>
+            <text x="24" y="36" class="mg-title">Identity graph · live slice</text>
+            <text x="24" y="318" class="mg-note">Hover a node to trace its access</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LIVE DEMO (console) ============ -->
+    <section class="section section-editorial" id="demo">
+      <div class="container">
+        <div class="section-head">
+          <h2>Try the console.</h2>
+          <p class="section-lede">A live slice of Kaidra: search identities, inspect why access exists, revoke what should not. Simulated and fictional, all in your browser.</p>
+        </div>
+
+        <div class="console" data-console>
+          <div class="console-bar">
+            <span class="window-dot" aria-hidden="true"></span><span class="window-dot" aria-hidden="true"></span><span class="window-dot" aria-hidden="true"></span>
+            <span class="window-url">kaidra.app/identities</span>
+            <div class="console-search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" id="consoleSearch" placeholder="Search name, account or department" aria-label="Search identities">
+            </div>
+            <div class="console-filters" role="group" aria-label="Filter by risk" id="consoleFilters">
+              <button class="chip is-active" data-risk="all" aria-pressed="true">All</button>
+              <button class="chip" data-risk="high" aria-pressed="false">High</button>
+              <button class="chip" data-risk="medium" aria-pressed="false">Medium</button>
+              <button class="chip" data-risk="low" aria-pressed="false">Low</button>
+            </div>
+          </div>
+
+          <div class="console-body">
+            <div class="console-table-wrap">
+              <table class="id-table" aria-label="Identities with access risk">
+                <thead>
+                  <tr>
+                    <th scope="col">Identity</th>
+                    <th scope="col">Sources</th>
+                    <th scope="col" class="num">Entitlements</th>
+                    <th scope="col">Risk</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="consoleRows"></tbody>
+              </table>
+              <p class="console-empty" id="consoleEmpty" hidden>No identity matches. Try another search.</p>
+            </div>
+            <aside class="id-panel" id="idPanel" aria-live="polite" aria-label="Identity detail">
+              <p class="id-panel-hint">Select a row to inspect why access exists, then revoke it. Everything runs locally.</p>
+            </aside>
+          </div>
+
+          <div class="console-toast" id="consoleToast" role="status"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TESTIMONIALS (carousel) ============ -->
+    <section class="section section-editorial" id="voices" aria-label="Customer voices">
+      <div class="container">
+        <div class="carousel" data-carousel role="region" aria-roledescription="carousel" aria-label="What customers say">
+          <div class="carousel-stage" id="carouselStage">
+            <figure class="quote is-active" aria-hidden="false">
+              <blockquote>“Our quarterly review cycle went from three weeks of spreadsheet work to a few hours. Reviewers see the context behind every grant and decide on the spot.”</blockquote>
+              <figcaption>IAM Lead · European public transport operator</figcaption>
+            </figure>
+            <figure class="quote" aria-hidden="true">
+              <blockquote>“For the first time we can answer who has access to what across HR, AD and SAP without exporting a single file.”</blockquote>
+              <figcaption>Security Architect · Financial services</figcaption>
+            </figure>
+            <figure class="quote" aria-hidden="true">
+              <blockquote>“Orphaned accounts used to surface during audits. Now Kaidra flags them the day someone leaves.”</blockquote>
+              <figcaption>CISO · Maritime sector</figcaption>
+            </figure>
+            <figure class="quote" aria-hidden="true">
+              <blockquote>“The identity graph gives auditors a straight answer: why this person holds this entitlement, and who approved it.”</blockquote>
+              <figcaption>Internal Auditor · Healthcare</figcaption>
+            </figure>
+            <figure class="quote" aria-hidden="true">
+              <blockquote>“EU-hosted, deployed in under two weeks, adopted by reviewers without training. That is what won the shortlist.”</blockquote>
+              <figcaption>IAM Program Lead · HR services provider</figcaption>
+            </figure>
+          </div>
+
+          <div class="carousel-controls">
+            <button class="carousel-btn" data-carousel-prev aria-label="Previous quote">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <div class="carousel-dots" role="tablist" aria-label="Choose quote" id="carouselDots"></div>
+            <button class="carousel-btn" data-carousel-next aria-label="Next quote">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ IDENTITY GRAPH (lifecycle) ============ -->
+    <section class="section section-dark" id="graph">
+      <div class="container">
+        <div class="section-head">
+          <h2>See the full identity graph change.</h2>
+          <p class="section-lede">Every joiner, mover and leaver updates the graph in real time. Follow one identity through its lifecycle.</p>
+        </div>
+
+        <div class="lifecycle" data-lifecycle>
+          <div class="lifecycle-track" role="tablist" aria-label="Identity lifecycle stages">
+            <button class="life-stage is-active" role="tab" id="life-1" aria-selected="true" aria-controls="life-panel">
+              <span class="life-dot" aria-hidden="true"></span><span class="life-name">Onboarded</span>
+            </button>
+            <button class="life-stage" role="tab" id="life-2" aria-selected="false" aria-controls="life-panel">
+              <span class="life-dot" aria-hidden="true"></span><span class="life-name">Access grows</span>
+            </button>
+            <button class="life-stage" role="tab" id="life-3" aria-selected="false" aria-controls="life-panel">
+              <span class="life-dot" aria-hidden="true"></span><span class="life-name">Under review</span>
+            </button>
+            <button class="life-stage" role="tab" id="life-4" aria-selected="false" aria-controls="life-panel">
+              <span class="life-dot" aria-hidden="true"></span><span class="life-name">Revoked</span>
+            </button>
+          </div>
+          <div class="lifecycle-panel" id="life-panel" role="tabpanel" aria-live="polite">
+            <p class="life-day" id="lifeDay">Day 0</p>
+            <p class="life-text" id="lifeText">HR creates the identity. The graph links person, position and cost centre before the first account exists.</p>
+          </div>
+          <div class="nlq-teaser">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+            <p><strong>Coming soon:</strong> ask in plain language. “Who still has SAP access after leaving finance?” gets a straight answer from the graph.</p>
+          </div>
+          <figure class="section-figure">
+            <img src="assets/figma-lifecycle.png" alt="Illustration of one identity through the graph: onboarded, access grows, under review, revoked.">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ACCESS EXPLAINER (stepper) ============ -->
+    <section class="section section-light" id="why">
+      <div class="container">
+        <div class="section-head">
+          <h2>The “why” behind every grant.</h2>
+          <p class="section-lede">Trace any permission back to its root cause. Click each hop of the inheritance path.</p>
+        </div>
+
+        <div class="trace" data-trace>
+          <ol class="trace-path" id="tracePath">
+            <li>
+              <button class="trace-hop is-active" aria-pressed="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span class="hop-label">Femke V.<small>User</small></span>
+              </button>
+            </li>
+            <li>
+              <button class="trace-hop" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span class="hop-label">Engineering<small>Group</small></span>
+              </button>
+            </li>
+            <li>
+              <button class="trace-hop" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                <span class="hop-label">SAP_FI_READ<small>Role</small></span>
+              </button>
+            </li>
+            <li>
+              <button class="trace-hop" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg>
+                <span class="hop-label">SAP · finance data<small>Entitlement</small></span>
+              </button>
+            </li>
+          </ol>
+          <div class="trace-detail" id="traceDetail" aria-live="polite">
+            <p class="trace-step">Hop 1 of 4</p>
+            <p class="trace-text">Femke V., product designer. Off-boarded 12 days ago, yet her account still resolves to live entitlements downstream.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ INTEGRATIONS (filter grid) ============ -->
+    <section class="section section-dark" id="integrations">
+      <div class="container">
+        <div class="section-head">
+          <h2>Connects to your entire stack.</h2>
+          <p class="section-lede">Filter the catalog, or search for the systems you run. Anything missing gets built on request.</p>
+        </div>
+
+        <figure class="section-figure">
+          <img src="assets/figma-integrations.png" alt="Diagram: eight sources such as Workday, Entra ID and SAP connected to the central Kaidra hub.">
+        </figure>
+
+        <div class="connector-tools">
+          <div class="connector-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="connectorSearch" placeholder="Search connectors" aria-label="Search connectors">
+          </div>
+          <div class="connector-filters" role="group" aria-label="Filter by category" id="connectorFilters">
+            <button class="chip is-active" data-filter="all" aria-pressed="true">All</button>
+            <button class="chip" data-filter="hr" aria-pressed="false">HR</button>
+            <button class="chip" data-filter="directory" aria-pressed="false">Directory</button>
+            <button class="chip" data-filter="business" aria-pressed="false">Business apps</button>
+            <button class="chip" data-filter="itsm" aria-pressed="false">ITSM</button>
+            <button class="chip" data-filter="security" aria-pressed="false">Security</button>
+          </div>
+        </div>
+
+        <ul class="connector-grid" id="connectorGrid">
+          <li class="connector" data-cat="hr">Workday<small>HR</small></li>
+          <li class="connector" data-cat="hr">SuccessFactors<small>HR</small></li>
+          <li class="connector" data-cat="hr">SAP HCM<small>HR</small></li>
+          <li class="connector" data-cat="hr">SD Worx<small>HR &amp; payroll</small></li>
+          <li class="connector" data-cat="directory">Entra ID<small>Directory</small></li>
+          <li class="connector" data-cat="directory">Active Directory<small>Directory</small></li>
+          <li class="connector" data-cat="directory">Google Workspace<small>Collaboration</small></li>
+          <li class="connector" data-cat="directory">Okta<small>Identity provider</small></li>
+          <li class="connector" data-cat="business">SAP S/4HANA<small>ERP</small></li>
+          <li class="connector" data-cat="business">Salesforce<small>CRM</small></li>
+          <li class="connector" data-cat="business">SharePoint<small>Collaboration</small></li>
+          <li class="connector" data-cat="business">NetSuite<small>ERP</small></li>
+          <li class="connector" data-cat="itsm">ServiceNow<small>ITSM</small></li>
+          <li class="connector" data-cat="itsm">TOPDESK<small>ITSM</small></li>
+          <li class="connector" data-cat="itsm">Jira<small>Development</small></li>
+          <li class="connector" data-cat="itsm">Zendesk<small>Support</small></li>
+          <li class="connector" data-cat="security">CyberArk<small>PAM</small></li>
+          <li class="connector" data-cat="security">Splunk<small>SIEM</small></li>
+          <li class="connector" data-cat="security">SailPoint<small>IGA</small></li>
+          <li class="connector" data-cat="security">Forescout<small>NAC</small></li>
+          <li class="connector connector-more" data-cat="all">60+ more<small>in the catalog</small></li>
+          <li class="connector connector-cta" data-cat="all">
+            <a href="#cta">Request a connector
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          </li>
+        </ul>
+        <p class="connector-empty" id="connectorEmpty" hidden>No connector matches that search. Kaidra builds custom connectors on request.</p>
+      </div>
+    </section>
+
+    <!-- ============ ACCESS REVIEWS (before/after) ============ -->
+    <section class="section section-light" id="reviews">
+      <div class="container">
+        <div class="section-head">
+          <h2>Kill the Excel certification loop.</h2>
+          <p class="section-lede">Compare the quarterly ritual with the Kaidra way. Toggle to switch.</p>
+        </div>
+
+        <div class="compare" data-compare>
+          <div class="compare-toggle" role="tablist" aria-label="Review process comparison">
+            <button class="compare-tab is-active" role="tab" id="cmp-old" aria-selected="true" aria-controls="cmp-panel-old">The old way</button>
+            <button class="compare-tab" role="tab" id="cmp-new" aria-selected="false" aria-controls="cmp-panel-new">With Kaidra</button>
+          </div>
+
+          <div class="compare-panels">
+            <div class="compare-panel is-active" role="tabpanel" id="cmp-panel-old" aria-labelledby="cmp-old">
+              <div class="xls-pane" aria-hidden="true">
+                <div class="xls-bar">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>
+                  <span>Q4_access_review_FINAL_v9.xlsx</span>
+                </div>
+                <ul class="xls-rows">
+                  <li><span>f.vosloo</span><span>SAP_FI_READ</span><span class="xls-flag">last reviewed Q2 2023</span></li>
+                  <li><span>m.ockers</span><span>PRD_APPROVE</span><span class="xls-flag">no owner listed</span></li>
+                  <li><span>j.rasson</span><span>HR_ADMIN</span><span class="xls-flag">ex-employee?</span></li>
+                  <li><span>a.janssens</span><span>PAYROLL_RW</span><span class="xls-flag">3 reminders sent</span></li>
+                  <li><span>e.vandenborne</span><span>ADM_ALL</span><span class="xls-flag">out of scope?</span></li>
+                </ul>
+                <p class="xls-note">412 rows · 9 versions · 3 weeks of chasing</p>
+              </div>
+            </div>
+
+            <div class="compare-panel" role="tabpanel" id="cmp-panel-new" aria-labelledby="cmp-new" hidden>
+              <div class="campaign-pane" aria-hidden="true">
+                <p class="mock-caption">Q4 certification · Kaidra</p>
+                <div class="campaign-progress big">
+                  <div class="campaign-track"><span class="campaign-fill" data-w="78"></span></div>
+                  <div class="campaign-meta"><span>78% complete</span><span>started Tuesday</span></div>
+                </div>
+                <ul class="mock-list">
+                  <li><span class="mock-pill ok">done</span>Finance · 40/40 · 2 toxic combos revoked</li>
+                  <li><span class="mock-pill ok">done</span>HR · 22/22 · 3 dormant accounts closed</li>
+                  <li><span class="mock-pill warn">open</span>Operations · 31/40 · due Friday</li>
+                </ul>
+                <p class="xls-note">Every decision logged with its reason, exportable for audit</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ EVENTS ============ -->
+    <section class="section section-events" id="events">
+      <div class="container">
+        <div class="events-grid">
+          <figure class="events-art">
+            <svg viewBox="0 0 520 420" role="img" aria-label="Abstract event artwork: conference badges with monograms — no photos, fictional people">
+              <defs>
+                <linearGradient id="ev-bg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#057AC6"/>
+                  <stop offset="1" stop-color="#0D1422"/>
+                </linearGradient>
+              </defs>
+              <rect width="520" height="420" rx="18" fill="url(#ev-bg)"/>
+              <circle cx="452" cy="64" r="44" fill="#FC7E4F" opacity=".92"/>
+              <circle cx="64" cy="360" r="9" fill="#43E0B8"/>
+              <g stroke="#7CC4FA" stroke-width="1.4" opacity=".5">
+                <line x1="40" y1="322" x2="96" y2="300"/>
+                <line x1="96" y1="300" x2="112" y2="344"/>
+                <line x1="96" y1="300" x2="150" y2="316"/>
+              </g>
+              <g fill="#7CC4FA" opacity=".8">
+                <circle cx="40" cy="322" r="5"/>
+                <circle cx="96" cy="300" r="7"/>
+                <circle cx="112" cy="344" r="4"/>
+                <circle cx="150" cy="316" r="5"/>
+              </g>
+              <g transform="rotate(4 360 210)">
+                <rect x="292" y="118" width="176" height="196" rx="12" fill="#0D1422" opacity=".38"/>
+                <rect x="292" y="118" width="176" height="196" rx="12" fill="none" stroke="#F5F7FB" stroke-opacity=".22"/>
+              </g>
+              <g transform="rotate(-4 210 230)">
+                <rect x="122" y="120" width="184" height="208" rx="14" fill="#F5F7FB"/>
+                <rect x="122" y="120" width="184" height="208" rx="14" fill="none" stroke="#0D1422" stroke-opacity=".08"/>
+                <line x1="214" y1="120" x2="214" y2="88" stroke="#0D1422" stroke-opacity=".35" stroke-width="4"/>
+                <rect x="196" y="70" width="36" height="20" rx="6" fill="#0D1422" opacity=".85"/>
+                <circle cx="214" cy="180" r="30" fill="#057AC6"/>
+                <text x="214" y="188" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#ffffff">FV</text>
+                <rect x="150" y="228" width="128" height="12" rx="6" fill="#0D1422" opacity=".82"/>
+                <rect x="150" y="250" width="92" height="10" rx="5" fill="#0D1422" opacity=".38"/>
+                <rect x="150" y="284" width="72" height="22" rx="11" fill="#E0F2FE"/>
+                <text x="186" y="299" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#075985">CONF</text>
+              </g>
+              <g transform="rotate(6 400 320)">
+                <rect x="318" y="228" width="164" height="150" rx="12" fill="#F5F7FB"/>
+                <circle cx="360" cy="272" r="22" fill="#FC7E4F"/>
+                <text x="360" y="278" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#ffffff">MO</text>
+                <rect x="394" y="258" width="70" height="10" rx="5" fill="#0D1422" opacity=".8"/>
+                <rect x="394" y="276" width="52" height="8" rx="4" fill="#0D1422" opacity=".35"/>
+                <rect x="340" y="318" width="66" height="20" rx="10" fill="#D9F8EE"/>
+                <text x="373" y="332" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#0C6B4F">WEBINAR</text>
+              </g>
+              <g transform="rotate(-8 110 90)">
+                <rect x="58" y="52" width="104" height="76" rx="10" fill="#F5F7FB" opacity=".95"/>
+                <circle cx="86" cy="80" r="14" fill="#0D1422"/>
+                <text x="86" y="85" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#43E0B8">HC</text>
+                <rect x="108" y="72" width="42" height="8" rx="4" fill="#0D1422" opacity=".75"/>
+                <rect x="108" y="86" width="32" height="6" rx="3" fill="#0D1422" opacity=".32"/>
+              </g>
+            </svg>
+          </figure>
+          <div class="events-copy">
+            <h2>Meet the team, live.</h2>
+            <p class="section-lede">Conferences, webinars and hands-on sessions across Europe. Bring your hardest access problem, leave with an answer.</p>
+            <ul class="event-list">
+              <li>
+                <span class="ev-date">Sep 30</span>
+                <div class="ev-body"><h3>CyberSec NL</h3><p>Utrecht · booth and live console demos</p></div>
+                <span class="ev-chip ev-conf">Conference</span>
+              </li>
+              <li>
+                <span class="ev-date">Oct 13</span>
+                <div class="ev-body"><h3>IT-SA 2026</h3><p>Nuremberg · identity governance track</p></div>
+                <span class="ev-chip ev-conf">Conference</span>
+              </li>
+              <li>
+                <span class="ev-date">Nov 12</span>
+                <div class="ev-body"><h3>Access reviews without Excel</h3><p>Live webinar · 45 minutes, real console</p></div>
+                <span class="ev-chip ev-web">Webinar</span>
+              </li>
+              <li>
+                <span class="ev-date">May 27</span>
+                <div class="ev-body"><h3>EIC 2027</h3><p>Munich · European identity week</p></div>
+                <span class="ev-chip ev-conf">Conference</span>
+              </li>
+            </ul>
+            <a class="text-link" href="#cta">All events and recordings</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ AGENTIC AI ============ -->
+    <section class="section section-dark" id="ai">
+      <div class="container">
+        <div class="section-head">
+          <p class="new-flag"><span>New</span> Kaidra for Agentic AI</p>
+          <h2>Agents are identities too.</h2>
+          <p class="section-lede">Copilots, MCP servers and autonomous agents act on someone's behalf. Kaidra governs them like any other identity: who they act for, and what they can reach.</p>
+        </div>
+        <div class="ai-grid">
+          <article class="ai-card">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M12 8V4"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+            <h3>Copilots</h3>
+            <p>See which assistants act for which users, and which entitlements they inherit. Revoke like any account.</p>
+          </article>
+          <article class="ai-card">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+            <h3>MCP servers</h3>
+            <p>Gate tool access per identity. If an agent should not touch finance data, the graph says so before the call does.</p>
+          </article>
+          <article class="ai-card">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+            <h3>Autonomous agents</h3>
+            <p>Entitlements, review campaigns and audit trails for agents, exactly as for people. No shadow workforce.</p>
+          </article>
+        </div>
+        <div class="claude-banner">
+          <div class="claude-copy">
+            <h3>Kaidra for Claude</h3>
+            <p>Govern what your Claude integration can reach, straight from the identity graph.</p>
+          </div>
+          <a class="btn btn-outline-light" href="#cta">Govern AI agents
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GUIDES ============ -->
+    <section class="section section-light" id="guides">
+      <div class="container">
+        <div class="section-head">
+          <h2>Pick your guide.</h2>
+          <p class="section-lede">Field notes from identity teams, not recycled listicles.</p>
+        </div>
+        <div class="guide-grid">
+          <a class="guide-card guide-lg" href="#cta">
+            <img class="guide-img" src="assets/figma-guide-nis2.png" alt="Cover of the NIS 2 preparation guide.">
+            <span class="guide-tag">Guide · 48 pages</span>
+            <h3>Prepare for NIS 2 without drowning in scope</h3>
+            <p>What the directive actually asks of identity teams, mapped to controls you can evidence in Kaidra.</p>
+            <span class="guide-cta">Download
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            </span>
+          </a>
+          <a class="guide-card" href="#cta">
+            <span class="guide-tag">Guide</span>
+            <h3>The 12 IAM metrics that matter</h3>
+            <p>KPIs for access risk, review speed and orphan decay. With formulas.</p>
+            <span class="guide-cta">Download
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            </span>
+          </a>
+          <a class="guide-card" href="#cta">
+            <span class="guide-tag">Whitepaper</span>
+            <h3>AI meets IAM</h3>
+            <p>Governing copilots and agents before they govern you.</p>
+            <span class="guide-cta">Download
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FINAL CTA ============ -->
+    <section class="cta-band" id="cta">
+      <div class="container cta-inner">
+        <div class="cta-copy">
+          <h2>See your identity landscape in 30 minutes.</h2>
+          <p>Bring two systems you care about. We will show you the graph they make together, live.</p>
+        </div>
+        <div class="cta-actions">
+          <a class="btn btn-primary btn-lg" href="mailto:hello@example.com?subject=Kaidra%20demo%20request">Book your demo
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <span class="cta-note">EU-hosted · NIS 2 · ISO 27001 · SOC 2</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="wordmark" href="#top" aria-label="Kaidra home">
+          <svg class="wordmark-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" class="mark-bg"/><circle cx="16" cy="16" r="6.5" class="mark-primary"/><circle cx="23" cy="9" r="3" class="mark-accent"/></svg>
+          <span>kaidra</span>
+        </a>
+        <p>Identity visibility and intelligence. Built and hosted in Europe.</p>
+        <ul class="footer-badges" aria-label="Compliance certifications">
+          <li>NIS 2</li><li>ISO 27001</li><li>SOC 2 Type II</li><li>GDPR</li>
+        </ul>
+      </div>
+      <nav class="footer-col" aria-label="Platform">
+        <h3>Platform</h3>
+        <ul>
+          <li><a href="#integrations">Integrations</a></li>
+          <li><a href="#reviews">Access reviews</a></li>
+          <li><a href="#graph">Identity graph</a></li>
+          <li><a href="#ai">Agentic AI</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Resources">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#guides">Guides &amp; whitepapers</a></li>
+          <li><a href="#voices">Customer cases</a></li>
+          <li><a href="#events">Events &amp; webinars</a></li>
+          <li><a href="#cta">Blog</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Company">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#cta">About</a></li>
+          <li><a href="#cta">Careers</a></li>
+          <li><a href="#cta">Partners</a></li>
+          <li><a href="#cta">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="container footer-legal">
+      <p>© <span id="year">2026</span> Kaidra. Fictional brand, concept redesign study, non-commercial.</p>
+      <ul class="social" aria-label="Social links">
+        <li><a href="#footer" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4V8h4v2.5"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a></li>
+        <li><a href="#footer" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg></a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=5"></script>
+</body>
+</html>

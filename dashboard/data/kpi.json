@@ -1,0 +1,9 @@
+{
+  "default_year": 2018,
+  "ghg_total_kt_co2e": 446565920.0,
+  "intensity_mean_t_per_musd": 1154.2645996681676,
+  "co2_pc_mean_t": 4.157869478712633,
+  "n_countries": 260,
+  "n_companies_total": 5000,
+  "coverage_note": "WDI GHGT proxy (EN.ATM.GHGT.KT.CE), source WDI_proxy. 2019-2020 incomplete; main window 2015-2018."
+}

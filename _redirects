@@ -1,0 +1,2 @@
+# Netlify redirects — mirror of netlify.toml [[redirects]] for drag-drop clarity.
+/dashboard  /dashboard/  301

@@ -1,0 +1,92 @@
+[
+  {
+    "country_code": "CAF",
+    "country_name": "Central African Republic",
+    "intensity_t_per_musd": 25070.0,
+    "ghg_kt_co2e": 55680.0
+  },
+  {
+    "country_code": "TCD",
+    "country_name": "Chad",
+    "intensity_t_per_musd": 7178.5,
+    "ghg_kt_co2e": 80680.0
+  },
+  {
+    "country_code": "AFG",
+    "country_name": "Afghanistan",
+    "intensity_t_per_musd": 5479.4,
+    "ghg_kt_co2e": 98920.0
+  },
+  {
+    "country_code": "SOM",
+    "country_name": "Somalia",
+    "intensity_t_per_musd": 4609.7,
+    "ghg_kt_co2e": 26970.0
+  },
+  {
+    "country_code": "UZB",
+    "country_name": "Uzbekistan",
+    "intensity_t_per_musd": 4474.6,
+    "ghg_kt_co2e": 235510.0
+  },
+  {
+    "country_code": "MNG",
+    "country_name": "Mongolia",
+    "intensity_t_per_musd": 3993.0,
+    "ghg_kt_co2e": 52620.0
+  },
+  {
+    "country_code": "TLS",
+    "country_name": "Timor-Leste",
+    "intensity_t_per_musd": 3908.1,
+    "ghg_kt_co2e": 6190.0
+  },
+  {
+    "country_code": "SDN",
+    "country_name": "Sudan",
+    "intensity_t_per_musd": 3540.5,
+    "ghg_kt_co2e": 109630.0
+  },
+  {
+    "country_code": "NER",
+    "country_name": "Niger",
+    "intensity_t_per_musd": 3517.2,
+    "ghg_kt_co2e": 45050.0
+  },
+  {
+    "country_code": "TKM",
+    "country_name": "Turkmenistan",
+    "intensity_t_per_musd": 3068.3,
+    "ghg_kt_co2e": 125080.0
+  },
+  {
+    "country_code": "IRN",
+    "country_name": "Iran, Islamic Rep.",
+    "intensity_t_per_musd": 2813.9,
+    "ghg_kt_co2e": 828280.0
+  },
+  {
+    "country_code": "LBR",
+    "country_name": "Liberia",
+    "intensity_t_per_musd": 2687.9,
+    "ghg_kt_co2e": 9200.0
+  },
+  {
+    "country_code": "LIC",
+    "country_name": "Low income",
+    "intensity_t_per_musd": 2604.1,
+    "ghg_kt_co2e": 1108360.0
+  },
+  {
+    "country_code": "MLI",
+    "country_name": "Mali",
+    "intensity_t_per_musd": 2562.3,
+    "ghg_kt_co2e": 43740.0
+  },
+  {
+    "country_code": "GIN",
+    "country_name": "Guinea",
+    "intensity_t_per_musd": 2436.5,
+    "ghg_kt_co2e": 28890.0
+  }
+]

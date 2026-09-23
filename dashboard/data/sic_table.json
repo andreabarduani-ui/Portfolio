@@ -1,0 +1,202 @@
+[
+  {
+    "sic": "2834",
+    "n_companies": 292,
+    "example_company": "TG THERAPEUTICS, INC."
+  },
+  {
+    "sic": "7372",
+    "n_companies": 218,
+    "example_company": "SAP SE"
+  },
+  {
+    "sic": "7389",
+    "n_companies": 205,
+    "example_company": "SPAR GROUP, INC."
+  },
+  {
+    "sic": "1311",
+    "n_companies": 149,
+    "example_company": "TENGASCO INC"
+  },
+  {
+    "sic": "1000",
+    "n_companies": 142,
+    "example_company": "SOUTHERN COPPER CORP/"
+  },
+  {
+    "sic": "6798",
+    "n_companies": 140,
+    "example_company": "IMPAC MORTGAGE HOLDINGS INC"
+  },
+  {
+    "sic": "6022",
+    "n_companies": 131,
+    "example_company": "KENTUCKY BANCSHARES INC /KY/"
+  },
+  {
+    "sic": "6770",
+    "n_companies": 116,
+    "example_company": "DIGITAL CREATIVE DEVELOPMENT CORP"
+  },
+  {
+    "sic": "3674",
+    "n_companies": 108,
+    "example_company": "PERICOM SEMICONDUCTOR CORP"
+  },
+  {
+    "sic": "3841",
+    "n_companies": 96,
+    "example_company": "KENSEY NASH CORP"
+  },
+  {
+    "sic": "6035",
+    "n_companies": 88,
+    "example_company": "BROADWAY FINANCIAL CORP \\DE\\"
+  },
+  {
+    "sic": "6021",
+    "n_companies": 87,
+    "example_company": "UNIONBANCAL CORP"
+  },
+  {
+    "sic": "1040",
+    "n_companies": 77,
+    "example_company": "GOLDEN MINERALS CO"
+  },
+  {
+    "sic": "6221",
+    "n_companies": 73,
+    "example_company": "ML TREND-FOLLOWING FUTURES FUND L.P."
+  },
+  {
+    "sic": "4911",
+    "n_companies": 57,
+    "example_company": "TUCSON ELECTRIC POWER CO"
+  },
+  {
+    "sic": "4813",
+    "n_companies": 57,
+    "example_company": "PERUSAHAAN PERSEROAN PERSERO PT TELEKOMUNIKASI INDONESIA TBK"
+  },
+  {
+    "sic": "8742",
+    "n_companies": 56,
+    "example_company": "WILHELMINA INTERNATIONAL, INC."
+  },
+  {
+    "sic": "2860",
+    "n_companies": 55,
+    "example_company": "UNION CARBIDE CORP /NEW/"
+  },
+  {
+    "sic": "7374",
+    "n_companies": 49,
+    "example_company": "INTERNET AMERICA INC"
+  },
+  {
+    "sic": "2836",
+    "n_companies": 48,
+    "example_company": "NOVAVAX INC"
+  },
+  {
+    "sic": "7373",
+    "n_companies": 46,
+    "example_company": "OPEN TEXT CORP"
+  },
+  {
+    "sic": "1382",
+    "n_companies": 44,
+    "example_company": "NXT ENERGY SOLUTIONS INC."
+  },
+  {
+    "sic": "6331",
+    "n_companies": 42,
+    "example_company": "UNICO AMERICAN CORP"
+  },
+  {
+    "sic": "7371",
+    "n_companies": 41,
+    "example_company": "ADVENT SOFTWARE INC /DE/"
+  },
+  {
+    "sic": "6500",
+    "n_companies": 40,
+    "example_company": "SOUTHCORP CAPITAL, INC."
+  },
+  {
+    "sic": "8200",
+    "n_companies": 38,
+    "example_company": "LEARNING TREE INTERNATIONAL, INC."
+  },
+  {
+    "sic": "4899",
+    "n_companies": 36,
+    "example_company": "RADIOIO, INC."
+  },
+  {
+    "sic": "7370",
+    "n_companies": 36,
+    "example_company": "FACTSET RESEARCH SYSTEMS INC"
+  },
+  {
+    "sic": "3663",
+    "n_companies": 35,
+    "example_company": "BLONDER TONGUE LABORATORIES INC"
+  },
+  {
+    "sic": "3714",
+    "n_companies": 35,
+    "example_company": "PURADYN FILTER TECHNOLOGIES INC"
+  },
+  {
+    "sic": "7310",
+    "n_companies": 32,
+    "example_company": "THEGLOBE COM INC"
+  },
+  {
+    "sic": "9995",
+    "n_companies": 32,
+    "example_company": "PROTEO INC"
+  },
+  {
+    "sic": "6211",
+    "n_companies": 32,
+    "example_company": "LADENBURG THALMANN FINANCIAL SERVICES INC."
+  },
+  {
+    "sic": "4922",
+    "n_companies": 32,
+    "example_company": "NATIONAL GRID PLC"
+  },
+  {
+    "sic": "7900",
+    "n_companies": 30,
+    "example_company": "DOVER MOTORSPORTS INC"
+  },
+  {
+    "sic": "5812",
+    "n_companies": 30,
+    "example_company": "BJS RESTAURANTS INC"
+  },
+  {
+    "sic": "1381",
+    "n_companies": 28,
+    "example_company": "PRECISION DRILLING CORP"
+  },
+  {
+    "sic": "6282",
+    "n_companies": 27,
+    "example_company": "AFFILIATED MANAGERS GROUP, INC."
+  },
+  {
+    "sic": "8731",
+    "n_companies": 25,
+    "example_company": "PHARMACEUTICAL PRODUCT DEVELOPMENT INC"
+  },
+  {
+    "sic": "3661",
+    "n_companies": 25,
+    "example_company": "WESTELL TECHNOLOGIES INC"
+  }
+]
