@@ -495,7 +495,7 @@
         });
       });
     }, { rootMargin: '-40% 0px -55% 0px' });
-    ['process', 'projects', 'skills', 'about', 'contact'].forEach(function (id) {
+    ['projects', 'skills', 'about', 'contact'].forEach(function (id) {
       var s = document.getElementById(id);
       if (s) spy.observe(s);
     });
