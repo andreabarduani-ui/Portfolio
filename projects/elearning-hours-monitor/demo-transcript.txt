@@ -1,0 +1,45 @@
+# Demo transcript — E-Learning Hours Monitor
+Tool: projects/elearning-hours-monitor/elearning_hours_monitor.py
+Date (UTC): 2026-09-26
+Sandbox: WSL2 Ubuntu, venv in /dev/shm (tmpfs), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- ROSSI MARIA | 10/03/2026 | 10:00-20:00 | "4 h 00 min 00 s" (threshold split demo)
+- BIANCHI LUCA | 11/03/2026 | 06:10-07:10 | "1 h 00 min 00 s" (morning-window demo)
+- GIORDANETTI ALESSANDRO | 12/03/2026 | 09:00-13:00 | "2 h 30 min 00 s"
+- LOMBARDINI BEATRICE | 13/03/2026 | 14:00-18:30 | "1 h 45 min 30 s"
+
+## Command 1: python3 elearning_hours_monitor.py --help
+Note: this tool has no argparse --help; any argument runs the normal
+entrypoint, which requires Report_Accessi.csv. Captured stdout:
+EXIT: 0
+--- STDOUT ---
+=================================================================
+  E-LEARNING TRAINING HOURS MONITORING
+=================================================================
+
+ERROR: CSV file not found -> Report_Accessi.csv
+--- STDERR ---
+(empty)
+
+## Command 2: offline function demo (fictional, no files, no network)
+CMD: python3 run_demo.py (imports parse_durata, splitta_ore_per_soglia,
+ore_in_finestra_mattino, normalizza_nome, chiave_ordinamento)
+EXIT: 0
+--- STDOUT ---
+### DEMO elearning-hours-monitor (fictional, offline) ###
+parse_durata 4/4: ['2.5000', '1.7583', '0.4194', '3.0000']
+split 18h -> prima=3.20 dopo=0.80
+mattino window=1.00
+normalizza: MARIO ROSSI | MARIO ROSSI
+chiave_ordinamento: ROSSI MARIA
+ELEARNING DEMO OK
+--- STDERR ---
+(empty)
+
+Summary: duration parsing 4/4 OK; evening split (18:00) and morning
+window (06:00-07:40) behave as documented; fuzzy name normalization
+unifies "Mario Rossi" and "ROSSI MARIO". Full illustrative workbook
+example: see sample-output.md (fictional data).

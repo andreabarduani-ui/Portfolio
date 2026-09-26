@@ -228,6 +228,10 @@ section { padding: 60px 0; }
 }
 .out-note { margin-top: 10px; font-size: .74rem; color: var(--ink-soft); }
 .out-note a { font-weight: 600; }
+.demo-proof { margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; background: #faf8f3; }
+.demo-proof summary { cursor: pointer; font-size: .82rem; font-weight: 600; color: var(--accent); }
+.demo-proof pre { margin-top: 8px; font-family: "JetBrains Mono", Consolas, monospace; font-size: .74rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
+[data-theme="dark"] .demo-proof { background: #1e1b15; }
 
 /* ---------- University cards ---------- */
 .uni-thumb {
@@ -455,6 +459,14 @@ footer .copy { margin-top: 34px; font-size: .82rem; color: var(--ink-soft); }
 .tag.python { background: #e8f0f8; color: #0d5794; }
 .tag.web { background: #e6e9fb; color: #3b46a3; }
 .tag.strategy { background: #edeae3; color: var(--ink-soft); }
+.tag.ai { background: #e3f2ec; color: #1f8a70; }
+.hero-badge {
+  display: inline-block; font-size: .82rem; font-weight: 600; color: var(--accent);
+  border: 1px solid var(--accent); border-radius: 999px; padding: 6px 16px; text-decoration: none;
+}
+.hero-badge:hover { background: var(--accent); color: #fff; }
+.card-hero { border-top: 4px solid #1f8a70; }
+[data-theme="dark"] .tag.ai { background: #16281f; color: #37b894; }
 .kaidra-thumb {
   height: 150px; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 14px;
   background: linear-gradient(135deg, #0A0F1E 0%, #2E6BF0 55%, #43E0B8 100%);

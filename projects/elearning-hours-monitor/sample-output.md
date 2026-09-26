@@ -1,7 +1,23 @@
 # Sample Output — E-Learning Hours Monitor
 
-> Illustrative excerpt with **fictional data**. The tool produces
-> `Monitoraggio_<date>.xlsx`: one sheet per month + a general summary.
+> Illustrative excerpt with **fictional data** (no PII). Live sandbox proof:
+> [demo-transcript.txt](demo-transcript.txt) (WSL2, tmpfs, timeout 10s,
+> no secrets) with fixture [demo-fixture.txt](demo-fixture.txt).
+
+## INPUT
+
+- `Report_Accessi.csv` (platform access log) + `Presenze.pdf` (LUL, mode B)
+- 6 months, 28 students (fictional excerpt below shows 3 students)
+
+## COMMAND
+
+```bash
+py elearning_hours_monitor.py
+```
+
+## OUTPUT
+
+`Monitoraggio_<date>.xlsx`: one sheet per month + a general summary.
 
 Monthly sheet (e.g. "Marzo 2026") — per student:
 

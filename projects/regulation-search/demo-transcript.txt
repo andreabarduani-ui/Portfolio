@@ -1,0 +1,59 @@
+# Demo transcript — Regulation Search Engine
+Tool: projects/regulation-search/regulation_search.py
+Date (UTC): 2026-09-26
+Sandbox: WSL2 Ubuntu, venv in /dev/shm (tmpfs), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines/pages, no PII)
+See demo-fixture.txt:
+- p.1 general intro, no rules
+- p.2 eligible-costs sentences (Italian category keywords)
+- p.3 variation/deadline sentences (free-text keywords)
+- p.4 state-aid sentences
+
+## Command 1: python3 regulation_search.py --help
+Note: this tool takes a PDF path as first argument; "--help" is treated
+as a path. Captured stdout:
+EXIT: 1
+--- STDOUT ---
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                   EXTRACTOR - FUNDED TRAINING DOCUMENTS                    ║
+║                      (PDF library in use: pdfplumber)                      ║
+╚════════════════════════════════════════════════════════════════════════════╝
+File not found: --help
+--- STDERR ---
+(empty)
+
+## Command 2: offline function demo (fictional, in-memory pages, no PDF)
+CMD: python3 run_demo.py (imports trova_corrispondenze, stampa_risultati,
+CATEGORIE["costi_ammissibili"])
+EXIT: 0
+--- STDOUT ---
+### DEMO regulation-search (fictional, offline, no PDF file) ###
+costi_ammissibili hits: 2 pages: [2]
+free-search hits: 2 pages: [3]
+
+==============================================================================
+  RESULTS: Free search: variation, deadline (fictional demo)
+  Matches found: 2
+==============================================================================
+
+  📄 PAGE 3  (2 matches)
+  --------------------------------------------------------------------------
+
+    🔍 «variation»
+    >>>VARIATION<<< requests must be submitted at least 30 days before
+    the end of the programme. Withdrawals follow the same deadline.
+
+    🔍 «deadline»
+    Variation requests must be submitted at least 30 days before the end
+    of the programme. Withdrawals follow the same >>>DEADLINE<<<.
+
+REGULATION DEMO OK
+--- STDERR ---
+(empty)
+
+Summary: category search finds 2 hits on p.2; free-text search finds
+2 hits on p.3; every hit cites page number + context. Full illustrative
+session: see sample-output.md (fictional data).

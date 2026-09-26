@@ -1,5 +1,7 @@
 # Andrea Barduani — Process Automation Portfolio
 
+[![CI](https://github.com/andreabarduani-ui/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/andreabarduani-ui/Portfolio/actions/workflows/ci.yml)
+
 Personal portfolio website: 13 Python automation tools covering the full
 lifecycle of funded training programs (launch → delivery → reporting).
 

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
+<!-- CI: [![CI](https://github.com/andreabarduani-ui/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/andreabarduani-ui/Portfolio/actions/workflows/ci.yml) — ruff check + pytest -q on every push to main. -->
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Andrea Barduani — Software, Web & AI-Driven Data Analytics</title>
-<meta name="description" content="18 projects across software development, web and AI-driven data analytics: 13 Python automations, Kaidra UI/UX web concept, energy & emissions dashboards on 5,000 companies across 260 countries, plus university-corporate strategy research.">
+<meta name="description" content="19 projects across software development, web and AI-driven data analytics: 13 Python automations, Kaidra UI/UX web concept, energy & emissions dashboards on 5,000 companies across 260 countries, university-corporate strategy research, plus the AI portfolio assistant.">
 <link rel="canonical" href="./">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Andrea Barduani — Software, Web & AI-Driven Data Analytics">
-<meta property="og:description" content="18 projects: 13 Python automations, Kaidra web concept, energy & emissions dashboards (5,000 companies, 260 countries), strategy research.">
+<meta property="og:description" content="19 projects: 13 Python automations, Kaidra web concept, energy & emissions dashboards (5,000 companies, 260 countries), strategy research, AI assistant.">
 <meta property="og:image" content="files/img/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
@@ -250,6 +251,9 @@
   }
   .out-note { margin-top: 10px; font-size: .74rem; color: var(--ink-soft); }
   .out-note a { font-weight: 600; }
+  .demo-proof { margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; background: #faf8f3; }
+  .demo-proof summary { cursor: pointer; font-size: .82rem; font-weight: 600; color: var(--accent); }
+  .demo-proof pre { margin-top: 8px; font-family: "JetBrains Mono", Consolas, monospace; font-size: .74rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
 
   /* ---------- University cards ---------- */
   .uni-thumb {
@@ -309,6 +313,13 @@
   .tag.python { background: #e8f0f8; color: #0d5794; }
   .tag.web { background: #e6e9fb; color: #3b46a3; }
   .tag.strategy { background: #edeae3; color: var(--ink-soft); }
+  .tag.ai { background: #e3f2ec; color: #1f8a70; }
+  .hero-badge {
+    display: inline-block; font-size: .82rem; font-weight: 600; color: var(--accent);
+    border: 1px solid var(--accent); border-radius: 999px; padding: 6px 16px; text-decoration: none;
+  }
+  .hero-badge:hover { background: var(--accent); color: #fff; }
+  .card-hero { border-top: 4px solid #1f8a70; }
   .kaidra-thumb {
     height: 150px; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 14px;
     background: linear-gradient(135deg, #0A0F1E 0%, #2E6BF0 55%, #43E0B8 100%);
@@ -378,6 +389,7 @@
     <a class="brand" href="#top">Andrea Barduani</a>
     <ul>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#ai-assistant">AI Assistant</a></li>
       <li><a href="dashboard/">Energy Dashboard</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#about">About</a></li>
@@ -395,16 +407,20 @@
       <!-- H1: "Personal projects" — kicker shortened to avoid duplication. -->
       <h1 class="hero-enter d1">Personal projects</h1>
       <p class="lead hero-enter d2">
-        18 projects across software, web and data: 13 Python automations,
+        19 projects across software, web, data and AI: 13 Python automations,
         the Kaidra UI/UX web concept, energy &amp; analytics dashboards on
         5,000 companies across 260 countries (BigQuery, Power BI, Data Studio),
-        and university–corporate strategy research.
+        university–corporate strategy research,
+        plus the AI portfolio assistant.
       </p>
       <div class="ctas hero-enter d3">
         <a class="btn primary" href="#projects-python">Explore the work</a>
         <a class="btn primary" href="dashboard/" style="background:#1f8a70">View Energy Dashboard</a>
         <a class="btn ghost" href="#about">About me</a>
       </div>
+      <p class="hero-enter d4" style="margin-top:14px">
+        <a class="hero-badge" href="#projects-ai" aria-label="New: AI Assistant — filter the AI project">New · AI Assistant — ask the portfolio in English</a>
+      </p>
       <p class="hero-enter d4" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
         <span class="tag data" style="margin:0">Python</span>
         <span class="tag data" style="margin:0">JavaScript</span>
@@ -442,12 +458,13 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>The projects</h2>
-      <p>18 projects across four areas — 13 Python automations, 1 UI/UX web concept
-         (Kaidra), 2 data dashboards and 2 strategy research decks. Default view is
+      <p>19 projects across five areas — 13 Python automations, 1 UI/UX web concept
+         (Kaidra), 2 data dashboards, 2 strategy research decks and 1 AI assistant. Default view is
          <a href="#projects-python">Python Automations</a> — switch area via the filters
          or deep-links <a href="#projects-python">#projects-python</a>,
          <a href="#projects-web">#projects-web</a>, <a href="#projects-data">#projects-data</a>,
-         <a href="#projects-strategy">#projects-strategy</a>. Full source and sample outputs live in
+         <a href="#projects-strategy">#projects-strategy</a>,
+         <a href="#projects-ai">#projects-ai</a>. Full source and sample outputs live in
          <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">the repository</a>.</p>
     </div>
 
@@ -456,10 +473,22 @@
       <button class="chip" data-filter="web" title="UI/UX Web — interface concept for identity governance" aria-pressed="false">UI/UX Web <span class="chip-sub">identity governance concept</span> <sup>1</sup></button>
       <button class="chip" data-filter="data" title="Data — energy & analytics dashboards" aria-pressed="false">Data <span class="chip-sub">energy &amp; analytics</span> <sup>2</sup></button>
       <button class="chip" data-filter="strategy" title="University-Corporate Strategy — market & strategy research" aria-pressed="false">University-Corporate Strategy <span class="chip-sub">market &amp; strategy research</span> <sup>2</sup></button>
+      <button class="chip" data-filter="ai" title="AI Assistant — ask the portfolio in English ($0 demo)" aria-pressed="false">AI Assistant <span class="chip-sub">ask in English · $0 demo</span> <sup>1</sup></button>
     </div>
 
     <!-- Single filtered grid (no section titles): context lives in the chips above. -->
     <div class="cards" id="projectsGrid">
+      <div class="card reveal card-hero" data-phase="ai" data-group="ai">
+        <span class="tag ai">New · AI</span>
+        <h4>Portfolio AI Assistant</h4>
+        <p>Ask in English about any project, demo, dashboard, CV or contact.
+           Rule-based v0 runs in your browser — $0, no backend, no keys.</p>
+        <div class="tech">Rule-based · English · $0 · zero backend</div>
+        <div class="card-foot">
+          <a class="code" href="projects/ai-assistant/" aria-label="Open the Portfolio AI assistant">Open the assistant &rarr;</a>
+          <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Demo data &rarr;</a>
+        </div>
+      </div>
       <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="student-import-generator">
         <span class="tag launch">Launch</span>
         <h4>Student Import Generator</h4>
@@ -517,6 +546,13 @@
            Fuzzy matching for truncated names.</p>
         <div class="tech">Python · pandas · openpyxl · fuzzy matching</div>
         <div class="panel-slot"></div>
+        <details class="demo-proof">
+          <summary>Sandbox proof (fictional, WSL2 tmpfs 10s, no secrets)</summary>
+          <pre>parse_durata 4/4: ['2.5000', '1.7583', '0.4194', '3.0000']
+split 18h -&gt; prima=3.20 dopo=0.80
+ELEARNING DEMO OK</pre>
+          <p class="out-note">Full proof: <a href="projects/elearning-hours-monitor/demo-transcript.txt" download>demo-transcript.txt</a> · fixture <a href="projects/elearning-hours-monitor/demo-fixture.txt" download>demo-fixture.txt</a> · <a href="projects/elearning-hours-monitor/sample-output.md">sample-output.md</a></p>
+        </details>
         <div class="card-foot">
           <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
@@ -591,6 +627,13 @@
            budget extracted, above-threshold calls flagged to Excel.</p>
         <div class="tech">Python · requests · BeautifulSoup · pandas</div>
         <div class="panel-slot"></div>
+        <details class="demo-proof">
+          <summary>Sandbox proof (fictional, offline, no network)</summary>
+          <pre>threshold 800000 -&gt; 3/4 above threshold
+e_fnc3 FNC3-text: True
+FUNDING DEMO OK</pre>
+          <p class="out-note">Full proof: <a href="projects/funding-call-scraper/demo-transcript.txt" download>demo-transcript.txt</a> · fixture <a href="projects/funding-call-scraper/demo-fixture.txt" download>demo-fixture.txt</a> · <a href="projects/funding-call-scraper/sample-output.md">sample-output.md</a></p>
+        </details>
         <div class="card-foot">
           <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
@@ -603,6 +646,13 @@
            every answer cites the page number and its context.</p>
         <div class="tech">Python · pdfplumber</div>
         <div class="panel-slot"></div>
+        <details class="demo-proof">
+          <summary>Sandbox proof (fictional, in-memory pages, no PDF)</summary>
+          <pre>costi_ammissibili hits: 2 pages: [2]
+free-search hits: 2 pages: [3]
+REGULATION DEMO OK</pre>
+          <p class="out-note">Full proof: <a href="projects/regulation-search/demo-transcript.txt" download>demo-transcript.txt</a> · fixture <a href="projects/regulation-search/demo-fixture.txt" download>demo-fixture.txt</a> · <a href="projects/regulation-search/sample-output.md">sample-output.md</a></p>
+        </details>
         <div class="card-foot">
           <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
@@ -1195,10 +1245,10 @@
     })();
   })();
 
-  /* ============ Filter chips (python|web|data|strategy, default python, single grid) ============ */
+  /* ============ Filter chips (python|web|data|strategy|ai, default python, single grid) ============ */
   var chips = document.querySelectorAll('#projects .chip');
   function normFilter(f) {
-    return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy') ? f : 'python';
+    return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
   }
   function applyFilter(f, pushHash) {
     f = normFilter(f);
@@ -1230,13 +1280,13 @@
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () { applyFilter(chip.dataset.filter, true); });
   });
-  // deep-link: #projects-python|web|data|strategy; bare #projects or unknown falls back to python
+  // deep-link: #projects-python|web|data|strategy|ai; bare #projects or unknown falls back to python
   (function deepLink() {
-    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
+    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
     applyFilter(m ? (m[1] || 'python') : 'python', false);
   })();
   window.addEventListener('hashchange', function () {
-    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
+    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
     if (m) { applyFilter(m[1] || 'python', false); }
   });
 
@@ -1275,7 +1325,7 @@
       });
     });
   }, { rootMargin: '-40% 0px -55% 0px' });
-  ['projects', 'skills', 'about', 'contact'].forEach(function (id) {
+  ['projects', 'ai-assistant', 'skills', 'about', 'contact'].forEach(function (id) {
     var s = document.getElementById(id);
     if (s) spy.observe(s);
   });

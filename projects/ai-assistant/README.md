@@ -13,6 +13,7 @@ Planned: v1 LLM backend with grounded answers, v2 Telegram /demo on allowlisted 
 - `demo-data/` — static pre-computed outputs (no live Python, no scraping):
   - `elearning-hours-monitor.json` (from `projects/elearning-hours-monitor/sample-output.md`)
   - `funding-call-scraper.json` (from `projects/funding-call-scraper/sample-output.md`)
+  - `regulation-search.json` (from `projects/regulation-search/sample-output.md`)
 
 ## Run locally
 
@@ -22,3 +23,4 @@ Just open `index.html` in a browser — no build, no keys, no backend.
 
 - E-learning monitor: https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor
 - Funding scraper: https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper
+- Regulation search: https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search

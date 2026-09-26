@@ -1,0 +1,10 @@
+# Demo fixture — Funding Call Scraper (fictional, no PII)
+
+Fictional call-text snippets used for the offline sandbox demo.
+No real fund pages fetched, no network. Amounts use formats the real
+extractor supports (explicit endowment, "X milioni", plain figures).
+
+1. "Dotazione finanziaria complessiva € 2.500.000 per il bando." (high confidence)
+2. "Il bando stanzia 1,1 milioni di euro per la formazione." (medium confidence)
+3. "Budget € 950000 - scadenza 2026." (low confidence, above threshold)
+4. "Contributo 120000 euro (sotto soglia)." (low confidence, below threshold)

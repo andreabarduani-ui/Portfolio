@@ -412,9 +412,9 @@
     })();
   }
 
-  /* ============ Filter chips (python|web|data|strategy, default python, single grid) ============ */
+  /* ============ Filter chips (python|web|data|strategy|ai, default python, single grid) ============ */
   function normFilter(f) {
-    return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy') ? f : 'python';
+    return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
   }
   function applyFilter(chips, f, pushHash) {
     f = normFilter(f);
@@ -444,10 +444,10 @@
     chips.forEach(function (chip) {
       chip.addEventListener('click', function () { applyFilter(chips, chip.dataset.filter, true); });
     });
-    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
+    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
     applyFilter(chips, m ? (m[1] || 'python') : 'python', false);
     window.addEventListener('hashchange', function () {
-      var mm = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy))?$/);
+      var mm = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
       if (mm) { applyFilter(chips, mm[1] || 'python', false); }
     });
   }
@@ -495,7 +495,7 @@
         });
       });
     }, { rootMargin: '-40% 0px -55% 0px' });
-    ['projects', 'skills', 'about', 'contact'].forEach(function (id) {
+    ['projects', 'ai-assistant', 'skills', 'about', 'contact'].forEach(function (id) {
       var s = document.getElementById(id);
       if (s) spy.observe(s);
     });

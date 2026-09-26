@@ -1,0 +1,9 @@
+# Demo fixture — Regulation Search (fictional, no PII)
+
+Fictional 4-page document used for the offline sandbox demo.
+No real manual, no PDF file, no personal data.
+
+1. p.1 "General introduction to the fictional training programme. No relevant rules here."
+2. p.2 "I costi ammissibili includono il costo orario definito nell'Allegato B. L'IVA e esclusa dai costi ammissibili salvo casi specifici."
+3. p.3 "Variation requests must be submitted at least 30 days before the end of the programme. Withdrawals follow the same deadline."
+4. p.4 "State aid under de minimis regulation 1407/2013 applies. Registration in the national register is required."

@@ -1,0 +1,17 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+# Critical safety net only (pyflakes + syntax errors): legacy tools keep
+# their proven style (single-line ifs, semicolons), so E7 is out.
+# Known non-critical F findings in the three legacy tools are ignored per-file.
+select = ["F", "E9"]
+
+[tool.ruff.lint.per-file-ignores]
+"projects/elearning-hours-monitor/elearning_hours_monitor.py" = ["F401", "F841", "F541"]
+"projects/funding-call-scraper/funding_calls_scraper.py" = ["F401", "F841", "F541"]
+"projects/regulation-search/regulation_search.py" = ["F401", "F841", "F541"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,9 @@
+# Demo fixture — E-Learning Hours Monitor (fictional, no PII)
+
+Fictional access-log sessions used for the offline sandbox demo.
+No real names, tax IDs, companies or files.
+
+1. ROSSI MARIA | 10/03/2026 | 10:00-20:00 | duration "4 h 00 min 00 s" | threshold split demo
+2. BIANCHI LUCA | 11/03/2026 | 06:10-07:10 | duration "1 h 00 min 00 s" | morning-window demo
+3. GIORDANETTI ALESSANDRO | 12/03/2026 | 09:00-13:00 | duration "2 h 30 min 00 s" | normal hours demo
+4. LOMBARDINI BEATRICE | 13/03/2026 | 14:00-18:30 | duration "1 h 45 min 30 s" | cap demo

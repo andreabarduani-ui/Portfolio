@@ -1,0 +1,43 @@
+{
+  "tool": "regulation_search.py",
+  "source": "projects/regulation-search/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live PDF, no public backend.",
+  "input": "fictional 4-page manual, indexed page by page; categories + free-text search",
+  "categories": [
+    "costi_ammissibili (eligible costs)",
+    "variazioni_progetto (variations)",
+    "free-text search"
+  ],
+  "before": [
+    {
+      "page": 2,
+      "category": "costi_ammissibili",
+      "hits": 2
+    },
+    {
+      "page": 3,
+      "query": "variation, deadline",
+      "hits": 2
+    }
+  ],
+  "after": [
+    {
+      "page": 2,
+      "match": "costi ammissibili",
+      "context": "I costi ammissibili includono il costo orario definito nell'Allegato B..."
+    },
+    {
+      "page": 3,
+      "match": "variation + deadline",
+      "context": "Variation requests must be submitted at least 30 days before the end of the programme..."
+    }
+  ],
+  "console": [
+    ">> Indexed: 4 pages (fictional fixture)",
+    ">> costi_ammissibili hits: 2 pages: [2]",
+    ">> free-search hits: 2 pages: [3]",
+    ">> Every hit cites page number + context"
+  ],
+  "output": "Every result cites the page number, so the answer can be verified on the source PDF immediately.",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search"
+}

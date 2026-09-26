@@ -1,7 +1,25 @@
 # Sample Output — Funding Call Scraper
 
 > Illustrative excerpt. Fund websites are public; call titles below are
-> **fictional examples** of the report format.
+> **fictional examples** of the report format (no PII). Live sandbox proof:
+> [demo-transcript.txt](demo-transcript.txt) (WSL2, tmpfs, timeout 10s,
+> no secrets, no network) with fixture [demo-fixture.txt](demo-fixture.txt).
+
+## INPUT
+
+- 9 funding-body list pages (level 1: list page → call links)
+- Per-call detail pages (level 2: full text, budget, program reference)
+- Threshold: EUR 800,000; `robots.txt` respected on all sites
+
+## COMMAND
+
+```bash
+py funding_calls_scraper.py
+# optional: py funding_calls_scraper.py --soglia 500000
+# optional: py funding_calls_scraper.py --includi-fnc3
+```
+
+## OUTPUT
 
 Console:
 

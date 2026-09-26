@@ -1,6 +1,23 @@
 # Sample Output — Regulation Search
 
-> Illustrative session with a **fictional** manual.
+> Illustrative session with a **fictional** manual (no PII). Live sandbox
+> proof: [demo-transcript.txt](demo-transcript.txt) (WSL2, tmpfs,
+> timeout 10s, no secrets) with fixture [demo-fixture.txt](demo-fixture.txt).
+
+## INPUT
+
+- Any regulation PDF, indexed page by page (fictional manual, 148 pages)
+- Predefined categories (variations, reporting, eligible costs, training
+  modes, state aid, ...) + free-text search
+
+## COMMAND
+
+```bash
+py regulation_search.py manual.pdf
+# or without arguments: the script asks for the path interactively
+```
+
+## OUTPUT
 
 ```
 $ py regulation_search.py manual.pdf

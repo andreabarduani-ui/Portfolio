@@ -1,0 +1,53 @@
+# Demo transcript — Funding Call Scraper
+Tool: projects/funding-call-scraper/funding_calls_scraper.py
+Date (UTC): 2026-09-26
+Sandbox: WSL2 Ubuntu, venv in /dev/shm (tmpfs), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- "Dotazione finanziaria complessiva € 2.500.000 per il bando." (high)
+- "Il bando stanzia 1,1 milioni di euro per la formazione." (medium)
+- "Budget € 950000 - scadenza 2026." (low, above threshold)
+- "Contributo 120000 euro (sotto soglia)." (low, below threshold)
+
+## Command 1: python3 funding_calls_scraper.py --help
+EXIT: 0
+--- STDOUT ---
+usage: funding_calls_scraper.py [-h] [--soglia SOGLIA] [--includi-fnc3]
+
+Searches Interprofessional Funds calls that are non-FNC3 above an amount
+threshold.
+
+options:
+  -h, --help       show this help message and exit
+  --soglia SOGLIA  Minimum threshold in euros (default: 800000)
+  --includi-fnc3   If set, does NOT exclude FNC3-related calls from the target
+                   sheet
+--- STDERR ---
+(empty)
+
+## Command 2: offline function demo (fictional, no network)
+CMD: python3 run_demo.py (imports _numero_italiano_a_float,
+importo_migliore, e_fnc3, blocco_da_scartare)
+EXIT: 0
+--- STDOUT ---
+### DEMO funding-call-scraper (fictional, offline, no network) ###
+numero IT 1.200.000,50 -> 1200000.5
+importo_migliore: 2500000.0 alta | Dotazione finanziaria complessiva € 2.500.000
+importo_migliore: 1100000.0 media | 1,1 milioni di euro
+importo_migliore: 950000.0 bassa | € 950000
+importo_migliore: 120000.0 bassa | 120000 euro
+threshold 800000 -> 3/4 above threshold
+e_fnc3 FNC3-text: True
+e_fnc3 clean-text: False
+scarta chiuso: (True, "word 'scaduto'")
+scarta aperto: (False, '')
+FUNDING DEMO OK
+--- STDERR ---
+(empty)
+
+Summary: Italian number format parsed (dot = thousands); confidence
+ordering high > medium > low works; threshold EUR 800,000 selects 3/4
+fictional calls; FNC3 and stale-call filters behave as documented.
+Full illustrative report example: see sample-output.md (fictional data).
