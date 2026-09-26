@@ -7,7 +7,7 @@ lifecycle of funded training programs (launch → delivery → reporting).
 
 ## Tech
 
-Single-page static site — one `index.html`, zero dependencies, no JavaScript.
+Static site — `index.html` + `css/site.css` + `js/site.js` (vanilla JavaScript, zero npm dependencies).
 Hosted for free on GitHub Pages.
 
 ## Develop locally

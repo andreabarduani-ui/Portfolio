@@ -1,0 +1,123 @@
+/* ============================================================
+   Portfolio AI assistant (v0) — chat-widget.css
+   Minimal styles for projects/ai-assistant/. Reuses the site
+   variables from ../../css/site.css (:root --accent #0d5794,
+   --bg #fdfcf9). No external fetch, no keys, no backend.
+   CSP: local file only (connect-src 'self' untouched).
+   ============================================================ */
+
+.ai-chat {
+  background: var(--paper, #ffffff);
+  border: 1px solid var(--line, #e4e0d8);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(38, 35, 31, 0.08);
+}
+
+.ai-messages {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ai-msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.ai-msg.bot {
+  align-self: flex-start;
+  background: #f4f7fa;
+  border: 1px solid var(--line, #e4e0d8);
+  color: var(--ink, #26231f);
+}
+
+.ai-msg.user {
+  align-self: flex-end;
+  background: var(--accent, #0d5794);
+  color: #fff;
+}
+
+.ai-msg a {
+  font-weight: 600;
+}
+
+.ai-msg .mini-table {
+  margin-top: 8px;
+}
+
+.ai-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 18px 12px;
+}
+
+.ai-chip {
+  border: 1px solid var(--accent, #0d5794);
+  background: transparent;
+  color: var(--accent, #0d5794);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ai-chip:hover {
+  background: var(--accent, #0d5794);
+  color: #fff;
+}
+
+.ai-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px 18px 18px;
+  border-top: 1px solid var(--line, #e4e0d8);
+}
+
+.ai-form input {
+  flex: 1;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  border: 1px solid var(--line, #e4e0d8);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink, #26231f);
+}
+
+.ai-form button {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent, #0d5794);
+  color: #fff;
+  cursor: pointer;
+}
+
+.ai-form button:hover {
+  background: var(--accent-dark, #093f6e);
+}
+
+.ai-note {
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: var(--ink-soft, #5c574f);
+}
+
+@media (max-width: 640px) {
+  .ai-msg {
+    max-width: 95%;
+  }
+}

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio AI assistant — Andrea Barduani</title>
+    <meta
+      name="description"
+      content="Rule-based English assistant for Andrea Barduani's portfolio: 18 projects, energy dashboard, CV and contacts. v0, $0, no backend, no keys — runs entirely in your browser."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfcf9'/><text x='50' y='70' font-family='Arial,sans-serif' font-size='54' text-anchor='middle' fill='%230d5794'>AB</text></svg>"
+    />
+    <link rel="stylesheet" href="../../css/site.css" />
+    <link rel="stylesheet" href="chat-widget.css" />
+  </head>
+  <body>
+    <a
+      class="skip-link"
+      href="#ai-chat"
+      style="
+        position: absolute;
+        left: 12px;
+        top: -48px;
+        z-index: 100;
+        background: #26231f;
+        color: #fdfcf9;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+      "
+      onfocus="this.style.top = '12px'"
+      onblur="this.style.top = '-48px'"
+      >Skip to chat</a
+    >
+
+    <header>
+      <div class="wrap nav">
+        <a class="brand" href="../../#top">Andrea Barduani</a>
+        <ul>
+          <li><a href="../../#projects">Projects</a></li>
+          <li><a href="../../dashboard/">Energy Dashboard</a></li>
+          <li><a href="../../#skills">Skills</a></li>
+          <li><a href="../../#about">About</a></li>
+          <li><a href="../../#contact">Contact</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- ============ AI ASSISTANT ============ -->
+    <section id="assistant">
+      <div class="wrap">
+        <div class="sec-head">
+          <p
+            class="kicker"
+            style="
+              font-size: 0.82rem;
+              text-transform: uppercase;
+              letter-spacing: 0.12em;
+              color: var(--ink-soft);
+              margin-bottom: 18px;
+            "
+          >
+            v0 rule-based demo — $0, no backend, no keys
+          </p>
+          <h1>Portfolio AI assistant</h1>
+          <p style="margin-top: 10px; color: var(--ink-soft)">
+            Ask in English about any of the 18 projects, the energy dashboard,
+            the CV or contacts. Keyword matching runs entirely in your browser —
+            no data leaves this page, no external fetch, no keys.
+            <a href="../../#projects">Back to all projects &rarr;</a>
+          </p>
+        </div>
+
+        <div class="ai-chat" id="ai-chat">
+          <div
+            class="ai-messages"
+            id="ai-messages"
+            role="log"
+            aria-live="polite"
+            aria-label="Assistant messages"
+          ></div>
+          <div class="ai-chips" role="group" aria-label="Suggested questions">
+            <button
+              class="ai-chip"
+              type="button"
+              data-ai-chip="Show backend demo"
+            >
+              Show backend demo
+            </button>
+            <button
+              class="ai-chip"
+              type="button"
+              data-ai-chip="How do you automate?"
+            >
+              How do you automate?
+            </button>
+            <button class="ai-chip" type="button" data-ai-chip="Contact">
+              Contact
+            </button>
+          </div>
+          <form class="ai-form" id="ai-form">
+            <input
+              id="ai-input"
+              type="text"
+              name="q"
+              autocomplete="off"
+              placeholder='Try "e-learning hours" or "funding calls"'
+              aria-label="Ask the assistant"
+            />
+            <button type="submit">Send</button>
+          </form>
+        </div>
+
+        <p class="ai-note">
+          Pre-computed demo data (no live Python, no public backend):
+          <a href="demo-data/elearning-hours-monitor.json"
+            >elearning-hours-monitor.json</a
+          >
+          ·
+          <a href="demo-data/funding-call-scraper.json"
+            >funding-call-scraper.json</a
+          >. Sources:
+          <a
+            href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor"
+            target="_blank"
+            rel="noopener"
+            >e-learning monitor</a
+          >
+          ·
+          <a
+            href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper"
+            target="_blank"
+            rel="noopener"
+            >funding scraper</a
+          >.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER / CONTACT ============ -->
+    <footer id="contact">
+      <div class="wrap">
+        <h2>Get in touch</h2>
+        <p>
+          Want to know how one of these tools works, or how the same approach
+          could automate your administrative processes? I'm happy to talk about
+          it.
+        </p>
+        <div class="links">
+          <div>
+            <span class="label">Email</span
+            ><a href="mailto:andrea.barduani@gmail.com"
+              >andrea.barduani@gmail.com</a
+            >
+          </div>
+          <div>
+            <span class="label">LinkedIn</span
+            ><a
+              href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/"
+              target="_blank"
+              rel="noopener"
+              >linkedin.com/in/andrea-barduani</a
+            >
+          </div>
+          <div>
+            <span class="label">GitHub</span
+            ><a
+              href="https://github.com/andreabarduani-ui"
+              target="_blank"
+              rel="noopener"
+              >github.com/andreabarduani-ui</a
+            >
+          </div>
+          <div>
+            <span class="label">CV</span
+            ><a href="../../files/Andrea_Barduani_CV.pdf">Download CV (PDF)</a>
+            <span style="color: var(--ink-soft); font-size: 0.82rem"
+              >— add your file at files/Andrea_Barduani_CV.pdf</span
+            >
+          </div>
+          <div>
+            <span class="label">Energy</span
+            ><a href="../../dashboard/"
+              >CSR Energy &amp; Emissions Intelligence</a
+            >
+          </div>
+        </div>
+        <p style="margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap">
+          <a
+            href="mailto:andrea.barduani@gmail.com"
+            aria-label="Email"
+            style="text-decoration: none"
+            >✉️ Email</a
+          >
+          <a
+            href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/"
+            target="_blank"
+            rel="noopener"
+            aria-label="LinkedIn"
+            style="text-decoration: none"
+            >in LinkedIn</a
+          >
+          <a
+            href="https://github.com/andreabarduani-ui"
+            target="_blank"
+            rel="noopener"
+            aria-label="GitHub"
+            style="text-decoration: none"
+            >⬢ GitHub</a
+          >
+        </p>
+        <div class="copy">
+          © 2026 Andrea Barduani — Process Automation Portfolio. Personal design
+          projects; CSR dashboard is not an official thesis.
+        </div>
+      </div>
+    </footer>
+
+    <script src="chat-widget.js"></script>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "tool": "funding_calls_scraper.py",
+  "source": "projects/funding-call-scraper/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live scraping, no public backend.",
+  "input": "9 funding bodies, 2 levels (list page -> call detail), robots.txt respected",
+  "threshold": "calls above EUR 800,000 listed on the Target sheet",
+  "before": [
+    {
+      "fund": "FonARCom",
+      "calls_read": 4,
+      "above_threshold": 1
+    },
+    {
+      "fund": "Fonditalia",
+      "calls_read": 7,
+      "above_threshold": 2
+    }
+  ],
+  "after": [
+    {
+      "fund": "Fonditalia",
+      "budget": "EUR 2,500,000",
+      "confidence": "High",
+      "restricted": "No"
+    },
+    {
+      "fund": "FonARCom",
+      "budget": "EUR 1,100,000",
+      "confidence": "Medium",
+      "restricted": "Yes"
+    },
+    {
+      "fund": "Fondir",
+      "budget": "EUR 950,000",
+      "confidence": "Low",
+      "restricted": "No"
+    }
+  ],
+  "console": [
+    ">> Scraping 9 funding bodies (2 levels: list page -> call detail)",
+    ">> robots.txt respected on all sites",
+    ">> FonARCom ......... 4 calls read, 1 above threshold",
+    ">> Fonditalia ....... 7 calls read, 2 above threshold",
+    ">> 38 calls total — report_bandi_fondi.xlsx written"
+  ],
+  "output": "report_bandi_fondi.xlsx: all calls + Target sheet (above EUR 800,000). Confidence reflects how explicitly each budget is stated; Italian number formats parsed (dot = thousands).",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper"
+}

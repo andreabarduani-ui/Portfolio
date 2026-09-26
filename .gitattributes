@@ -1,0 +1,11 @@
+# Enforce LF (supervisor fix: index.html + AI card eol=lf)
+* text=auto
+index.html eol=lf
+projects/ai-assistant/index.html eol=lf
+projects/ai-assistant/chat-widget.js eol=lf
+projects/ai-assistant/chat-widget.css eol=lf
+projects/ai-assistant/demo-data/*.json eol=lf
+*.md eol=lf
+*.css eol=lf
+*.js eol=lf
+*.json eol=lf

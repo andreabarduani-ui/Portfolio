@@ -1,0 +1,70 @@
+{
+  "tool": "elearning_hours_monitor.py (v17)",
+  "source": "projects/elearning-hours-monitor/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "Report_Accessi.csv + Presenze.pdf (LUL, mode B), 6 months, 28 students",
+  "rules": [
+    "evenings after 19:00 stripped",
+    "weekends stripped",
+    "early mornings 06:00-07:40 stripped",
+    "daily cap 8h (10-minute tolerance)",
+    "fuzzy matching for names truncated at ~19 chars"
+  ],
+  "before": [
+    {
+      "student": "ROSSI MARIA",
+      "total": "71:40:00",
+      "excess": "9:25:00",
+      "evening": "5:10:00",
+      "weekend": "4:15:00",
+      "early": "0:00:00"
+    },
+    {
+      "student": "BIANCHI LUCA",
+      "total": "49:00:00",
+      "excess": "0:30:00",
+      "evening": "0:30:00",
+      "weekend": "0:00:00",
+      "early": "0:00:00"
+    },
+    {
+      "student": "GIORDANETTI ALESSANDRO",
+      "total": "63:45:00",
+      "excess": "8:40:00",
+      "evening": "3:20:00",
+      "weekend": "2:00:00",
+      "early": "3:20:00"
+    }
+  ],
+  "after": [
+    {
+      "student": "ROSSI MARIA",
+      "effective_month": "62:15:00",
+      "accrued": "148:15",
+      "cap": "150h",
+      "status": "in cap"
+    },
+    {
+      "student": "BIANCHI LUCA",
+      "effective_month": "48:30:00",
+      "accrued": "150:00",
+      "cap": "150h",
+      "status": "cap reached"
+    },
+    {
+      "student": "LOMBARDINI BEATRICE",
+      "effective_month": "55:05:00",
+      "accrued": "153:30",
+      "cap": "150h",
+      "status": "+3:30 over cap"
+    }
+  ],
+  "console": [
+    ">> Input detected: Report_Accessi.csv + Presenze.pdf (LUL, mode B)",
+    ">> Months processed: 6 — students: 28",
+    ">> Excess stripped: evenings >19:00, weekends, 06:00-07:40, >8h/day",
+    ">> Written: Monitoraggio_26-08-2026.xlsx"
+  ],
+  "output": "Monitoraggio_<date>.xlsx: one sheet per month + Riepilogo Generale vs the 150-hour per-student cap",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor"
+}
