@@ -519,7 +519,7 @@
       title: "CV",
       keywords: ["cv", "resume", "curriculum", "vitae"],
       reply:
-        '<a href="https://docs.google.com/document/d/1Ep9fzLmezB8vfBo2t9P-FeNKGO64nIWL/edit?usp=sharing&ouid=101196647938047170540&rtpof=true&sd=true" target="_blank" rel="noopener">Download CV</a>. ' +
+        '<a href="https://docs.google.com/document/d/1Ep9fzLmezB8vfBo2t9P-FeNKGO64nIWL/edit?usp=sharing&ouid=101196647938047170540&rtpof=true&sd=true" target="_blank" rel="noopener">CV</a>. ' +
         ciBadge() +
         ".",
     },
@@ -974,6 +974,29 @@
     );
   }
 
+  /* ---------- Surprise me: random automation (13 tools, in-browser preview only) ----------
+     Picks 1 of the 13 Python automation tools and shows its real INPUT
+     (first 4 fixture lines) + OUTPUT (first lines of the run log) from the
+     same demo-data JSON / inline fallback used by Phase 1. Preview only:
+     no upload, no fetch beyond same-origin demo-data, no network. */
+  var RANDOM_IDS = EXAMPLE_IDS.concat(["social-graphics-pipeline"]);
+
+  function findEntry(id) {
+    for (var i = 0; i < KNOWLEDGE.length; i++) {
+      if (KNOWLEDGE[i].id === id) return KNOWLEDGE[i];
+    }
+    return null;
+  }
+
+  function randomExampleResult() {
+    var id = RANDOM_IDS[Math.floor(Math.random() * RANDOM_IDS.length)];
+    var entry = findEntry(id);
+    if (!entry) return { id: id, html: fallbackReplyHtml() };
+    var d = getExampleData(id);
+    if (d) return { id: id, html: exampleReplyHtml(entry, d) };
+    return { id: id, html: entry.reply };
+  }
+
   /* ---------- Matching ---------- */
   function normalize(s) {
     return (
@@ -1318,6 +1341,29 @@
       },
     );
 
+    var randomBtn = document.getElementById("ai-random");
+    if (randomBtn) {
+      randomBtn.addEventListener("click", function () {
+        var picked = randomExampleResult();
+        addMsg(box, "user", "Surprise me: random automation");
+        var thinking = addMsg(box, "bot", "Thinking\u2026");
+        window.setTimeout(function () {
+          thinking.innerHTML = picked.html;
+          box.scrollTop = box.scrollHeight;
+        }, 250);
+        try {
+          if (
+            window.__aiExamplePanel &&
+            typeof window.__aiExamplePanel.select === "function"
+          ) {
+            window.__aiExamplePanel.select(picked.id);
+            var runBtn = document.getElementById("ai-run-example");
+            if (runBtn && runBtn.click) runBtn.click();
+          }
+        } catch (e) {}
+      });
+    }
+
     form.addEventListener("submit", function (ev) {
       if (ev && ev.preventDefault) ev.preventDefault();
       var q = input.value.trim();
@@ -1345,6 +1391,8 @@
     knowledgeSize: KNOWLEDGE.length,
     isExampleQuery: isExampleQuery,
     exampleIds: EXAMPLE_IDS,
+    randomIds: RANDOM_IDS,
+    randomExample: randomExampleResult,
     exampleHtml: function (id) {
       for (var i = 0; i < KNOWLEDGE.length; i++) {
         if (KNOWLEDGE[i].id === id) {
