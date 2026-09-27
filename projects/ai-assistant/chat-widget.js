@@ -1062,6 +1062,210 @@
     } catch (e) {}
   }
 
+  /* ---------- Phase 1: static input → output examples (no execution, no upload) ----------
+     Below the chat, three option buttons show a panel with:
+     - sample INPUT (first 4 fixture lines, downloadable from the real
+       demo-fixture.txt in the project folder);
+     - a drag&drop zone that previews a local .txt/.csv file in-browser only
+       (name, rows, character count, max 500KB, evident-PII warning, never
+       uploaded — no fetch, no backend);
+     - a "Run example" button that shows the pre-computed OUTPUT
+       (first lines of the run log from demo-data JSON with inline fallback),
+       plus the real command, Source file:line and transcript link, with an
+       example-output download (real sample-output.md from the sandbox run).
+     Bubble text stays factual; no sales language.
+
+     PHASE 2 DESIGN (documented only, NOT implemented):
+     A Netlify Function sandbox would accept a file upload, run the real tool
+     in an isolated tmpfs environment (timeout 10s, no network, no secrets,
+     allow-listed commands only, per-tool allow-list + size caps), stream back
+     stdout/stderr and a signed short-lived download URL, with full audit log.
+     No Phase 2 code ships here: no fetch to functions, no upload endpoint,
+     CSP connect-src 'self' untouched. */
+  var EXAMPLE_PANEL_IDS = [
+    "elearning-hours-monitor",
+    "funding-call-scraper",
+    "regulation-search",
+  ];
+  var EXAMPLE_TITLES = {
+    "elearning-hours-monitor": "E-learning monitoring",
+    "funding-call-scraper": "Funding scraper",
+    "regulation-search": "Regulation search",
+  };
+  var MAX_LOCAL_BYTES = 500 * 1024;
+
+  function examplePaths(id) {
+    return {
+      fixture: "../" + id + "/demo-fixture.txt",
+      transcriptPage: "../" + id + "/demo-transcript.txt",
+      outputFile: "../" + id + "/sample-output.md",
+    };
+  }
+
+  function hasEvidentPii(text) {
+    var t = String(text || "");
+    var email = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(t);
+    var phone = /(?:\+39\s?)?(?:0\d[\s.]?\d{2,4}[\s.]?\d{3,4}[\s.]?\d{3,4}|3\d{2}[\s.]?\d{3}[\s.]?\d{4})/.test(t);
+    var cf = /\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b/i.test(t);
+    var iban = /\bIT\d{2}\s?[A-Z]\d{3}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{3}\b/i.test(t);
+    return email || phone || cf || iban;
+  }
+
+  function previewLocalFile(file, previewEl, warnEl) {
+    if (!file) return;
+    var name = file.name || "file";
+    var size = file.size || 0;
+    if (size > MAX_LOCAL_BYTES) {
+      previewEl.textContent =
+        name + " — " + size + " bytes (over the 500KB limit, not read).";
+      warnEl.hidden = false;
+      warnEl.textContent =
+        "File over 500KB: choose a smaller excerpt. Nothing was uploaded.";
+      return;
+    }
+    try {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var text = String(reader.result || "");
+        var rows = text === "" ? 0 : text.split(/\r\n|\r|\n/).length;
+        previewEl.textContent =
+          name + " — " + rows + " rows, " + text.length + " characters (local preview).";
+        if (hasEvidentPii(text)) {
+          warnEl.hidden = false;
+          warnEl.textContent =
+            "Possible personal data detected (email, phone, tax ID or IBAN). Do not share this file; the preview stays in this page and nothing was uploaded.";
+        } else {
+          warnEl.hidden = true;
+          warnEl.textContent = "";
+        }
+      };
+      reader.onerror = function () {
+        previewEl.textContent = name + " — could not be read in this browser.";
+      };
+      reader.readAsText(file.slice(0, MAX_LOCAL_BYTES));
+    } catch (e) {
+      previewEl.textContent = name + " — preview not available.";
+    }
+  }
+
+  function initExamplePanel() {
+    var panel = document.getElementById("ai-example-panel");
+    if (!panel) return;
+    var titleEl = document.getElementById("ai-example-title");
+    var inputEl = document.getElementById("ai-example-input");
+    var inputDl = document.getElementById("ai-example-input-dl");
+    var dropzone = document.getElementById("ai-dropzone");
+    var fileInput = document.getElementById("ai-file");
+    var previewEl = document.getElementById("ai-drop-preview");
+    var warnEl = document.getElementById("ai-drop-warn");
+    var runBtn = document.getElementById("ai-run-example");
+    var outWrap = document.getElementById("ai-example-output-wrap");
+    var outEl = document.getElementById("ai-example-output");
+    var metaEl = document.getElementById("ai-example-meta");
+    var outDl = document.getElementById("ai-example-output-dl");
+    var transcriptLink = document.getElementById("ai-example-transcript");
+    var current = null;
+    var optionBtns = document.querySelectorAll("[data-example]");
+
+    function select(id) {
+      if (EXAMPLE_PANEL_IDS.indexOf(id) === -1) return;
+      current = id;
+      Array.prototype.forEach.call(optionBtns, function (b) {
+        b.setAttribute(
+          "aria-pressed",
+          String(b.getAttribute("data-example") === id),
+        );
+      });
+      var d = getExampleData(id);
+      var paths = examplePaths(id);
+      panel.hidden = false;
+      outWrap.hidden = true;
+      previewEl.textContent = "";
+      warnEl.hidden = true;
+      warnEl.textContent = "";
+      try {
+        if (fileInput) fileInput.value = "";
+      } catch (e) {}
+      titleEl.textContent = EXAMPLE_TITLES[id] || id;
+      if (d) {
+        inputEl.textContent = d.fixture_lines.slice(0, 4).join("\n");
+        metaEl.textContent = "$ " + d.cmd + " · Source: " + d.source_ref;
+      } else {
+        inputEl.textContent = "";
+        metaEl.textContent = "";
+      }
+      inputDl.setAttribute("href", paths.fixture);
+      outDl.setAttribute("href", paths.outputFile);
+      transcriptLink.setAttribute(
+        "href",
+        d && d.transcript ? d.transcript : paths.transcriptPage,
+      );
+    }
+
+    Array.prototype.forEach.call(optionBtns, function (b) {
+      b.addEventListener("click", function () {
+        select(b.getAttribute("data-example"));
+      });
+    });
+
+    function handleFiles(files) {
+      if (!files || !files.length) return;
+      previewLocalFile(files[0], previewEl, warnEl);
+    }
+
+    if (dropzone) {
+      ["dragenter", "dragover"].forEach(function (ev) {
+        dropzone.addEventListener(ev, function (e) {
+          if (e && e.preventDefault) e.preventDefault();
+          dropzone.classList.add("dragover");
+        });
+      });
+      ["dragleave", "drop"].forEach(function (ev) {
+        dropzone.addEventListener(ev, function (e) {
+          if (e && e.preventDefault) e.preventDefault();
+          dropzone.classList.remove("dragover");
+        });
+      });
+      dropzone.addEventListener("drop", function (e) {
+        var dt = e && e.dataTransfer;
+        handleFiles(dt && dt.files);
+      });
+      dropzone.addEventListener("click", function (e) {
+        if (e && e.target && e.target.id === "ai-file") return;
+        if (fileInput) fileInput.click();
+      });
+      dropzone.addEventListener("keydown", function (e) {
+        if (e && (e.key === "Enter" || e.key === " ")) {
+          if (e.preventDefault) e.preventDefault();
+          if (fileInput) fileInput.click();
+        }
+      });
+    }
+    if (fileInput) {
+      fileInput.addEventListener("change", function () {
+        handleFiles(fileInput.files);
+      });
+    }
+
+    if (runBtn) {
+      runBtn.addEventListener("click", function () {
+        if (!current) return;
+        var d = getExampleData(current);
+        if (!d) return;
+        outEl.textContent = d.transcript_lines.slice(0, 8).join("\n");
+        metaEl.textContent = "$ " + d.cmd + " · Source: " + d.source_ref;
+        outWrap.hidden = false;
+      });
+    }
+
+    window.__aiExamplePanel = {
+      select: select,
+      current: function () {
+        return current;
+      },
+    };
+  }
+
   /* ---------- UI wiring ---------- */
   function esc(s) {
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -1087,6 +1291,7 @@
     if (!box || !form || !input) return;
 
     tryLoadDemoData();
+    initExamplePanel();
 
     addMsg(
       box,

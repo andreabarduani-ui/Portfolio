@@ -114,6 +114,129 @@
               />
               <button type="submit">Send</button>
             </form>
+
+            <div class="ai-examples" id="ai-examples">
+              <p class="ai-examples-title">Try an input → output example</p>
+              <div
+                class="ai-options"
+                role="group"
+                aria-label="Example tools"
+              >
+                <button
+                  class="ai-option"
+                  type="button"
+                  data-example="elearning-hours-monitor"
+                >
+                  E-learning monitoring
+                </button>
+                <button
+                  class="ai-option"
+                  type="button"
+                  data-example="funding-call-scraper"
+                >
+                  Funding scraper
+                </button>
+                <button
+                  class="ai-option"
+                  type="button"
+                  data-example="regulation-search"
+                >
+                  Regulation search
+                </button>
+              </div>
+              <div
+                class="ai-example-panel"
+                id="ai-example-panel"
+                hidden
+              >
+                <h3 id="ai-example-title">Example</h3>
+                <div class="ai-example-block">
+                  <p class="ai-example-label">Sample input</p>
+                  <pre
+                    class="ai-example-pre"
+                    id="ai-example-input"
+                  ></pre>
+                  <p class="out-note">
+                    <a href="#" id="ai-example-input-dl" download
+                      >Download sample input</a
+                    >
+                  </p>
+                </div>
+                <div class="ai-example-block">
+                  <p class="ai-example-label">
+                    Check your own file (preview only, stays in this
+                    page)
+                  </p>
+                  <div
+                    class="ai-dropzone"
+                    id="ai-dropzone"
+                    tabindex="0"
+                    role="button"
+                    aria-label="Drop a text file here for a local preview. Nothing is uploaded."
+                  >
+                    <p>Drag &amp; drop a .txt or .csv file here, or</p>
+                    <label class="ai-browse" for="ai-file"
+                      >choose a file</label
+                    >
+                    <input
+                      type="file"
+                      id="ai-file"
+                      accept=".txt,.csv,.md"
+                      hidden
+                    />
+                    <p class="ai-drop-hint">
+                      Max 500KB. Preview only — the file never leaves
+                      this page.
+                    </p>
+                  </div>
+                  <p
+                    class="ai-drop-preview"
+                    id="ai-drop-preview"
+                    aria-live="polite"
+                  ></p>
+                  <p
+                    class="ai-drop-warn"
+                    id="ai-drop-warn"
+                    role="alert"
+                    hidden
+                  ></p>
+                </div>
+                <div class="ai-example-block">
+                  <button
+                    class="ai-run"
+                    type="button"
+                    id="ai-run-example"
+                  >
+                    Run example
+                  </button>
+                </div>
+                <div
+                  class="ai-example-block"
+                  id="ai-example-output-wrap"
+                  hidden
+                >
+                  <p class="ai-example-label">Output</p>
+                  <pre
+                    class="ai-example-pre"
+                    id="ai-example-output"
+                  ></pre>
+                  <p class="out-note" id="ai-example-meta"></p>
+                  <p class="out-note">
+                    <a href="#" id="ai-example-output-dl" download
+                      >Download example output</a
+                    >
+                    ·
+                    <a
+                      href="#"
+                      id="ai-example-transcript"
+                      target="_blank"
+                      rel="noopener"
+                      >Full transcript</a
+                    >
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <aside class="ai-proof" aria-label="Verified sources">

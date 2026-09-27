@@ -412,32 +412,45 @@
     })();
   }
 
-  /* ============ Filter chips (python|web|data|strategy|ai, default python, single grid) ============ */
+  /* ============ Project sections (vertical, no filtering) + legacy deep-link aliases ============ */
   function normFilter(f) {
     return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
   }
+  function aliasTarget(f) {
+    if (f === 'web') return document.getElementById('projects-web');
+    return document.getElementById('projects-' + f);
+  }
   function applyFilter(chips, f, pushHash) {
     f = normFilter(f);
-    chips.forEach(function (c) {
-      var on = c.dataset.filter === f;
-      c.classList.toggle('active', on);
-      c.setAttribute('aria-pressed', String(on));
+    if (chips && chips.length) {
+      chips.forEach(function (c) {
+        var on = c.dataset.filter === f;
+        c.classList.toggle('active', on);
+        c.setAttribute('aria-pressed', String(on));
+      });
+      var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
+      cards.forEach(function (card) {
+        var show = card.dataset.phase === f || card.dataset.phase === 'ai';
+        if (!REDUCED && !show) { card.classList.add('filtering'); }
+        card.hidden = !show;
+        if (show) { card.classList.remove('filtering'); void card.offsetWidth; }
+      });
+      var i = 0;
+      cards.forEach(function (card) {
+        if (!card.hidden) { card.style.setProperty('--i', String(i % 6)); i++; }
+      });
+      if (pushHash && history.replaceState) {
+        history.replaceState(null, '', '#projects-' + f);
+      }
+      return;
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('#projects .card'), function (card) {
+      card.hidden = false;
+      card.classList.remove('filtering');
     });
-    var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
-    cards.forEach(function (card) {
-      // AI card stays visible across filters: featured first.
-      var show = card.dataset.phase === f || card.dataset.phase === 'ai';
-      if (!REDUCED && !show) { card.classList.add('filtering'); }
-      card.hidden = !show;
-      if (show) { card.classList.remove('filtering'); void card.offsetWidth; }
-    });
-    // no .group-head in DOM anymore: single filtered grid, context lives in chips
-    var i = 0;
-    cards.forEach(function (card) {
-      if (!card.hidden) { card.style.setProperty('--i', String(i % 6)); i++; }
-    });
-    if (pushHash && history.replaceState) {
-      history.replaceState(null, '', '#projects-' + f);
+    if (pushHash) {
+      var t = aliasTarget(f);
+      if (t && t.scrollIntoView) { try { t.scrollIntoView(); } catch (e) {} }
     }
   }
   function initChips() {
@@ -446,7 +459,7 @@
       chip.addEventListener('click', function () { applyFilter(chips, chip.dataset.filter, true); });
     });
     var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
-    applyFilter(chips, m ? (m[1] || 'python') : 'python', false);
+    if (m) { applyFilter(chips, m[1] || 'python', false); }
     window.addEventListener('hashchange', function () {
       var mm = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
       if (mm) { applyFilter(chips, mm[1] || 'python', false); }

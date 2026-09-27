@@ -136,6 +136,18 @@ section { padding: 60px 0; }
 .chip .chip-sub { display: block; font-size: .74rem; font-weight: 400; opacity: .82; line-height: 1.35; margin-top: 2px; }
 .chip.active .chip-sub { opacity: .92; color: #eaf3fa; }
 @media (max-width: 640px) { .chips { justify-content: center; } .chip { flex: 1 1 100%; max-width: 340px; } }
+/* ---------- Project sections (vertical, numbered) ---------- */
+.proj-index { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 30px; }
+.proj-index a { border: 1px solid var(--line); background: var(--paper); color: var(--ink-soft); border-radius: 999px; padding: 8px 16px; font-size: .86rem; font-weight: 600; text-decoration: none; }
+.proj-index a span { color: var(--accent); margin-right: 6px; font-size: .78rem; }
+.proj-index a:hover { border-color: var(--accent); color: var(--accent); }
+.proj-block { padding: 34px 0; border-top: 1px solid var(--line); }
+.proj-block:first-of-type { border-top: none; padding-top: 6px; }
+.proj-kicker { font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+.proj-block h3 { font-size: 1.35rem; }
+.proj-details { margin-top: 18px; }
+.proj-details > summary { cursor: pointer; font-weight: 600; font-size: .92rem; color: var(--accent); margin-bottom: 14px; }
+.proj-details > summary:hover { text-decoration: underline; }
 /* group-head removed from DOM — kept hidden as safety if reintroduced */
 .group-head { display: none !important; }
 
@@ -261,6 +273,12 @@ a.thumb-link:hover .uni-thumb { transform: scale(1.03); }
 .about { display: grid; grid-template-columns: 1.35fr 1fr; gap: 44px; align-items: start; }
 @media (max-width: 780px) { .about { grid-template-columns: 1fr; } }
 .about p { color: var(--ink-soft); margin-bottom: 14px; }
+.about-points { list-style: none; counter-reset: about; margin: 0 0 16px; padding: 0; display: grid; gap: 10px; }
+.about-points li { padding: 10px 0 10px 42px; position: relative; border-top: 1px solid var(--line); font-size: .9rem; }
+.about-points li:first-child { border-top: none; }
+.about-points li::before { counter-increment: about; content: counter(about, decimal-leading-zero); position: absolute; left: 0; top: 10px; font-size: .78rem; font-weight: 700; color: var(--accent); letter-spacing: .06em; }
+.about-points li b { display: block; font-size: .95rem; font-weight: 600; }
+.about-points li span { color: var(--ink-soft); }
 .principles { list-style: none; }
 .principles li { padding: 12px 0; border-top: 1px solid var(--line); font-size: .9rem; }
 .principles li b { display: block; font-size: .95rem; font-weight: 600; }

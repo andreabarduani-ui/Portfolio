@@ -525,6 +525,11 @@
     </div>
     <div class="about">
       <div class="reveal">
+        <ol class="about-points">
+          <li><b>Marketing education</b><span>Two masters — Communication and Marketing at Sapienza University of Rome, and Business Organization at Il Sole 24 Ore Business School — covering data analysis and digital solutions including CRM and marketing campaigns.</span></li>
+          <li><b>Training Coordinator</b><span>Design of ESF+ training plans, course design, and end-to-end delivery with reporting and accounting.</span></li>
+          <li><b>Automation mindset</b><span>13 Python tools operating on Word, Excel and PDF files; originals are never modified.</span></li>
+        </ol>
         <p>
           Manual processes that used to take hours now run in seconds,
           with consistent output that can be verified and audited. The tools
@@ -547,36 +552,26 @@
 </section>
 
 <!-- ============ EXPERIENCE ============ -->
+<!-- TODO(experience): confirm exact dates, job titles and duties from CV (files/Andrea_Barduani_CV.pdf is currently missing in repo). Entries below use employer names + one neutral line each; do not publish dates until verified. -->
 <section id="experience">
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>Experience</h2>
-      <p>Work in the administration of funded vocational training programs, across automation, data and research.</p>
+      <p>Work in the administration of funded vocational training programs, across training coordination, research and automation.</p>
     </div>
     <ol class="exp-list">
       <li class="exp reveal">
-        <div class="exp-head"><h3>Process Automation Specialist</h3><span>Training administration</span></div>
-        <p>Design, build and maintain 13 Python tools covering program launch, delivery and reporting:
-           Excel, Word and PDF automation, fuzzy matching for inconsistent registries,
-           double-click launchers for non-technical colleagues.
-           Flagship work: the E-Learning Hours Monitor (17 versions, ~1,800 lines),
-           computing each student's real hours by stripping evenings, weekends and daily excess.</p>
+        <div class="exp-head"><h3>Accademia Informatica</h3><span>Training programs</span></div>
+        <p>Work in training program delivery and administration.</p>
+      </li>
+      <li class="exp reveal">
+        <div class="exp-head"><h3>ADN Kronos</h3><span>Training programs</span></div>
+        <p>Work in training program delivery and administration.</p>
+      </li>
+      <li class="exp reveal">
+        <div class="exp-head"><h3>SDI Sant'Egidio</h3><span>Training programs</span></div>
+        <p>Training Coordinator: design of ESF+ plans, course design, and end-to-end delivery with reporting and accounting, supported by Python automation on Word, Excel and PDF.</p>
         <div class="exp-links"><a href="#projects-python">Python automations</a> · <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">E-Learning Hours Monitor</a></div>
-      </li>
-      <li class="exp reveal">
-        <div class="exp-head"><h3>Data Analysis &amp; Dashboards</h3><span>Energy &amp; analytics</span></div>
-        <p>CSR Energy &amp; Emissions Intelligence: interactive dashboard on energy use and emissions
-           intensity across 5,000 companies in 260 countries (2015–2018),
-           built with BigQuery, Power BI and Chart.js — plus a Google Data Studio dashboard
-           with connected sources and dynamic filters.</p>
-        <div class="exp-links"><a href="dashboard/">CSR Energy &amp; Emissions Intelligence</a> · <a href="#projects-data">Data projects</a></div>
-      </li>
-      <li class="exp reveal">
-        <div class="exp-head"><h3>Web Concept &amp; Strategy Research</h3><span>University–corporate projects</span></div>
-        <p>Kaidra: UI/UX web concept unifying identity data into one source of truth.
-           Strategy research: NBC Store marketing analysis (Sapienza University, 42 slides)
-           and Future Moves for Milano Sport (group market research, 44 slides).</p>
-        <div class="exp-links"><a href="projects/kaidra/" target="_blank" rel="noopener">Kaidra concept</a> · <a href="#projects-strategy">Strategy projects</a></div>
       </li>
     </ol>
     <p class="out-note reveal">Full CV on request — <a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a> · <a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a></p>
@@ -588,37 +583,31 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>The projects</h2>
-      <p>19 projects across five areas — 13 Python automations, 1 UI/UX web concept
-         (Kaidra), 2 data dashboards, 2 strategy research decks and 1 AI assistant. Default view is
-         <a href="#projects-python">Python Automations</a> — switch area via the filters
-         or deep-links <a href="#projects-python">#projects-python</a>,
-         <a href="#projects-web">#projects-web</a>, <a href="#projects-data">#projects-data</a>,
+      <p>19 projects in four sections — 13 Python automations, 2 data dashboards, 2 strategy research decks and 1 AI assistant, plus the Kaidra web concept linked under strategy.
+         Jump to <a href="#projects-python">#projects-python</a>,
+         <a href="#projects-data">#projects-data</a>,
          <a href="#projects-strategy">#projects-strategy</a>,
-         <a href="#projects-ai">#projects-ai</a>. Full source and sample outputs live in
+         <a href="#projects-ai">#projects-ai</a> (#projects-web remains as an alias to the Kaidra concept). Full source and sample outputs live in
          <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">the repository</a>.</p>
     </div>
 
-    <div class="chips reveal" role="group" aria-label="Filter projects by area">
-      <button class="chip active" data-filter="python" title="Python Automations — launch → delivery → reporting + utilities (13 tools)" aria-pressed="true">Python Automations <span class="chip-sub">launch → delivery → reporting</span> <sup>13</sup></button>
-      <button class="chip" data-filter="web" title="UI/UX Web — interface concept for identity governance" aria-pressed="false">UI/UX Web <span class="chip-sub">identity governance concept</span> <sup>1</sup></button>
-      <button class="chip" data-filter="data" title="Data — energy & analytics dashboards" aria-pressed="false">Data <span class="chip-sub">energy &amp; analytics</span> <sup>2</sup></button>
-      <button class="chip" data-filter="strategy" title="University-Corporate Strategy — market & strategy research" aria-pressed="false">University-Corporate Strategy <span class="chip-sub">market &amp; strategy research</span> <sup>2</sup></button>
-      <button class="chip" data-filter="ai" title="AI Assistant — ask the portfolio in English" aria-pressed="false">AI Assistant <span class="chip-sub">ask in English</span> <sup>1</sup></button>
-    </div>
+    <nav class="proj-index reveal" aria-label="Project sections">
+      <a href="#projects-python"><span>01</span> Python Automations</a>
+      <a href="#projects-data"><span>02</span> Data</a>
+      <a href="#projects-strategy"><span>03</span> Strategy</a>
+      <a href="#projects-ai"><span>04</span> AI Assistant</a>
+    </nav>
 
-    <!-- Single filtered grid (no section titles): context lives in the chips above. -->
-    <div class="cards" id="projectsGrid">
-      <div class="card reveal card-hero" data-phase="ai" data-group="ai">
-        <span class="tag ai">New · AI</span>
-        <h4>Portfolio AI Assistant</h4>
-        <p>Ask in English about any project, dashboard, CV or contact.
-           Runs in your browser — no keys required.</p>
-        <div class="tech">English · runs in your browser</div>
-        <div class="card-foot">
-          <a class="code" href="projects/ai-assistant/" aria-label="Open the Portfolio AI assistant">Open the assistant &rarr;</a>
-          <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Sample data &rarr;</a>
-        </div>
+    <!-- 01 · Python automations (all 13, collapsible) -->
+    <section id="projects-python" class="proj-block" aria-label="Python automations">
+      <div class="sec-head reveal">
+        <p class="proj-kicker">01 — Python automations</p>
+        <h3>Launch → delivery → reporting</h3>
+        <p>13 tools covering the full lifecycle of funded training programs: Word, Excel and PDF automation with fuzzy matching for inconsistent registries. Originals are never modified. Expand the list to browse every tool.</p>
       </div>
+      <details class="proj-details" open>
+        <summary>Show all 13 tools</summary>
+        <div class="cards" id="projectsGrid">
       <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="student-import-generator">
         <span class="tag launch">Launch</span>
         <h4>Student Import Generator</h4>
@@ -800,25 +789,18 @@ REGULATION DEMO OK</pre>
           <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Browse all projects &rarr;</a>
         </div>
       </div>
-    <!-- UI/UX Web card continues in the same single grid -->
-      <div class="card reveal" data-phase="web" data-group="web">
-        <a class="thumb-link" href="projects/kaidra/" target="_blank" rel="noopener">
-          <span class="kaidra-thumb">
-            <img src="projects/kaidra/assets/figma-og.png" alt="Kaidra identity governance console — preview" loading="lazy" onerror="this.remove()">
-            <span class="kaidra-fallback" aria-hidden="true">kaidra</span>
-          </span>
-        </a>
-        <span class="tag web">UI</span>
-        <h4>Kaidra — Identity Visibility Concept</h4>
-        <p>Concept web app that unifies identity data into one source of truth.
-           Monitor, certify and remediate access in real time. EU-hosted.</p>
-        <div class="tech">HTML · CSS · JavaScript</div>
-        <div class="card-foot">
-          <a class="code" href="projects/kaidra/" target="_blank" rel="noopener">Open the live concept &rarr;</a>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Source &rarr;</a>
-        </div>
       </div>
-    <!-- Data cards continue in the same single grid -->
+      </details>
+    </section>
+
+    <!-- 02 · Data -->
+    <section id="projects-data" class="proj-block" aria-label="Data projects">
+      <div class="sec-head reveal">
+        <p class="proj-kicker">02 — Data</p>
+        <h3>Energy data analysis</h3>
+        <p>Pipeline: Google Cloud and BigQuery for data preparation, Power BI for analysis, and Chart.js for the web dashboard. Window 2015–2018, 5,000 companies across 260 countries: KPIs, top-15 ranking, trends and SIC breakdown.</p>
+      </div>
+      <div class="cards">
       <div class="card reveal energy" data-phase="data" data-group="data" style="border-top:4px solid #1f8a70">
         <div class="metric" style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><b style="font-size:1.35rem;font-weight:800">260</b><span style="font-size:.76rem;color:var(--ink-soft)">countries · 5,000 companies · 2015–2018</span></div>
         <span class="tag data">Data</span>
@@ -868,7 +850,17 @@ REGULATION DEMO OK</pre>
           <a class="code" href="https://datastudio.google.com/reporting/d787ca46-5f8c-449d-9c3d-47bf7164d82f/page/3ucKF" target="_blank" rel="noopener">Open the dashboard &rarr;</a>
         </div>
       </div>
-    <!-- Strategy cards continue in the same single grid -->
+      </div>
+    </section>
+
+    <!-- 03 · Strategy -->
+    <section id="projects-strategy" class="proj-block" aria-label="Strategy projects">
+      <div class="sec-head reveal">
+        <p class="proj-kicker">03 — Strategy</p>
+        <h3>University research decks</h3>
+        <p>Two university-corporate research presentations: marketing and market analysis with PESTLE, SWOT, benchmarking and growth options.</p>
+      </div>
+      <div class="cards">
       <div class="card reveal" data-phase="strategy" data-group="strategy">
         <a class="thumb-link" href="files/sapienza-nbc-marketing-analysis.pdf" target="_blank" rel="noopener">
           <img class="uni-thumb" src="files/img/thumb-nbc.png" alt="NBC Store marketing analysis — title slide" loading="lazy">
@@ -897,7 +889,47 @@ REGULATION DEMO OK</pre>
           <a class="code" href="files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
         </div>
       </div>
-    </div>
+      <div class="card reveal" data-phase="web" data-group="web" id="projects-web">
+        <a class="thumb-link" href="projects/kaidra/" target="_blank" rel="noopener">
+          <span class="kaidra-thumb">
+            <img src="projects/kaidra/assets/figma-og.png" alt="Kaidra identity governance console — preview" loading="lazy" onerror="this.remove()">
+            <span class="kaidra-fallback" aria-hidden="true">kaidra</span>
+          </span>
+        </a>
+        <span class="tag web">UI</span>
+        <h4>Kaidra — Identity Visibility Concept</h4>
+        <p>Concept web app that unifies identity data into one source of truth.
+           Monitor, certify and remediate access in real time. EU-hosted.</p>
+        <div class="tech">HTML · CSS · JavaScript</div>
+        <div class="card-foot">
+          <a class="code" href="projects/kaidra/" target="_blank" rel="noopener">Open the live concept &rarr;</a>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Source &rarr;</a>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- 04 · AI assistant (explainer) -->
+    <section id="projects-ai" class="proj-block" aria-label="AI assistant">
+      <div class="sec-head reveal">
+        <p class="proj-kicker">04 — AI assistant</p>
+        <h3>Ask the portfolio</h3>
+        <p>An English assistant that explains each tool with its real command, sample input and pre-computed output. It runs entirely in the browser — no keys, no uploads.</p>
+      </div>
+      <div class="cards">
+        <div class="card reveal card-hero" data-phase="ai" data-group="ai">
+          <span class="tag ai">New · AI</span>
+          <h4>Portfolio AI Assistant</h4>
+          <p>Ask in English about any project, dashboard, CV or contact.
+             Runs in your browser — no keys required. Try the input → output examples for e-learning monitoring, funding calls and regulation search.</p>
+          <div class="tech">English · runs in your browser</div>
+          <div class="card-foot">
+            <a class="code" href="projects/ai-assistant/" aria-label="Open the Portfolio AI assistant">Open the assistant &rarr;</a>
+            <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Sample data &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </section>
 
@@ -1346,46 +1378,62 @@ REGULATION DEMO OK</pre>
     })();
   })();
 
-  /* ============ Filter chips (python|web|data|strategy|ai, default python, single grid) ============ */
+  /* ============ Project sections (vertical, no filtering) + legacy deep-link aliases ============ */
   var chips = document.querySelectorAll('#projects .chip');
   function normFilter(f) {
     return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
   }
+  function aliasTarget(f) {
+    // Legacy #projects-web is an alias to the Kaidra card inside the strategy block.
+    if (f === 'web') return document.getElementById('projects-web');
+    return document.getElementById('projects-' + f);
+  }
   function applyFilter(f, pushHash) {
     f = normFilter(f);
-    chips.forEach(function (c) {
-      var on = c.dataset.filter === f;
-      c.classList.toggle('active', on);
-      c.setAttribute('aria-pressed', String(on));
-    });
-    var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
-    cards.forEach(function (card) {
-      // AI card stays visible across filters: featured first.
-      var show = card.dataset.phase === f || card.dataset.phase === 'ai';
-      if (!REDUCED && !show) { card.classList.add('filtering'); }
-      card.hidden = !show;
-      if (show) {
-        card.classList.remove('filtering');
-        void card.offsetWidth;
+    // New layout: all sections stay visible; chips removed. Keep legacy behavior
+    // only if chips exist (old pages); otherwise just ensure cards are visible.
+    if (chips && chips.length) {
+      chips.forEach(function (c) {
+        var on = c.dataset.filter === f;
+        c.classList.toggle('active', on);
+        c.setAttribute('aria-pressed', String(on));
+      });
+      var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
+      cards.forEach(function (card) {
+        var show = card.dataset.phase === f || card.dataset.phase === 'ai';
+        if (!REDUCED && !show) { card.classList.add('filtering'); }
+        card.hidden = !show;
+        if (show) {
+          card.classList.remove('filtering');
+          void card.offsetWidth;
+        }
+      });
+      var i = 0;
+      cards.forEach(function (card) {
+        if (!card.hidden) { card.style.setProperty('--i', String(i % 6)); i++; }
+      });
+      if (pushHash && history.replaceState) {
+        history.replaceState(null, '', '#projects-' + f);
       }
+      return;
+    }
+    // Vertical layout: never hide; deep-links scroll natively via anchor ids.
+    Array.prototype.forEach.call(document.querySelectorAll('#projects .card'), function (card) {
+      card.hidden = false;
+      card.classList.remove('filtering');
     });
-    // no .group-head in DOM anymore: single filtered grid, context lives in chips
-    // stagger re-trigger for visible cards
-    var i = 0;
-    cards.forEach(function (card) {
-      if (!card.hidden) { card.style.setProperty('--i', String(i % 6)); i++; }
-    });
-    if (pushHash && history.replaceState) {
-      history.replaceState(null, '', '#projects-' + f);
+    if (pushHash) {
+      var t = aliasTarget(f);
+      if (t && t.scrollIntoView) { try { t.scrollIntoView(); } catch (e) {} }
     }
   }
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () { applyFilter(chip.dataset.filter, true); });
   });
-  // deep-link: #projects-python|web|data|strategy|ai; bare #projects or unknown falls back to python
+  // deep-link aliases: #projects-python|web|data|strategy|ai all resolve; bare #projects shows everything
   (function deepLink() {
     var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
-    applyFilter(m ? (m[1] || 'python') : 'python', false);
+    if (m) { applyFilter(m[1] || 'python', false); }
   })();
   window.addEventListener('hashchange', function () {
     var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
