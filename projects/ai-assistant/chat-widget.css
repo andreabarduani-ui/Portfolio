@@ -352,3 +352,57 @@
     width: 100%;
   }
 }
+
+/* ---------- Contact panel (mailto only, no backend) ---------- */
+#contact-panel {
+  margin-top: 22px;
+  background: var(--paper, #ffffff);
+  border: 1px solid var(--line, #e4e0d8);
+  border-radius: 10px;
+  padding: 20px 22px;
+}
+#contact-panel h2 {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+#contact-panel p {
+  color: var(--ink-soft, #5c574f);
+  margin-bottom: 12px;
+}
+#contact-form {
+  display: grid;
+  gap: 12px;
+}
+.contact-field {
+  display: grid;
+  gap: 6px;
+}
+.contact-field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.contact-field input,
+.contact-field textarea {
+  font: inherit;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid var(--line, #e4e0d8);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink, #26231f);
+}
+#contact-form button {
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent, #0d5794);
+  color: #fff;
+  cursor: pointer;
+  justify-self: start;
+}
+#contact-form button:hover {
+  background: var(--accent-dark, #093f6e);
+}

@@ -6,7 +6,7 @@
     <title>Portfolio AI assistant — Andrea Barduani</title>
     <meta
       name="description"
-      content="English assistant for Andrea Barduani's portfolio: 18 projects, energy dashboard, CV and contacts. Runs entirely in your browser, no keys."
+      content="English assistant for Andrea Barduani's portfolio: 19 projects, energy dashboard, CV and contacts. Runs entirely in your browser, no keys."
     />
     <link
       rel="icon"
@@ -68,7 +68,7 @@
           </p>
           <h1>Portfolio AI assistant</h1>
           <p style="margin-top: 10px; color: var(--ink-soft)">
-            Ask in English about any of the 18 projects, the energy dashboard,
+            Ask in English about any of the 19 projects, the energy dashboard,
             the CV or contacts. Matching runs entirely in your browser —
             no data leaves this page, no external fetch, no keys.
             <a href="../../#projects">Back to all projects &rarr;</a>
@@ -335,6 +335,35 @@
             >regulation search</a
           >.
         </p>
+
+        <!-- ============ CONTACT PANEL (mailto only, no backend) ============ -->
+        <section id="contact-panel" aria-label="Contact panel">
+          <h2>Contact</h2>
+          <p>
+            This form only opens your email app with a pre-filled message to
+            <a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a>.
+            No data is sent elsewhere, no backend is involved.
+          </p>
+          <form id="contact-form" novalidate>
+            <div class="contact-field">
+              <label for="contact-name">Name</label>
+              <input id="contact-name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="contact-field">
+              <label for="contact-email">Email</label>
+              <input id="contact-email" name="email" type="email" autocomplete="email" required />
+            </div>
+            <div class="contact-field">
+              <label for="contact-message">Message</label>
+              <textarea id="contact-message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit">Open email draft</button>
+            <p class="ai-note">
+              Direct link:
+              <a id="contact-mailto" href="mailto:andrea.barduani@gmail.com?subject=Portfolio%20contact">andrea.barduani@gmail.com</a>.
+            </p>
+          </form>
+        </section>
       </div>
     </section>
 
@@ -427,5 +456,31 @@
     </footer>
 
     <script src="chat-widget.js"></script>
+    <script>
+      // Contact panel: mailto only. No backend, no fetch, no data sent elsewhere.
+      // Builds a pre-filled mailto: link from the form fields and opens the email app.
+      (function () {
+        "use strict";
+        var form = document.getElementById("contact-form");
+        if (!form) return;
+        form.addEventListener("submit", function (ev) {
+          if (ev && ev.preventDefault) ev.preventDefault();
+          var name = (document.getElementById("contact-name") || {}).value || "";
+          var email = (document.getElementById("contact-email") || {}).value || "";
+          var message = (document.getElementById("contact-message") || {}).value || "";
+          name = String(name).trim();
+          email = String(email).trim();
+          message = String(message).trim();
+          if (!name || !email || !message) return;
+          var subject = "Portfolio contact from " + name;
+          var body = message + "\n\nFrom: " + name + " <" + email + ">";
+          var href =
+            "mailto:andrea.barduani@gmail.com" +
+            "?subject=" + encodeURIComponent(subject) +
+            "&body=" + encodeURIComponent(body);
+          window.location.href = href;
+        });
+      })();
+    </script>
   </body>
 </html>

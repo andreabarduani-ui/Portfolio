@@ -19,7 +19,7 @@
 <meta name="twitter:image" content="files/img/og-cover.png">
 <meta name="twitter:image:alt" content="Andrea Barduani — Portfolio: Software, Web, AI-Driven Data Analytics">
 <meta name="twitter:title" content="Andrea Barduani — Software, Web & AI-Driven Data Analytics">
-<meta name="twitter:description" content="Software, web experiences and AI-driven data products: 18 projects, 5,000 companies, 260 countries.">
+<meta name="twitter:description" content="Software, web experiences and AI-driven data products: 19 projects, 5,000 companies, 260 countries.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Andrea Barduani","jobTitle":"Process Automation Specialist","email":"mailto:andrea.barduani@gmail.com","url":"./","sameAs":["https://www.linkedin.com/in/andrea-barduani-b76a7719a/","https://github.com/andreabarduani-ui"]}</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23fdfcf9'/><text x='50' y='70' font-family='Arial,sans-serif' font-size='54' text-anchor='middle' fill='%230d5794'>AB</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -89,6 +89,7 @@
   .btn.primary:hover { background: var(--accent-dark); color: #fff; }
   .btn.ghost { border: 1px solid var(--ink); color: var(--ink); background: transparent; }
   .btn.ghost:hover { background: var(--ink); color: var(--bg); }
+  .btn.large { padding: 15px 30px; font-size: 1.05rem; border-radius: 6px; box-shadow: 0 8px 20px rgba(13,87,148,.28); }
   .hero-term-caption { margin-top: 10px; font-size: .78rem; color: var(--ink-soft); text-align: center; }
 
   /* ---------- Terminal window ---------- */
@@ -457,7 +458,7 @@
       <li><a href="#about">About</a></li>
       <li><a href="#experience">Experience</a></li>
       <li><a href="#projects">Projects</a></li>
-      <li><a href="#ai-assistant">AI</a></li>
+      <li><a href="projects/ai-assistant/" aria-label="Open the AI Assistant">AI Assistant</a></li>
     </ul>
   </div>
 </header>
@@ -475,8 +476,8 @@
         in 260 countries, plus a browser-based portfolio assistant.
       </p>
       <div class="ctas hero-enter d3">
-        <a class="btn primary" href="#projects">View projects</a>
-        <a class="btn ghost" href="projects/ai-assistant/">Ask the assistant</a>
+        <a class="btn primary large" href="projects/ai-assistant/">Ask the AI Assistant</a>
+        <a class="btn ghost" href="#projects">View projects</a>
         <a class="btn ghost" href="mailto:andrea.barduani@gmail.com">Email</a>
       </div>
     </div>
@@ -504,7 +505,7 @@
         <li><a href="#about">About</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#projects">Projects</a></li>
-        <li><a href="#ai-assistant">AI</a></li>
+        <li><a href="#ai-assistant">AI Assistant</a></li>
       </ul>
     </nav>
     <ul class="side-links">
@@ -583,11 +584,12 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>The projects</h2>
-      <p>19 projects in four sections — 13 Python automations, 2 data dashboards, 2 strategy research decks and 1 AI assistant, plus the Kaidra web concept linked under strategy.
+      <p>19 projects in five sections — 13 Python automations, 2 data dashboards, 2 strategy research decks, 1 AI assistant and 1 Web UI/UX concept (Kaidra).
          Jump to <a href="#projects-python">#projects-python</a>,
          <a href="#projects-data">#projects-data</a>,
          <a href="#projects-strategy">#projects-strategy</a>,
-         <a href="#projects-ai">#projects-ai</a> (#projects-web remains as an alias to the Kaidra concept). Full source and sample outputs live in
+         <a href="#projects-ai">#projects-ai</a>,
+         <a href="#projects-webux">#projects-webux</a> (#projects-web remains as an alias to the Kaidra concept). Full source and sample outputs live in
          <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">the repository</a>.</p>
     </div>
 
@@ -596,6 +598,7 @@
       <a href="#projects-data"><span>02</span> Data</a>
       <a href="#projects-strategy"><span>03</span> Strategy</a>
       <a href="#projects-ai"><span>04</span> AI Assistant</a>
+      <a href="#projects-webux"><span>05</span> Web UI/UX</a>
     </nav>
 
     <!-- 01 · Python automations (all 13, collapsible) -->
@@ -767,7 +770,7 @@ FUNDING DEMO OK</pre>
         <div class="panel-slot"></div>
         <details class="demo-proof">
           <summary>Sandbox proof (in-memory pages, no PDF)</summary>
-          <pre>costi_ammissibili hits: 2 pages: [2]
+          <pre>eligible-costs hits: 2 pages: [2]
 free-search hits: 2 pages: [3]
 REGULATION DEMO OK</pre>
           <p class="out-note">Full proof: <a href="projects/regulation-search/demo-transcript.txt" download>demo-transcript.txt</a> · fixture <a href="projects/regulation-search/demo-fixture.txt" download>demo-fixture.txt</a> · <a href="projects/regulation-search/sample-output.md">sample-output.md</a></p>
@@ -889,23 +892,6 @@ REGULATION DEMO OK</pre>
           <a class="code" href="files/milano-sport-future-moves.pdf" target="_blank" rel="noopener">View the presentation (PDF) &rarr;</a>
         </div>
       </div>
-      <div class="card reveal" data-phase="web" data-group="web" id="projects-web">
-        <a class="thumb-link" href="projects/kaidra/" target="_blank" rel="noopener">
-          <span class="kaidra-thumb">
-            <img src="projects/kaidra/assets/figma-og.png" alt="Kaidra identity governance console — preview" loading="lazy" onerror="this.remove()">
-            <span class="kaidra-fallback" aria-hidden="true">kaidra</span>
-          </span>
-        </a>
-        <span class="tag web">UI</span>
-        <h4>Kaidra — Identity Visibility Concept</h4>
-        <p>Concept web app that unifies identity data into one source of truth.
-           Monitor, certify and remediate access in real time. EU-hosted.</p>
-        <div class="tech">HTML · CSS · JavaScript</div>
-        <div class="card-foot">
-          <a class="code" href="projects/kaidra/" target="_blank" rel="noopener">Open the live concept &rarr;</a>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Source &rarr;</a>
-        </div>
-      </div>
       </div>
     </section>
 
@@ -924,10 +910,38 @@ REGULATION DEMO OK</pre>
              Runs in your browser — no keys required. Try the input → output examples for e-learning monitoring, funding calls and regulation search.</p>
           <div class="tech">English · runs in your browser</div>
           <div class="card-foot">
-            <a class="code" href="projects/ai-assistant/" aria-label="Open the Portfolio AI assistant">Open the assistant &rarr;</a>
+            <a class="code" href="projects/ai-assistant/" aria-label="Open the Portfolio AI assistant">Ask the AI Assistant &rarr;</a>
             <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Sample data &rarr;</a>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- 05 · Web UI/UX — Kaidra concept -->
+    <section id="projects-webux" class="proj-block" aria-label="Web UI/UX projects">
+      <div class="sec-head reveal">
+        <p class="proj-kicker">05 — Web UI/UX</p>
+        <h3>Kaidra concept</h3>
+        <p>Web UI/UX concept: a web app that unifies identity data into one source of truth. Monitor, certify and remediate access in real time. EU-hosted.</p>
+      </div>
+      <div class="cards">
+      <div class="card reveal" data-phase="webux" data-group="webux" id="projects-web">
+        <a class="thumb-link" href="projects/kaidra/" target="_blank" rel="noopener">
+          <span class="kaidra-thumb">
+            <img src="projects/kaidra/assets/figma-og.png" alt="Kaidra identity governance console — preview" loading="lazy" onerror="this.remove()">
+            <span class="kaidra-fallback" aria-hidden="true">kaidra</span>
+          </span>
+        </a>
+        <span class="tag web">UI</span>
+        <h4>Kaidra — Identity Visibility Concept</h4>
+        <p>Concept web app that unifies identity data into one source of truth.
+           Monitor, certify and remediate access in real time. EU-hosted.</p>
+        <div class="tech">HTML · CSS · JavaScript</div>
+        <div class="card-foot">
+          <a class="code" href="projects/kaidra/" target="_blank" rel="noopener">Open the live concept &rarr;</a>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Source &rarr;</a>
+        </div>
+      </div>
       </div>
     </section>
   </div>
@@ -944,10 +958,10 @@ REGULATION DEMO OK</pre>
       <div class="card reveal">
         <span class="tag data">New</span>
         <h4>Portfolio AI assistant</h4>
-        <p>Ask in English about any of the 18 projects, the energy dashboard, the CV or contacts. Examples: “e-learning hours” or “funding calls”. No data leaves your browser.</p>
+        <p>Ask in English about any of the 19 projects, the energy dashboard, the CV or contacts. Examples: “e-learning hours” or “funding calls”. No data leaves your browser.</p>
         <div class="tech">English only · runs in your browser</div>
         <div class="card-foot">
-          <a class="code" href="projects/ai-assistant/">Open the assistant &rarr;</a>
+          <a class="code" href="projects/ai-assistant/">Ask the AI Assistant &rarr;</a>
           <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Sample data &rarr;</a>
         </div>
       </div>
@@ -1026,11 +1040,11 @@ REGULATION DEMO OK</pre>
         ['ok', 'Parsed tax IDs: 4/4 — gender + birth place resolved'],
         ['ok', 'Written: modello-importazione-corsisti.xlsx (4 rows, ready for import)']
       ],
-      out: '<table class="mini-table"><tr><th>Cognome</th><th>Nome</th><th>Codice Fiscale</th><th>Sesso</th><th>Comune</th><th>Prov.</th></tr>' +
+      out: '<table class="mini-table"><tr><th>Surname</th><th>Name</th><th>Tax ID</th><th>Gender</th><th>Town</th><th>Prov.</th></tr>' +
            '<tr><td>ROSSI</td><td>MARIA</td><td class="num">RSSMRA80A01H501Z</td><td>F</td><td>ROMA</td><td>RM</td></tr>' +
            '<tr><td>BIANCHI</td><td>LUCA</td><td class="num">BNCLCU85C22D612X</td><td>M</td><td>MILANO</td><td>MI</td></tr>' +
            '<tr><td>FERRARI</td><td>ANNA</td><td class="num">FRRNNA92B41A944W</td><td>F</td><td>FIRENZE</td><td>FI</td></tr></table>' +
-           '<p class="out-note">Sesso, Comune and Province are derived automatically by parsing the tax ID (gender digits + Belfiore municipality code).</p>'
+           '<p class="out-note">Gender, town and province are derived automatically by parsing the tax ID (gender digits + municipality code).</p>'
     },
 
     'adhesion-letter-compiler': {
@@ -1073,10 +1087,10 @@ REGULATION DEMO OK</pre>
       file: 'financial_plan_builder.py',
       lines: [
         ['cmd', 'py financial_plan_builder.py'],
-        ['ok', 'Scheda finanziaria built — official cost items A1–A10, B1–B10'],
+        ['ok', 'Financial plan built — official cost items A1–A10, B1–B10'],
         ['ok', 'Live formulas wired: change any input, every total recalculates'],
         ['cmd', 'py add_budget_calculator.py'],
-        ['ok', 'Constraint checker added (Calcolatore sheet, traffic lights)']
+        ['ok', 'Constraint checker added (calculator sheet, traffic lights)']
       ],
       out: '<table class="mini-table"><tr><th>Rule</th><th>Status</th><th>Value</th></tr>' +
            '<tr><td>Teaching costs A ≤ 35%</td><td><span class="pill ok">OK</span></td><td class="num">31.2%</td></tr>' +
@@ -1130,10 +1144,10 @@ REGULATION DEMO OK</pre>
         ['out', '[5/5] Compiled PDF: output/Registro_compilato.pdf'],
         ['result', 'Sessions: 14 — PRESENT labels: 612 — ABSENT labels: 186']
       ],
-      out: '<table class="mini-table"><tr><th>#</th><th>Student</th><th>Entry</th><th>Exit</th></tr>' +
-           '<tr><td class="num">1</td><td>BIANCHI LUCA</td><td><span class="pill ok">PRESENTE</span></td><td><span class="pill ok">PRESENTE</span></td></tr>' +
-           '<tr><td class="num">2</td><td>FERRARI ANNA</td><td><span class="pill bad">ASSENTE</span></td><td><span class="pill bad">ASSENTE</span></td></tr>' +
-           '<tr><td class="num">3</td><td>GIORDANETTI ALESSANDRO</td><td><span class="pill ok">PRESENTE</span></td><td><span class="pill ok">PRESENTE</span></td></tr></table>' +
+       out: '<table class="mini-table"><tr><th>#</th><th>Student</th><th>Entry</th><th>Exit</th></tr>' +
+           '<tr><td class="num">1</td><td>BIANCHI LUCA</td><td><span class="pill ok">PRESENT</span></td><td><span class="pill ok">PRESENT</span></td></tr>' +
+           '<tr><td class="num">2</td><td>FERRARI ANNA</td><td><span class="pill bad">ABSENT</span></td><td><span class="pill bad">ABSENT</span></td></tr>' +
+           '<tr><td class="num">3</td><td>GIORDANETTI ALESSANDRO</td><td><span class="pill ok">PRESENT</span></td><td><span class="pill ok">PRESENT</span></td></tr></table>' +
            '<p class="out-note">Inputs are archived in elaborati/&lt;timestamp&gt;/, never deleted; a JSON report records every match decision for auditing.</p>'
     },
 
@@ -1381,11 +1395,11 @@ REGULATION DEMO OK</pre>
   /* ============ Project sections (vertical, no filtering) + legacy deep-link aliases ============ */
   var chips = document.querySelectorAll('#projects .chip');
   function normFilter(f) {
-    return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
+    return (f === 'python' || f === 'webux' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
   }
   function aliasTarget(f) {
-    // Legacy #projects-web is an alias to the Kaidra card inside the strategy block.
-    if (f === 'web') return document.getElementById('projects-web');
+    // Legacy #projects-web is an alias to the Kaidra card inside the Web UI/UX block (#projects-webux).
+    if (f === 'web' || f === 'webux') return document.getElementById('projects-webux');
     return document.getElementById('projects-' + f);
   }
   function applyFilter(f, pushHash) {
@@ -1430,13 +1444,13 @@ REGULATION DEMO OK</pre>
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () { applyFilter(chip.dataset.filter, true); });
   });
-  // deep-link aliases: #projects-python|web|data|strategy|ai all resolve; bare #projects shows everything
+  // deep-link aliases: #projects-python|webux|web|data|strategy|ai all resolve; bare #projects shows everything
   (function deepLink() {
-    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
+    var m = (location.hash || '').match(/^#projects(?:-(python|webux|web|data|strategy|ai))?$/);
     if (m) { applyFilter(m[1] || 'python', false); }
   })();
   window.addEventListener('hashchange', function () {
-    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
+    var m = (location.hash || '').match(/^#projects(?:-(python|webux|web|data|strategy|ai))?$/);
     if (m) { applyFilter(m[1] || 'python', false); }
   });
 

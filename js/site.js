@@ -55,11 +55,11 @@
         ['ok', 'Parsed tax IDs: 4/4 — gender + birth place resolved'],
         ['ok', 'Written: modello-importazione-corsisti.xlsx (4 rows, ready for import)']
       ],
-      out: '<table class="mini-table"><tr><th>Cognome</th><th>Nome</th><th>Codice Fiscale</th><th>Sesso</th><th>Comune</th><th>Prov.</th></tr>' +
+      out: '<table class="mini-table"><tr><th>Surname</th><th>Name</th><th>Tax ID</th><th>Gender</th><th>Town</th><th>Prov.</th></tr>' +
            '<tr><td>ROSSI</td><td>MARIA</td><td class="num">RSSMRA80A01H501Z</td><td>F</td><td>ROMA</td><td>RM</td></tr>' +
            '<tr><td>BIANCHI</td><td>LUCA</td><td class="num">BNCLCU85C22D612X</td><td>M</td><td>MILANO</td><td>MI</td></tr>' +
            '<tr><td>FERRARI</td><td>ANNA</td><td class="num">FRRNNA92B41A944W</td><td>F</td><td>FIRENZE</td><td>FI</td></tr></table>' +
-           '<p class="out-note">Sesso, Comune and Province are derived automatically by parsing the tax ID (gender digits + Belfiore municipality code).</p>'
+           '<p class="out-note">Gender, town and province are derived automatically by parsing the tax ID (gender digits + municipality code).</p>'
     },
 
     'adhesion-letter-compiler': {
@@ -102,10 +102,10 @@
       file: 'financial_plan_builder.py',
       lines: [
         ['cmd', 'py financial_plan_builder.py'],
-        ['ok', 'Scheda finanziaria built — official cost items A1–A10, B1–B10'],
+        ['ok', 'Financial plan built — official cost items A1–A10, B1–B10'],
         ['ok', 'Live formulas wired: change any input, every total recalculates'],
         ['cmd', 'py add_budget_calculator.py'],
-        ['ok', 'Constraint checker added (Calcolatore sheet, traffic lights)']
+        ['ok', 'Constraint checker added (calculator sheet, traffic lights)']
       ],
       out: '<table class="mini-table"><tr><th>Rule</th><th>Status</th><th>Value</th></tr>' +
            '<tr><td>Teaching costs A ≤ 35%</td><td><span class="pill ok">OK</span></td><td class="num">31.2%</td></tr>' +
@@ -159,10 +159,10 @@
         ['out', '[5/5] Compiled PDF: output/Registro_compilato.pdf'],
         ['result', 'Sessions: 14 — PRESENT labels: 612 — ABSENT labels: 186']
       ],
-      out: '<table class="mini-table"><tr><th>#</th><th>Student</th><th>Entry</th><th>Exit</th></tr>' +
-           '<tr><td class="num">1</td><td>BIANCHI LUCA</td><td><span class="pill ok">PRESENTE</span></td><td><span class="pill ok">PRESENTE</span></td></tr>' +
-           '<tr><td class="num">2</td><td>FERRARI ANNA</td><td><span class="pill bad">ASSENTE</span></td><td><span class="pill bad">ASSENTE</span></td></tr>' +
-           '<tr><td class="num">3</td><td>GIORDANETTI ALESSANDRO</td><td><span class="pill ok">PRESENTE</span></td><td><span class="pill ok">PRESENTE</span></td></tr></table>' +
+       out: '<table class="mini-table"><tr><th>#</th><th>Student</th><th>Entry</th><th>Exit</th></tr>' +
+           '<tr><td class="num">1</td><td>BIANCHI LUCA</td><td><span class="pill ok">PRESENT</span></td><td><span class="pill ok">PRESENT</span></td></tr>' +
+           '<tr><td class="num">2</td><td>FERRARI ANNA</td><td><span class="pill bad">ABSENT</span></td><td><span class="pill bad">ABSENT</span></td></tr>' +
+           '<tr><td class="num">3</td><td>GIORDANETTI ALESSANDRO</td><td><span class="pill ok">PRESENT</span></td><td><span class="pill ok">PRESENT</span></td></tr></table>' +
            '<p class="out-note">Inputs are archived in elaborati/&lt;timestamp&gt;/, never deleted; a JSON report records every match decision for auditing.</p>'
     },
 
@@ -414,10 +414,10 @@
 
   /* ============ Project sections (vertical, no filtering) + legacy deep-link aliases ============ */
   function normFilter(f) {
-    return (f === 'python' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
+    return (f === 'python' || f === 'webux' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
   }
   function aliasTarget(f) {
-    if (f === 'web') return document.getElementById('projects-web');
+    if (f === 'web' || f === 'webux') return document.getElementById('projects-webux');
     return document.getElementById('projects-' + f);
   }
   function applyFilter(chips, f, pushHash) {
@@ -458,10 +458,10 @@
     chips.forEach(function (chip) {
       chip.addEventListener('click', function () { applyFilter(chips, chip.dataset.filter, true); });
     });
-    var m = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
+    var m = (location.hash || '').match(/^#projects(?:-(python|webux|web|data|strategy|ai))?$/);
     if (m) { applyFilter(chips, m[1] || 'python', false); }
     window.addEventListener('hashchange', function () {
-      var mm = (location.hash || '').match(/^#projects(?:-(python|web|data|strategy|ai))?$/);
+      var mm = (location.hash || '').match(/^#projects(?:-(python|webux|web|data|strategy|ai))?$/);
       if (mm) { applyFilter(chips, mm[1] || 'python', false); }
     });
   }
