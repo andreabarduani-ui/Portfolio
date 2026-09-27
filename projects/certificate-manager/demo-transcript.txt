@@ -1,0 +1,57 @@
+# Demo transcript -- Certificate Manager
+Tool: projects/certificate-manager/certificate_manager.py
+Date (UTC): 2026-09-27
+Sandbox: Windows temp dir, script copied to sandbox (same content), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- dividi: 26 pages = 13 people (front+back)
+- organizza: 12 exact, 1 fuzzy, 1 to verify
+- Maria Rossi -> 01_Maria_Rossi.pdf
+- Example Logistics S.r.l. (folder kept as-is)
+
+## Command 1
+CMD: certificate_manager.py --help
+EXIT: 0
+--- STDOUT ---
+usage: certificate_manager.py [-h]
+                              {dividi,organizza,riorganizza,registri,tutto} ...
+
+Complete management of CORSO certificates: dividi, organizza, riorganizza.
+
+positional arguments:
+  {dividi,organizza,riorganizza,registri,tutto}
+    dividi              Splits a mass-print PDF into one file per person
+                        (front+back joined).
+    organizza           Sorts the PDFs of an edition into company subfolders
+                        using an Excel rubrica.
+    riorganizza         Rebuilds multiple editions already organized by
+                        company into a company/edition view.
+    registri            Generates the Word registers from template + rubrica
+                        ONLY (no CORSO* folders/PDFs).
+    tutto               Full pipeline: splits the PDF and immediately
+                        organizes it by company (a single edition).
+
+options:
+  -h, --help            show this help message and exit
+
+--- STDERR ---
+(empty)
+
+## Command 2 (offline function demo, fictional, no network)
+CMD: python run_demo_inline.py
+EXIT: 0
+--- STDOUT ---
+### DEMO certificate-manager (fictional, offline) ###
+normalizza 'Mario Rossi' -> 'MARIO ROSSI'
+slug_nome_persona 'Mario Rossi' -> 'Mario_Rossi'
+sanitizza_nome_cartella 'Example Logistics S.r.l.' -> 'Example Logistics S.r.l.'
+estrai_nome_da_testo -> 'Mario Rossi'
+CERTIFICATE DEMO OK
+
+--- STDERR ---
+(empty)
+
+Summary: argparse --help documents dividi|organizza|riorganizza; name extraction, normalization and folder sanitization behave as documented.
+Full illustrative example: see sample-output.md (fictional data).

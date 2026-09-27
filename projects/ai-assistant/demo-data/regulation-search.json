@@ -39,5 +39,24 @@
     ">> Every hit cites page number + context"
   ],
   "output": "Every result cites the page number, so the answer can be verified on the source PDF immediately.",
-  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search"
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search",
+  "cmd": "py regulation_search.py manual.pdf",
+  "fixture_lines": [
+    "1. p.1 \"General introduction to the fictional training programme. No relevant rules here.\"",
+    "2. p.2 \"I costi ammissibili includono il costo orario definito nell'Allegato B. L'IVA e esclusa dai costi ammissibili salvo casi specifici.\"",
+    "3. p.3 \"Variation requests must be submitted at least 30 days before the end of the programme. Withdrawals follow the same deadline.\"",
+    "4. p.4 \"State aid under de minimis regulation 1407/2013 applies. Registration in the national register is required.\""
+  ],
+  "transcript_lines": [
+    "### DEMO regulation-search (fictional, offline, no PDF file) ###",
+    "costi_ammissibili hits: 2 pages: [2]",
+    "free-search hits: 2 pages: [3]",
+    "==============================================================================",
+    "  RESULTS: Free search: variation, deadline (fictional demo)",
+    "  Matches found: 2",
+    "==============================================================================",
+    "  📄 PAGE 3  (2 matches)"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/regulation-search/demo-transcript.txt",
+  "source_ref": "regulation_search.py:166"
 }

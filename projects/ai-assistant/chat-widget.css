@@ -75,6 +75,32 @@
   color: var(--ink, #26231f);
 }
 
+.ai-msg table.ai-io-table {
+  margin-top: 10px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  background: #faf8f3;
+  border: 1px solid var(--line, #e4e0d8);
+  border-radius: 8px;
+}
+
+.ai-msg table.ai-io-table caption {
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--ink-soft, #5c574f);
+  padding: 6px 10px 2px;
+}
+
+.ai-msg table.ai-io-table td {
+  padding: 3px 10px;
+  border-top: 1px solid var(--line, #e4e0d8);
+  font-family: "JetBrains Mono", Consolas, monospace;
+  word-break: break-word;
+}
+
 .ai-chips {
   display: flex;
   flex-wrap: wrap;

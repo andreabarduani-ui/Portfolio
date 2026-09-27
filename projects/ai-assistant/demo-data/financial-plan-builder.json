@@ -1,0 +1,67 @@
+{
+  "tool": "financial_plan_builder.py + add_budget_calculator.py",
+  "source": "projects/financial-plan-builder/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "Target budget, percentage split, people, EUR/h, hours (yellow input cells)",
+  "rules": [
+    "live formulas: every total recalculates on input change",
+    "official cost items A1-A10 and B1-B10",
+    "constraint traffic lights: teaching A <= 35%, delivery B <= 40%, overhead D <= 25%"
+  ],
+  "before": [
+    {
+      "item": "A5 Coordination",
+      "person": "Coordinatore A",
+      "rate": 25.54,
+      "hours": 40
+    },
+    {
+      "item": "B2 Tutoring (2025)",
+      "person": "Tutor C",
+      "rate": 19.02,
+      "hours": 82
+    }
+  ],
+  "after": [
+    {
+      "rule": "Teaching costs A <= 35%",
+      "status": "OK",
+      "value": "31.2%"
+    },
+    {
+      "rule": "Delivery costs B <= 40%",
+      "status": "OK",
+      "value": "44.7%"
+    },
+    {
+      "rule": "Overhead D <= 25%",
+      "status": "OVER",
+      "value": "26.1% - add 18 delivery hours to fix"
+    }
+  ],
+  "console": [
+    ">> Generated: Scheda_Finanziaria_Template.xlsx",
+    ">> Calcolatore sheet added: constraint checks + gap-closing simulator"
+  ],
+  "output": "Scheda_Finanziaria_Template.xlsx (in repo): input cells, live formulas, official A/B items, traffic-light constraints and a gap-closing simulator",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/financial-plan-builder",
+  "cmd": "py financial_plan_builder.py",
+  "fixture_lines": [
+    "1. A5 Coordination | Coordinatore A | 25.54 EUR/h | 40 h",
+    "2. B2 Tutoring | Tutor C | 19.02 EUR/h | 82 h",
+    "3. Constraint: teaching A <= 35% | delivery B <= 40% | overhead D <= 25%",
+    "4. Simulator: extra delivery hours close the gap to target"
+  ],
+  "transcript_lines": [
+    "### DEMO financial-plan-builder (fictional, offline) ###",
+    "py_compile financial_plan_builder.py EXIT: 0",
+    "py_compile add_budget_calculator.py EXIT: 0",
+    "setc(coord, value, font, fill, align, fmt, border)",
+    "param(row, label, value, is_input, fmt, formula)",
+    "riga_voce(row, cod, voce, persona, euh, ore)",
+    "chk(row, label, formula)",
+    "FINANCIAL DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/financial-plan-builder/demo-transcript.txt",
+  "source_ref": "financial_plan_builder.py:53"
+}

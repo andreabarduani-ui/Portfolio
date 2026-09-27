@@ -1,0 +1,60 @@
+{
+  "tool": "student_import_generator.py",
+  "source": "projects/student-import-generator/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "Student data request spreadsheet (Richiesta_dati_allievi.xlsx) + course ID",
+  "rules": [
+    "gender and birth town parsed from each Italian tax ID (Belfiore codes)",
+    "email generated as nome.cognome@domain, headers auto-detected",
+    "output ready for platform import"
+  ],
+  "before": [
+    {
+      "surname": "ROSSI",
+      "name": "MARIA",
+      "tax_id": "RSSMRA80A01H501Z"
+    },
+    {
+      "surname": "BIANCHI",
+      "name": "LUCA",
+      "tax_id": "BNCLCU85C22D612X"
+    }
+  ],
+  "after": [
+    {
+      "student": "ROSSI MARIA",
+      "gender": "F",
+      "birth_town": "ROMA (RM)"
+    },
+    {
+      "student": "BIANCHI LUCA",
+      "gender": "M",
+      "birth_town": "MILANO (MI)"
+    }
+  ],
+  "console": [
+    ">> Read 4 students from Richiesta_dati_allievi.xlsx",
+    ">> Parsed tax IDs: 4/4 OK (gender + birth place resolved)",
+    ">> Written: modello-importazione-corsisti.xlsx (4 rows, ready for import)"
+  ],
+  "output": "modello-importazione-corsisti.xlsx: one enriched row per student with gender, birth town/province parsed from the tax ID",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/student-import-generator",
+  "cmd": "py student_import_generator.py --help",
+  "fixture_lines": [
+    "CF_M= RSSMRA80A01H501Z -> M / Roma (RM) / 01/01/1980",
+    "CF_F= RSSMRA80A41H501Z -> F / Roma (RM) / 01/01/1980",
+    "EMAIL= Mario Rossi <mario.rossi@example.org>",
+    "HEADER= ' Codice Fiscale ' -> 'codice fiscale'"
+  ],
+  "transcript_lines": [
+    "### DEMO student-import-generator (fictional, offline) ###",
+    "parse_cf RSSMRA80A01H501Z -> M / Roma (RM) / 01/01/1980",
+    "parse_cf RSSMRA80A41H501Z -> F / Roma (RM) / 01/01/1980",
+    "genera_email Mario Rossi -> mario.rossi@example.org",
+    "normalize_header ' Codice Fiscale ' -> 'codice fiscale'",
+    "map_titolo_studio Laurea -> '4'",
+    "STUDENT DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/student-import-generator/demo-transcript.txt",
+  "source_ref": "student_import_generator.py:71"
+}

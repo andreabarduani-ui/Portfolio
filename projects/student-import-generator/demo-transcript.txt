@@ -1,0 +1,67 @@
+# Demo transcript -- Student Import Generator
+Tool: projects/student-import-generator/student_import_generator.py
+Date (UTC): 2026-09-27
+Sandbox: Windows temp dir, script copied to sandbox (same content), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- CF_M RSSMRA80A01H501Z -> M / Roma (RM) / 01/01/1980
+- CF_F RSSMRA80A41H501Z -> F / Roma (RM) / 01/01/1980
+- EMAIL Mario Rossi <mario.rossi@example.org>
+- HEADER ' Codice Fiscale ' -> 'codice fiscale' | Laurea -> '4'
+
+## Command 1
+CMD: student_import_generator.py --help
+EXIT: 0
+--- STDOUT ---
+usage: student_import_generator.py [-h] [--id-corso ID_CORSO]
+                                   [--piva-azienda PIVA_AZIENDA]
+                                   [--id-sede ID_SEDE]
+                                   [--id-intermediario ID_INTERMEDIARIO]
+                                   [--settore-ateco SETTORE_ATECO]
+                                   [--email-domain EMAIL_DOMAIN]
+                                   [--output-dir OUTPUT_DIR]
+                                   [sorgente]
+
+Generates the trainee import files from the source file.
+
+positional arguments:
+  sorgente              Source Excel file (.xlsx) — optional
+
+options:
+  -h, --help            show this help message and exit
+  --id-corso ID_CORSO   Course ID
+  --piva-azienda PIVA_AZIENDA
+                        Company P.IVA (VAT number)
+  --id-sede ID_SEDE     Site ID
+  --id-intermediario ID_INTERMEDIARIO
+                        Intermediary ID
+  --settore-ateco SETTORE_ATECO
+                        ATECO code
+  --email-domain EMAIL_DOMAIN
+                        Domain used to generate emails (e.g. azienda.it) ->
+                        generates nome.cognome@dominio
+  --output-dir OUTPUT_DIR
+                        Output folder
+
+--- STDERR ---
+(empty)
+
+## Command 2 (offline function demo, fictional, no network)
+CMD: python run_demo_inline.py
+EXIT: 0
+--- STDOUT ---
+### DEMO student-import-generator (fictional, offline) ###
+parse_cf RSSMRA80A01H501Z -> M / Roma (RM) / 01/01/1980
+parse_cf RSSMRA80A41H501Z -> F / Roma (RM) / 01/01/1980
+genera_email Mario Rossi -> mario.rossi@example.org
+normalize_header ' Codice Fiscale ' -> 'codice fiscale'
+map_titolo_studio Laurea -> '4'
+STUDENT DEMO OK
+
+--- STDERR ---
+(empty)
+
+Summary: argparse --help documents sorgente/id-corso options; tax-ID parsing, email generation and header mapping behave as documented.
+Full illustrative example: see sample-output.md (fictional data).

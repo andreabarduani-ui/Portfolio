@@ -1,0 +1,9 @@
+# Demo fixture -- Tutoring Hours Distributor (fictional, no PII)
+
+Fictional tutoring inputs used for the offline sandbox demo.
+No real interns, no real tutors, no personal data.
+
+1. Tutor A | year 2025 | intern Maria Rossi 10/02/2025-30/09/2025
+2. Feb 2025: 4h [cap 4h] slots Wed 15:00-17:00, Fri 10:00-12:00
+3. Excluded windows: 08-09, 13-14, 18-20
+4. Month tag 02/2025 -> (2025, 2)

@@ -1,0 +1,62 @@
+{
+  "tool": "apprenticeship_quote_generator.py",
+  "source": "projects/apprenticeship-quote-generator/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "Company, participants (6), year (1/2), calendar agreed or rebuilt from Excel + Word template",
+  "rules": [
+    "unit price 480.00 EUR per participant, 10% discount, rounded to nearest hundred",
+    "offer number progressive per year, persisted in contatore_offerte.json",
+    "original template never modified, work happens on a copy"
+  ],
+  "before": [
+    {
+      "company": "Example Manufacturing S.r.l.",
+      "participants": 6,
+      "year": 1
+    },
+    {
+      "company": "Demo Services S.p.A.",
+      "participants": 4,
+      "year": 2
+    }
+  ],
+  "after": [
+    {
+      "offer": 20260046,
+      "unit": "480,00 EUR",
+      "total": "2.880,00 EUR",
+      "final": "2.600,00 EUR"
+    },
+    {
+      "offer": 20260067,
+      "unit": "480,00 EUR",
+      "total": "1.920,00 EUR",
+      "final": "1.700,00 EUR"
+    }
+  ],
+  "console": [
+    ">> Calendar agreed? (s/n): s",
+    ">> Participants: 6, Year (1/2): 1, Company: Example Manufacturing S.r.l.",
+    ">> Offer number: 20260046 (progressive, auto-incremented)",
+    ">> Total: 2.880,00 EUR - Best offer: 2.600,00 EUR (x 0.90, rounded)"
+  ],
+  "output": "output/Offerta_<Company>_<YYYYMMDD>.docx: complete economic offer with progressive number and course calendar rebuilt into a Word table when not yet agreed",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/apprenticeship-quote-generator",
+  "cmd": "py apprenticeship_quote_generator.py",
+  "fixture_lines": [
+    "1. Company: Example Manufacturing S.r.l. | participants: 6 | year: 1",
+    "2. Unit price: 480.00 EUR | discount: 10% | rounding: nearest hundred",
+    "3. Calendar agreed: yes | edition code: first year",
+    "4. Counter: year 1 last assigned 20260045 -> next 20260046"
+  ],
+  "transcript_lines": [
+    "### DEMO apprenticeship-quote-generator (fictional, offline) ###",
+    "euro(2880) -> '2.880,00 €'",
+    "calc_totali(6) -> (2880.0, 2600.0)",
+    "prossimo_numero_offerta(1, {1: 20260045}) -> 20260046",
+    "prossimo_numero_offerta(1) fresh counter -> 20260046",
+    "APPRENTICESHIP DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/apprenticeship-quote-generator/demo-transcript.txt",
+  "source_ref": "apprenticeship_quote_generator.py:138"
+}

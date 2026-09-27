@@ -1,0 +1,59 @@
+{
+  "tool": "timesheet_generator.py",
+  "source": "projects/timesheet-generator/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "Intern registry + tutor timesheets for the reporting year + official template",
+  "rules": [
+    "one file per month plus a UNICO multi-sheet workbook per intern with activity",
+    "--dry-run reports without writing files",
+    "official template extended on a copy (v2), original never modified"
+  ],
+  "before": [
+    {
+      "registry": "6 interns",
+      "programs": "4 PROGRAM_A, 2 PROGRAM_B"
+    },
+    {
+      "tutors": "Tutor A, Tutor B",
+      "year": 2026
+    }
+  ],
+  "after": [
+    {
+      "intern": "Maria Rossi",
+      "program": "PROGRAM_A",
+      "months": 5,
+      "rows": 22
+    },
+    {
+      "intern": "Anna Ferrari",
+      "program": "PROGRAM_B",
+      "months": 7,
+      "rows": 30
+    }
+  ],
+  "console": [
+    ">> Interns read from registry: 6 (4 PROGRAM_A, 2 PROGRAM_B)",
+    ">> Tutor timesheets: 2 (Tutor A, Tutor B), reporting year: 2026",
+    ">> Maria Rossi PROGRAM_A activity months: 5 est. rows: 22",
+    ">> (no files written --dry-run)"
+  ],
+  "output": "Timesheet_<Name>_<YYYY-MM>.xlsx per month + Timesheet_<Name>_UNICO_<YYYY>.xlsx: official monthly sheets compiled from intern records and tutor reports",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/timesheet-generator",
+  "cmd": "py timesheet_generator.py --help",
+  "fixture_lines": [
+    "1. Registry: 6 interns (4 PROGRAM_A, 2 PROGRAM_B)",
+    "2. Tutor reports: Tutor A, Tutor B | year 2026",
+    "3. Maria Rossi PROGRAM_A | 5 activity months | 22 rows",
+    "4. Output: 1 file/month + UNICO multi-sheet workbook"
+  ],
+  "transcript_lines": [
+    "### DEMO timesheet-generator (fictional, offline) ###",
+    "norm 'Mario Rossi ' -> 'mario rossi'",
+    "safe_name 'Mario Rossi/01' -> 'Mario Rossi_01'",
+    "match_fuzzy identical -> 'ESATTO'",
+    "TIMESHEET DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/timesheet-generator/demo-transcript.txt",
+  "source_ref": "timesheet_generator.py:55"
+}

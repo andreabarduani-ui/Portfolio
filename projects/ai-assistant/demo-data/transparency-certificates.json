@@ -1,0 +1,57 @@
+{
+  "tool": "transparency_certificates.py",
+  "source": "projects/transparency-certificates/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "Master Excel (File madre.xlsx, 24 participants) + Word template with 4 tables",
+  "rules": [
+    "only empty value cells are filled, layout and headers untouched",
+    "institution and signature data never modified by design",
+    "one certificate per participant in Attestati_Generati/"
+  ],
+  "before": [
+    {
+      "student": "Maria Rossi",
+      "born": "Rome 01/01/1990",
+      "hours": 150
+    },
+    {
+      "student": "Luca Bianchi",
+      "born": "Milan 02/02/1991",
+      "hours": 148
+    }
+  ],
+  "after": [
+    {
+      "file": "Attestato Apprendimenti Acquisiti_Rossi.docx",
+      "assessment": "final test 28/30 passed, practical passed"
+    },
+    {
+      "file": "Attestato Apprendimenti Acquisiti_Bianchi.docx",
+      "assessment": "final test 26/30 passed, practical passed"
+    }
+  ],
+  "console": [
+    ">> Template: Attestato Apprendimenti Acquisiti_.docx (4 tables)",
+    ">> Master file: File madre.xlsx - 24 participants found",
+    ">> 24 certificates generated in Attestati_Generati/",
+    ">> Institution/responsible data fields: untouched (by design)"
+  ],
+  "output": "Attestati_Generati/Attestato Apprendimenti Acquisiti_<Surname>.docx: one acquired-skills certificate per participant from the master file",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/transparency-certificates",
+  "cmd": "py transparency_certificates.py",
+  "fixture_lines": [
+    "1. Student: Maria Rossi, born Rome 01/01/1990",
+    "2. Experience: Warehouse logistics, 150 effective hours, 09/2026-12/2026",
+    "3. Assessment: final test 28/30 passed | practical passed",
+    "4. Master file: 24 participants -> 24 certificates"
+  ],
+  "transcript_lines": [
+    "### DEMO transparency-certificates (fictional, offline) ###",
+    "normalizza_etichetta '  Nome Allievo ' -> 'nome allievo'",
+    "valore_come_testo 28.0 -> '28'",
+    "sanitize_filename 'Mario Rossi / 01' -> 'Mario Rossi _ 01'",
+    "TRANSPARENCY DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/transparency-certificates/demo-transcript.txt",
+  "source_ref": "transparency_certificates.py:94"
+}

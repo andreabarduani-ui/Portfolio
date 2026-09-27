@@ -1,0 +1,9 @@
+# Demo fixture -- Transparency Certificates (fictional, no PII)
+
+Fictional certificate fields used for the offline sandbox demo.
+No real participants, no real template, no personal data.
+
+1. Student: Maria Rossi, born Rome 01/01/1990
+2. Experience: Warehouse logistics, 150 effective hours, 09/2026-12/2026
+3. Assessment: final test 28/30 passed | practical passed
+4. Master file: 24 participants -> 24 certificates

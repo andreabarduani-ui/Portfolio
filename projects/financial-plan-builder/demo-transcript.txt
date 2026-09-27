@@ -1,0 +1,40 @@
+# Demo transcript -- Financial Plan Builder
+Tool: projects/financial-plan-builder/financial_plan_builder.py
+Date (UTC): 2026-09-27
+Sandbox: Windows temp dir, script copied to sandbox (same content), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- A5 Coordination | 25.54 EUR/h | 40 h
+- B2 Tutoring | 19.02 EUR/h | 82 h
+- constraints: A<=35% B<=40% D<=25%
+- simulator closes the gap to target
+
+## Command 1
+CMD: financial_plan_builder.py
+EXIT: 0
+--- STDOUT ---
+Generated: Scheda_Finanziaria_Template.xlsx
+
+--- STDERR ---
+(empty)
+
+## Command 2 (offline function demo, fictional, no network)
+CMD: python run_demo_inline.py
+EXIT: 0
+--- STDOUT ---
+### DEMO financial-plan-builder (fictional, offline) ###
+py_compile financial_plan_builder.py EXIT: 0
+py_compile add_budget_calculator.py EXIT: 0
+setc(coord, value, font, fill, align, fmt, border)
+param(row, label, value, is_input, fmt, formula)
+riga_voce(row, cod, voce, persona, euh, ore)
+chk(row, label, formula)
+FINANCIAL DEMO OK
+
+--- STDERR ---
+(empty)
+
+Summary: the script generates a live-formula workbook in the sandbox; both modules compile cleanly and expose the documented helpers.
+Full illustrative example: see sample-output.md (fictional data).

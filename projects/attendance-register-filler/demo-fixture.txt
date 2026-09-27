@@ -1,0 +1,9 @@
+# Demo fixture -- Attendance Register Filler (fictional, no PII)
+
+Fictional register rows used for the offline sandbox demo.
+No real students, no real PDF, no personal data.
+
+1. BIANCHI LUCA | exact match | 14/14 sessions PRESENT
+2. GIORDANETTI ALSSANDRO ~ GIORDANETTI ALESSANDRO | fuzzy 0.97
+3. LOMBARDINI BEATRIC ~ LOMBARDINI BEATRICE | fuzzy 0.98
+4. FERRARI ANNA | no session overlap | ABSENT

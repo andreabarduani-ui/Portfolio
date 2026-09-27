@@ -1,0 +1,62 @@
+{
+  "tool": "certificate_manager.py",
+  "source": "projects/certificate-manager/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "Bulk-print PDF (26 pages = 13 people, front+back) + Excel directory for organizing",
+  "rules": [
+    "dividi: name read from each certificate text, one file per person",
+    "organizza: company folders via the Excel directory, fuzzy matches flagged with ~",
+    "riorganizza: cross-edition company view, nothing lost"
+  ],
+  "before": [
+    {
+      "file": "stampa_massiva.pdf",
+      "pages": 26,
+      "people": 13
+    },
+    {
+      "edition": "CORSO10",
+      "directory_rows": 14,
+      "unmatched": 1
+    }
+  ],
+  "after": [
+    {
+      "step": "dividi",
+      "result": "13 files (01_Maria_Rossi.pdf, 02_Luca_Bianchi.pdf, ...)"
+    },
+    {
+      "step": "organizza",
+      "result": "12 exact, 1 fuzzy (~), 1 to verify in _DA_VERIFICARE/"
+    },
+    {
+      "step": "riorganizza",
+      "result": "3 companies across 2 editions in ATTESTATI_PER_AZIENDA/"
+    }
+  ],
+  "console": [
+    ">> Input: stampa_massiva.pdf (26 pages = 13 people, front+back)",
+    ">> dividi: 13 files written to attestati_output/",
+    ">> organizza: 12 exact, 1 fuzzy (~), 1 to verify",
+    ">> riorganizza: 3 companies across 2 editions - nothing lost"
+  ],
+  "output": "One file per person, sorted into company folders per edition, plus a cross-edition company view; uncertain matches flagged for visual check",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/certificate-manager",
+  "cmd": "py certificate_manager.py --help",
+  "fixture_lines": [
+    "1. dividi: bulk print 26 pages = 13 people (front+back)",
+    "2. organizza: 12 exact, 1 fuzzy (~), 1 to verify",
+    "3. person: Maria Rossi -> file 01_Maria_Rossi.pdf",
+    "4. company: Example Logistics S.r.l. (folder name kept as-is)"
+  ],
+  "transcript_lines": [
+    "### DEMO certificate-manager (fictional, offline) ###",
+    "normalizza 'Mario Rossi' -> 'MARIO ROSSI'",
+    "slug_nome_persona 'Mario Rossi' -> 'Mario_Rossi'",
+    "sanitizza_nome_cartella 'Example Logistics S.r.l.' -> 'Example Logistics S.r.l.'",
+    "estrai_nome_da_testo -> 'Mario Rossi'",
+    "CERTIFICATE DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/certificate-manager/demo-transcript.txt",
+  "source_ref": "certificate_manager.py:82"
+}

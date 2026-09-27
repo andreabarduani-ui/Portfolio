@@ -44,5 +44,24 @@
     ">> 38 calls total — report_bandi_fondi.xlsx written"
   ],
   "output": "report_bandi_fondi.xlsx: all calls + Target sheet (above EUR 800,000). Confidence reflects how explicitly each budget is stated; Italian number formats parsed (dot = thousands).",
-  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper"
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper",
+  "cmd": "py funding_calls_scraper.py --help",
+  "fixture_lines": [
+    "1. \"Dotazione finanziaria complessiva € 2.500.000 per il bando.\" (high confidence)",
+    "2. \"Il bando stanzia 1,1 milioni di euro per la formazione.\" (medium confidence)",
+    "3. \"Budget € 950000 - scadenza 2026.\" (low confidence, above threshold)",
+    "4. \"Contributo 120000 euro (sotto soglia).\" (low confidence, below threshold)"
+  ],
+  "transcript_lines": [
+    "### DEMO funding-call-scraper (fictional, offline, no network) ###",
+    "numero IT 1.200.000,50 -> 1200000.5",
+    "importo_migliore: 2500000.0 alta | Dotazione finanziaria complessiva € 2.500.000",
+    "importo_migliore: 1100000.0 media | 1,1 milioni di euro",
+    "importo_migliore: 950000.0 bassa | € 950000",
+    "importo_migliore: 120000.0 bassa | 120000 euro",
+    "threshold 800000 -> 3/4 above threshold",
+    "e_fnc3 FNC3-text: True"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/funding-call-scraper/demo-transcript.txt",
+  "source_ref": "funding_calls_scraper.py:439"
 }

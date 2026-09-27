@@ -1,0 +1,45 @@
+# Demo transcript -- Project Timesheet Generator
+Tool: projects/timesheet-generator/timesheet_generator.py
+Date (UTC): 2026-09-27
+Sandbox: Windows temp dir, script copied to sandbox (same content), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- registry: 6 interns (4 PROGRAM_A, 2 PROGRAM_B)
+- tutor reports: Tutor A, Tutor B | 2026
+- Maria Rossi PROGRAM_A | 5 months | 22 rows
+- output: 1 file/month + UNICO workbook
+
+## Command 1
+CMD: timesheet_generator.py --help
+EXIT: 0
+--- STDOUT ---
+usage: timesheet_generator.py [-h] [--dry-run] [--solo-unici]
+
+Fills in the Programma_A/Programma_B timesheets from the tutor timesheets.
+
+options:
+  -h, --help    show this help message and exit
+  --dry-run     Extraction and report only, generates no files.
+  --solo-unici  Generates only the single files (not the separate monthly
+                ones).
+
+--- STDERR ---
+(empty)
+
+## Command 2 (offline function demo, fictional, no network)
+CMD: python run_demo_inline.py
+EXIT: 0
+--- STDOUT ---
+### DEMO timesheet-generator (fictional, offline) ###
+norm 'Mario Rossi ' -> 'mario rossi'
+safe_name 'Mario Rossi/01' -> 'Mario Rossi_01'
+match_fuzzy identical -> 'ESATTO'
+TIMESHEET DEMO OK
+
+--- STDERR ---
+(empty)
+
+Summary: argparse --help documents --dry-run/--solo-unici; name normalization, safe filenames and fuzzy matching behave as documented.
+Full illustrative example: see sample-output.md (fictional data).

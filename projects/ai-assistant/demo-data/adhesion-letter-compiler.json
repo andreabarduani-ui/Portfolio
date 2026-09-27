@@ -1,0 +1,64 @@
+{
+  "tool": "adhesion_letter_compiler.py",
+  "source": "projects/adhesion-letter-compiler/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "Trainee-company pairs from Excel (people rows 3-5, companies rows 20-22) + Word template",
+  "rules": [
+    "template file never modified, work happens on generated copies",
+    "one personalized letter per trainee-company pair",
+    "field boxes centered from the original template geometry"
+  ],
+  "before": [
+    {
+      "pair": 1,
+      "person": "Maria Rossi",
+      "company": "Example Logistics S.r.l."
+    },
+    {
+      "pair": 2,
+      "person": "Luca Bianchi",
+      "company": "Demo Services S.p.A."
+    }
+  ],
+  "after": [
+    {
+      "file": "Lettera Adesione_Example Logistics.docx",
+      "trainee": "Maria Rossi",
+      "status": "fields filled and centered"
+    },
+    {
+      "file": "Lettera Adesione_Demo Services.docx",
+      "trainee": "Luca Bianchi",
+      "status": "fields filled and centered"
+    },
+    {
+      "file": "Lettera Adesione_Sample Consulting.docx",
+      "trainee": "Anna Ferrari",
+      "status": "fields filled and centered"
+    }
+  ],
+  "console": [
+    ">> Read 3 people (rows 3-5) and 3 companies (rows 20-22)",
+    ">> 3 letters generated - original template untouched"
+  ],
+  "output": "Lettera Adesione_<Company>.docx: one personalized Word letter per pair, template boxes filled and horizontally centered",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/adhesion-letter-compiler",
+  "cmd": "py adhesion_letter_compiler.py",
+  "fixture_lines": [
+    "1. Maria Rossi | born Rome 01/01/1980 | Example Logistics S.r.l. | Warehouse logistics - 1st year",
+    "2. Luca Bianchi | born Milan 02/02/1981 | Demo Services S.p.A. | Logistics basics - 1st year",
+    "3. Anna Ferrari | born Florence 03/03/1982 | Sample Consulting S.r.l. | Inventory tools - 2nd year",
+    "4. Paolo Conti | born Turin 04/04/1983 | Example Logistics S.r.l. | Safety compliance - 1st year"
+  ],
+  "transcript_lines": [
+    "### DEMO adhesion-letter-compiler (fictional, offline) ###",
+    "normalizza '  Maria Rossi  ' -> 'Maria Rossi'",
+    "come_piva_cf '01234567890' -> '01234567890'",
+    "come_provincia 'Roma (RM)' -> 'RM'",
+    "come_provincia 'roma' -> 'roma'",
+    "nome_file_output 'Example Logistics S.r.l.' -> 'Lettera Adesione_Example Logistics S.r.l..docx'",
+    "ADHESION DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/adhesion-letter-compiler/demo-transcript.txt",
+  "source_ref": "adhesion_letter_compiler.py:110"
+}

@@ -1,0 +1,44 @@
+# Demo transcript -- Apprenticeship Quote Generator
+Tool: projects/apprenticeship-quote-generator/apprenticeship_quote_generator.py
+Date (UTC): 2026-09-27
+Sandbox: Windows temp dir, script copied to sandbox (same content), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- Example Manufacturing S.r.l. | 6 participants | year 1
+- unit 480.00 EUR | 10% discount | nearest hundred
+- calendar agreed: yes | first-year edition
+- counter year 1: last 20260045 -> next 20260046
+
+## Command 1
+CMD: apprenticeship_quote_generator.py
+EXIT: 1
+--- STDOUT ---
+======================================================================
+  OFFER GENERATOR - PRIVATE APPRENTICESHIP
+======================================================================
+
+ERROR: template not found at:
+  C:\Users\andre\AppData\Local\Temp\portfolio-demo-vocak2o9\apprenticeship-quote-generator\template_offerta_apprendistato.docx
+Make sure template_offerta_apprendistato.docx is present in the folder.
+
+--- STDERR ---
+(empty)
+
+## Command 2 (offline function demo, fictional, no network)
+CMD: python run_demo_inline.py
+EXIT: 0
+--- STDOUT ---
+### DEMO apprenticeship-quote-generator (fictional, offline) ###
+euro(2880) -> '2.880,00 €'
+calc_totali(6) -> (2880.0, 2600.0)
+prossimo_numero_offerta(1, {1: 20260045}) -> 20260046
+prossimo_numero_offerta(1) fresh counter -> 20260046
+APPRENTICESHIP DEMO OK
+
+--- STDERR ---
+(empty)
+
+Summary: missing template stops the run with a clear ERROR; pricing, rounding and progressive numbering behave as documented.
+Full illustrative example: see sample-output.md (fictional data).

@@ -1,0 +1,9 @@
+# Demo fixture -- Certificate Manager (fictional, no PII)
+
+Fictional pipeline cases used for the offline sandbox demo.
+No real PDFs, no real people, no personal data.
+
+1. dividi: bulk print 26 pages = 13 people (front+back)
+2. organizza: 12 exact, 1 fuzzy (~), 1 to verify
+3. person: Maria Rossi -> file 01_Maria_Rossi.pdf
+4. company: Example Logistics S.r.l. (folder name kept as-is)

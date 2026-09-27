@@ -1,0 +1,9 @@
+# Demo fixture -- Apprenticeship Quote Generator (fictional, no PII)
+
+Fictional offer inputs used for the offline sandbox demo.
+No real companies, prices are example figures.
+
+1. Company: Example Manufacturing S.r.l. | participants: 6 | year: 1
+2. Unit price: 480.00 EUR | discount: 10% | rounding: nearest hundred
+3. Calendar agreed: yes | edition code: first year
+4. Counter: year 1 last assigned 20260045 -> next 20260046

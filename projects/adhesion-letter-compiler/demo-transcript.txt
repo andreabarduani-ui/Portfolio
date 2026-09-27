@@ -1,0 +1,39 @@
+# Demo transcript -- Adhesion Letter Compiler
+Tool: projects/adhesion-letter-compiler/adhesion_letter_compiler.py
+Date (UTC): 2026-09-27
+Sandbox: Windows temp dir, script copied to sandbox (same content), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- Maria Rossi | Example Logistics S.r.l. (pair 1)
+- Luca Bianchi | Demo Services S.p.A. (pair 2)
+- Anna Ferrari | Sample Consulting S.r.l. (pair 3)
+- Paolo Conti | Example Logistics S.r.l. (pair 4)
+
+## Command 1
+CMD: adhesion_letter_compiler.py
+EXIT: 1
+--- STDOUT ---
+ERROR: template not found: C:\Users\andre\AppData\Local\Temp\portfolio-demo-vocak2o9\adhesion-letter-compiler\Lettera Adesione.docx
+
+--- STDERR ---
+(empty)
+
+## Command 2 (offline function demo, fictional, no network)
+CMD: python run_demo_inline.py
+EXIT: 0
+--- STDOUT ---
+### DEMO adhesion-letter-compiler (fictional, offline) ###
+normalizza '  Maria Rossi  ' -> 'Maria Rossi'
+come_piva_cf '01234567890' -> '01234567890'
+come_provincia 'Roma (RM)' -> 'RM'
+come_provincia 'roma' -> 'roma'
+nome_file_output 'Example Logistics S.r.l.' -> 'Lettera Adesione_Example Logistics S.r.l..docx'
+ADHESION DEMO OK
+
+--- STDERR ---
+(empty)
+
+Summary: missing template/data files stop the run with a clear ERROR; field normalization and output naming behave as documented.
+Full illustrative example: see sample-output.md (fictional data).

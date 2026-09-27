@@ -1,0 +1,9 @@
+# Demo fixture -- Financial Plan Builder (fictional, no PII)
+
+Fictional budget inputs used for the offline sandbox demo.
+No real projects, figures are examples.
+
+1. A5 Coordination | Coordinatore A | 25.54 EUR/h | 40 h
+2. B2 Tutoring | Tutor C | 19.02 EUR/h | 82 h
+3. Constraint: teaching A <= 35% | delivery B <= 40% | overhead D <= 25%
+4. Simulator: extra delivery hours close the gap to target

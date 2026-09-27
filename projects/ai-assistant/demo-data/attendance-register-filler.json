@@ -1,0 +1,67 @@
+{
+  "tool": "attendance_register_filler.py",
+  "source": "projects/attendance-register-filler/sample-output.md",
+  "note": "Pre-computed illustrative excerpt with fictional data. No live Python execution, no public backend.",
+  "input": "input/Registro.pdf + 14 session Excel reports; names sourced from the PDF ELENCO ALLIEVI page",
+  "rules": [
+    "layout A/B auto-detected from the ELENCO ALLIEVI page",
+    "surname+name matching with similarity >= 80%",
+    "input files archived in elaborati/<timestamp>/, never deleted"
+  ],
+  "before": [
+    {
+      "student": "BIANCHI LUCA",
+      "match": "exact",
+      "sessions": "14/14"
+    },
+    {
+      "student": "GIORDANETTI ALSSANDRO",
+      "match": "fuzzy 0.95",
+      "sessions": "12/14"
+    }
+  ],
+  "after": [
+    {
+      "student": "BIANCHI LUCA",
+      "entry": "PRESENTE",
+      "exit": "PRESENTE"
+    },
+    {
+      "student": "FERRARI ANNA",
+      "entry": "ASSENTE",
+      "exit": "ASSENTE"
+    },
+    {
+      "student": "GIORDANETTI ALESSANDRO",
+      "entry": "PRESENTE",
+      "exit": "PRESENTE"
+    }
+  ],
+  "console": [
+    ">> [1/5] Register found: Registro.pdf (3 pages/session, 57 students)",
+    ">> [2/5] Layout detected: B (single clean row in student list)",
+    ">> [3/5] Reading 14 session Excel reports",
+    ">> [4/5] Matching students to sessions (similarity >= 80%)",
+    ">> [5/5] Compiled PDF: output/Registro_compilato.pdf",
+    ">> Sessions: 14 - PRESENT labels: 612 - ABSENT labels: 186"
+  ],
+  "output": "output/Registro_compilato.pdf (+ JSON report + page previews): PRESENT/ABSENT written into the official register, every match decision recorded for auditing",
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/attendance-register-filler",
+  "cmd": "py attendance_register_filler.py",
+  "fixture_lines": [
+    "1. BIANCHI LUCA | exact match | 14/14 sessions PRESENT",
+    "2. GIORDANETTI ALSSANDRO ~ GIORDANETTI ALESSANDRO | fuzzy 0.97",
+    "3. LOMBARDINI BEATRIC ~ LOMBARDINI BEATRICE | fuzzy 0.98",
+    "4. FERRARI ANNA | no session overlap | ABSENT"
+  ],
+  "transcript_lines": [
+    "### DEMO attendance-register-filler (fictional, offline) ###",
+    "norm 'Mario Rossi ' -> 'MARIO ROSSI'",
+    "similarity ALSSANDRO/ALESSANDRO -> 0.9474",
+    "nome_chiave Rossi Mario -> 'ROSSI MARIO'",
+    "slugify 'Example Logistics S.r.l.' -> 'example_logistics'",
+    "ATTENDANCE DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/attendance-register-filler/demo-transcript.txt",
+  "source_ref": "attendance_register_filler.py:50"
+}

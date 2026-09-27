@@ -1,0 +1,49 @@
+# Demo transcript -- Tutoring Hours Distributor
+Tool: projects/tutoring-hours-distributor/tutoring_hours_distributor.py
+Date (UTC): 2026-09-27
+Sandbox: Windows temp dir, script copied to sandbox (same content), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- Tutor A | 2025 | Maria Rossi 10/02/2025-30/09/2025
+- Feb 2025: 4h [cap 4h] Wed/Fri slots
+- excluded windows: 08-09, 13-14, 18-20
+- month tag 02/2025 -> (2025, 2)
+
+## Command 1
+CMD: tutoring_hours_distributor.py
+EXIT: 0
+--- STDOUT ---
+Reading the timesheet...
+
+======================================================================
+ERROR: FILE NOT FOUND
+======================================================================
+The file does not exist at the specified path:
+  timesheet_tutor.xlsx
+
+=> Check the paths (TIMESHEET_PATH / FILE_TIROCINI_PATH)
+   at the top of the script.
+======================================================================
+
+--- STDERR ---
+(empty)
+
+## Command 2 (offline function demo, fictional, no network)
+CMD: python run_demo_inline.py
+EXIT: 0
+--- STDOUT ---
+### DEMO tutoring-hours-distributor (fictional, offline) ###
+normalizza_testo 'Mario Rossi' -> 'mario rossi'
+punteggio_similarita identical -> 1.0
+slot_escluso '8 - 9' -> True
+slot_escluso '10 - 12' -> False
+parse_mese_anno '02/2025' -> (2025, 2)
+TUTORING DEMO OK
+
+--- STDERR ---
+(empty)
+
+Summary: missing timesheet stops the run with a clear ERROR; text normalization, fuzzy scoring, slot rules and month parsing behave as documented.
+Full illustrative example: see sample-output.md (fictional data).

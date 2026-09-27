@@ -1,0 +1,9 @@
+# Demo fixture -- Project Timesheet Generator (fictional, no PII)
+
+Fictional timesheet inputs used for the offline sandbox demo.
+No real interns, no real tutors, no personal data.
+
+1. Registry: 6 interns (4 PROGRAM_A, 2 PROGRAM_B)
+2. Tutor reports: Tutor A, Tutor B | year 2026
+3. Maria Rossi PROGRAM_A | 5 activity months | 22 rows
+4. Output: 1 file/month + UNICO multi-sheet workbook

@@ -1,0 +1,38 @@
+# Demo transcript -- Transparency Certificates
+Tool: projects/transparency-certificates/transparency_certificates.py
+Date (UTC): 2026-09-27
+Sandbox: Windows temp dir, script copied to sandbox (same content), timeout 10s per command,
+no network, no secrets, fictional fixture only (demo-fixture.txt, no PII).
+
+## Fixture (fictional, 4 lines, no PII)
+See demo-fixture.txt:
+- Maria Rossi, born Rome 01/01/1990
+- Warehouse logistics, 150 h, 09/2026-12/2026
+- final test 28/30 passed | practical passed
+- master file: 24 participants -> 24 files
+
+## Command 1
+CMD: transparency_certificates.py
+EXIT: 0
+--- STDOUT ---
+ERROR: Word file not found:
+  .\Attestato Apprendimenti Acquisiti_.docx
+
+--- STDERR ---
+(empty)
+
+## Command 2 (offline function demo, fictional, no network)
+CMD: python run_demo_inline.py
+EXIT: 0
+--- STDOUT ---
+### DEMO transparency-certificates (fictional, offline) ###
+normalizza_etichetta '  Nome Allievo ' -> 'nome allievo'
+valore_come_testo 28.0 -> '28'
+sanitize_filename 'Mario Rossi / 01' -> 'Mario Rossi _ 01'
+TRANSPARENCY DEMO OK
+
+--- STDERR ---
+(empty)
+
+Summary: missing template stops the run with a clear ERROR; label normalization, value formatting and filename sanitization behave as documented.
+Full illustrative example: see sample-output.md (fictional data).

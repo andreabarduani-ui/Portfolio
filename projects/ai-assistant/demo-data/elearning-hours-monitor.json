@@ -66,5 +66,23 @@
     ">> Written: Monitoraggio_26-08-2026.xlsx"
   ],
   "output": "Monitoraggio_<date>.xlsx: one sheet per month + Riepilogo Generale vs the 150-hour per-student cap",
-  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor"
+  "project": "https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor",
+  "cmd": "py elearning_hours_monitor.py --help",
+  "fixture_lines": [
+    "1. ROSSI MARIA | 10/03/2026 | 10:00-20:00 | duration \"4 h 00 min 00 s\" | threshold split demo",
+    "2. BIANCHI LUCA | 11/03/2026 | 06:10-07:10 | duration \"1 h 00 min 00 s\" | morning-window demo",
+    "3. GIORDANETTI ALESSANDRO | 12/03/2026 | 09:00-13:00 | duration \"2 h 30 min 00 s\" | normal hours demo",
+    "4. LOMBARDINI BEATRICE | 13/03/2026 | 14:00-18:30 | duration \"1 h 45 min 30 s\" | cap demo"
+  ],
+  "transcript_lines": [
+    "### DEMO elearning-hours-monitor (fictional, offline) ###",
+    "parse_durata 4/4: ['2.5000', '1.7583', '0.4194', '3.0000']",
+    "split 18h -> prima=3.20 dopo=0.80",
+    "mattino window=1.00",
+    "normalizza: MARIO ROSSI | MARIO ROSSI",
+    "chiave_ordinamento: ROSSI MARIA",
+    "ELEARNING DEMO OK"
+  ],
+  "transcript": "https://github.com/andreabarduani-ui/Portfolio/blob/main/projects/elearning-hours-monitor/demo-transcript.txt",
+  "source_ref": "elearning_hours_monitor.py:300"
 }

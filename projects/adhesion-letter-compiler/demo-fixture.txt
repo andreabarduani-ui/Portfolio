@@ -1,0 +1,9 @@
+# Demo fixture -- Adhesion Letter Compiler (fictional, no PII)
+
+Fictional trainee-company pairs used for the offline sandbox demo.
+No real names, tax IDs, companies or files.
+
+1. Maria Rossi | born Rome 01/01/1980 | Example Logistics S.r.l. | Warehouse logistics - 1st year
+2. Luca Bianchi | born Milan 02/02/1981 | Demo Services S.p.A. | Logistics basics - 1st year
+3. Anna Ferrari | born Florence 03/03/1982 | Sample Consulting S.r.l. | Inventory tools - 2nd year
+4. Paolo Conti | born Turin 04/04/1983 | Example Logistics S.r.l. | Safety compliance - 1st year
