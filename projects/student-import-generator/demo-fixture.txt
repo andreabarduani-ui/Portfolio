@@ -1,0 +1,7 @@
+# Demo fixture — Student Import Generator (fictional, no PII)
+# Only fictional placeholder names; no real personal data, no secrets.
+CF_M= RSSMRA80A01H501Z -> M / Roma (RM) / 01/01/1980
+CF_F= RSSMRA80A41H501Z -> F / Roma (RM) / 01/01/1980
+EMAIL= Mario Rossi <mario.rossi@example.org>
+HEADER= ' Codice Fiscale ' -> 'codice fiscale'
+TITOLO= Laurea -> '4'

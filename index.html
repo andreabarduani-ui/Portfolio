@@ -56,7 +56,7 @@
     font-size: 16.5px;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 22px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 22px; }
   h1, h2, h3, h4 { font-weight: 700; letter-spacing: -.018em; line-height: 1.25; }
   a { color: var(--accent); }
   a:hover { color: var(--accent-dark); }
@@ -76,7 +76,7 @@
   /* ---------- Hero ---------- */
   .hero { padding: 64px 0 56px; }
   .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 44px; align-items: center; }
-  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .hero { padding-top: 48px; } }
+  @media (max-width: 1100px) { .hero-grid { grid-template-columns: 1fr; } .hero { padding-top: 48px; } }
   .hero .kicker { font-size: .82rem; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-soft); margin-bottom: 18px; }
   .hero h1 { font-size: clamp(1.75rem, 4.3vw, 2.5rem); line-height: 1.2; }
   .hero p.lead { margin-top: 20px; font-size: 1.05rem; color: var(--ink-soft); }
@@ -131,7 +131,7 @@
 
   /* ---------- Sections ---------- */
   section { padding: 60px 0; }
-  .sec-head { max-width: 640px; margin-bottom: 34px; }
+  .sec-head { max-width: 880px; margin-bottom: 34px; }
   .sec-head h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); }
   .sec-head p { margin-top: 10px; color: var(--ink-soft); }
 
@@ -164,7 +164,7 @@
 
   /* ---------- Project cards ---------- */
   #projects { background: var(--bg); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
   @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
   .card {
     background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
@@ -271,7 +271,7 @@
   }
 
   /* ---------- Skills ---------- */
-  .skills-list { display: flex; flex-wrap: wrap; gap: 8px; max-width: 700px; }
+  .skills-list { display: flex; flex-wrap: wrap; gap: 8px; max-width: 960px; }
   .skills-list span {
     white-space: nowrap; font-weight: 600; font-size: .88rem;
     border: 1px solid var(--line); background: var(--paper);
@@ -291,7 +291,7 @@
   /* ---------- Footer ---------- */
   footer { border-top: 2px solid var(--ink); padding: 52px 0 44px; background: var(--bg); }
   footer h2 { font-size: 1.5rem; }
-  footer p { max-width: 560px; font-size: .97rem; color: var(--ink-soft); margin-top: 8px; }
+  footer p { max-width: 760px; font-size: .97rem; color: var(--ink-soft); margin-top: 8px; }
   footer .links { margin-top: 22px; display: grid; gap: 6px; font-size: .95rem; }
   footer .links a { text-decoration: none; font-weight: 600; }
   footer .links a:hover { text-decoration: underline; }
@@ -367,6 +367,72 @@
   .btn:active, .chip:active, .run:active { transform: scale(.97); }
   .btn.primary:hover, .run:hover { box-shadow: 0 6px 16px rgba(13,87,148,.22); }
 
+  /* ---------- Redesign: sticky sidebar + wide project rows (original styles) ---------- */
+  .hero-sober { max-width: 880px; }
+  .layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 44px; align-items: start; }
+  .sidebar { position: sticky; top: 76px; padding: 6px 0; }
+  .side-name { font-weight: 700; font-size: 1.05rem; }
+  .side-role { font-size: .85rem; color: var(--ink-soft); margin-top: 2px; }
+  .side-line { font-size: .86rem; color: var(--ink-soft); margin-top: 10px; }
+  .side-nav ul { list-style: none; margin-top: 18px; display: grid; gap: 2px; }
+  .side-nav a { display: block; padding: 7px 10px; border-radius: 6px; color: var(--ink-soft); text-decoration: none; font-size: .92rem; font-weight: 600; }
+  .side-nav a:hover { color: var(--accent); background: #f3f0e9; }
+  .side-nav a.active { color: var(--accent); }
+  .side-links { list-style: none; margin-top: 18px; display: grid; gap: 6px; font-size: .88rem; }
+  .side-links a { text-decoration: none; font-weight: 600; }
+  .side-cv { margin-top: 14px; font-size: .82rem; color: var(--ink-soft); }
+  .layout .content { min-width: 0; }
+  .layout .content .wrap { max-width: none; padding: 0; }
+  .layout .content section { padding: 44px 0; }
+  @media (max-width: 1023px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+    .side-nav ul { grid-template-columns: repeat(4, auto); gap: 8px; justify-content: start; }
+  }
+  @media (max-width: 640px) {
+    .side-nav ul { grid-template-columns: 1fr 1fr; }
+  }
+  /* Experience */
+  .exp-list { list-style: none; display: grid; gap: 18px; }
+  .exp { border: 1px solid var(--line); border-radius: 10px; background: var(--paper); padding: 20px 22px; }
+  .exp-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: baseline; }
+  .exp-head h3 { font-size: 1.05rem; }
+  .exp-head span { font-size: .8rem; color: var(--ink-soft); }
+  .exp p { margin-top: 8px; font-size: .9rem; color: var(--ink-soft); }
+  .exp-links { margin-top: 10px; font-size: .84rem; font-weight: 600; }
+  /* Projects as wide rows: single column, floated thumb on the left */
+  #projectsGrid.cards { display: flex; flex-direction: column; gap: 14px; }
+  #projectsGrid .card { display: block; overflow: hidden; }
+  #projectsGrid .card-hero { order: -1; }
+  #projectsGrid .card[data-subphase]::before {
+    content: attr(data-subphase);
+    float: left; width: 132px; min-height: 118px; margin: 0 18px 8px 0;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--ink-soft); background: #f3f0e9;
+    border: 1px solid var(--line); border-radius: 8px; padding: 12px 8px;
+  }
+  #projectsGrid .card:not([data-subphase])::before {
+    content: attr(data-phase);
+    float: left; width: 132px; min-height: 118px; margin: 0 18px 8px 0;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--ink-soft); background: #f3f0e9;
+    border: 1px solid var(--line); border-radius: 8px; padding: 12px 8px;
+  }
+  #projectsGrid .card:has(.thumb-link)::before,
+  #projectsGrid .card:has(.ds-mock)::before { display: none; }
+  #projectsGrid .thumb-link { float: left; width: 190px; margin: 0 18px 8px 0; }
+  #projectsGrid .thumb-link .uni-thumb { height: 122px; }
+  #projectsGrid .kaidra-thumb { height: 122px; margin-bottom: 0; }
+  #projectsGrid .ds-mock { float: left; width: 190px; margin: 0 18px 8px 0; }
+  #projectsGrid .ds-mock svg { height: 122px; }
+  @media (max-width: 680px) {
+    #projectsGrid .card[data-subphase]::before,
+    #projectsGrid .card:not([data-subphase])::before { float: none; width: 100%; min-height: 0; margin: 0 0 12px; }
+    #projectsGrid .thumb-link, #projectsGrid .ds-mock { float: none; width: 100%; margin: 0 0 12px; }
+  }
+
   /* ---------- Reveal on scroll ---------- */
   .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
   .js .reveal.in { opacity: 1; transform: none; }
@@ -388,57 +454,31 @@
   <div class="wrap nav">
     <a class="brand" href="#top">Andrea Barduani</a>
     <ul>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#ai-assistant">AI Assistant</a></li>
-      <li><a href="dashboard/">Energy Dashboard</a></li>
-      <li><a href="#skills">Skills</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#ai-assistant">AI</a></li>
     </ul>
   </div>
 </header>
 
 <!-- ============ HERO ============ -->
 <div class="hero" id="top">
-  <div class="hero-blob" aria-hidden="true"></div>
-  <div class="wrap hero-grid">
-    <div>
-      <p class="kicker hero-enter">web development · data analysis · Python automation</p>
-      <!-- H1: "Personal projects" — kicker shortened to avoid duplication. -->
-      <h1 class="hero-enter d1">Personal projects</h1>
+  <div class="wrap">
+    <div class="hero-sober">
+      <p class="kicker hero-enter">Process Automation Specialist — funded vocational training</p>
+      <h1 class="hero-enter d1">Andrea Barduani</h1>
       <p class="lead hero-enter d2">
-        19 projects across software, web, data and AI: 13 Python automations,
-        the Kaidra UI/UX web concept, energy &amp; analytics dashboards on
-        5,000 companies across 260 countries (BigQuery, Power BI, Data Studio),
-        university–corporate strategy research,
-        plus the AI portfolio assistant.
+        Python tools and data dashboards for the administration of funded
+        training programs: 13 automations across launch, delivery and
+        reporting, energy &amp; emissions dashboards covering 5,000 companies
+        in 260 countries, plus a browser-based portfolio assistant.
       </p>
       <div class="ctas hero-enter d3">
-        <a class="btn primary" href="#projects-python">Explore the work</a>
-        <a class="btn primary" href="dashboard/" style="background:#1f8a70">View Energy Dashboard</a>
-        <a class="btn ghost" href="#about">About me</a>
+        <a class="btn primary" href="#projects">View projects</a>
+        <a class="btn ghost" href="projects/ai-assistant/">Ask the assistant</a>
+        <a class="btn ghost" href="mailto:andrea.barduani@gmail.com">Email</a>
       </div>
-      <p class="hero-enter d4" style="margin-top:14px">
-        <a class="hero-badge" href="#projects-ai" aria-label="New: AI Assistant — filter the AI project">New · AI Assistant — ask the portfolio in English</a>
-      </p>
-      <p class="hero-enter d4" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
-        <span class="tag data" style="margin:0">Python</span>
-        <span class="tag data" style="margin:0">JavaScript</span>
-        <span class="tag data" style="margin:0">BigQuery</span>
-        <span class="tag data" style="margin:0">Power BI</span>
-        <span class="tag data" style="margin:0">Chart.js</span>
-        <span class="tag uni" style="margin:0">Personal design project — not official thesis</span>
-      </p>
-    </div>
-    <div class="hero-enter d2">
-      <div class="term hero-term float-soft">
-        <div class="term-bar">
-          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-          <span class="term-title">elearning_hours_monitor.py</span>
-        </div>
-        <div class="term-body"></div>
-      </div>
-      <p class="hero-term-caption">Live console sessions from the real tools — every project card below has its own ▸ demo.</p>
     </div>
   </div>
 </div>
@@ -452,6 +492,96 @@
     <div class="stat"><b data-count="17">0</b><span>versions of the e-learning monitor</span></div>
   </div>
 </div>
+
+<!-- ============ LAYOUT: sticky sidebar + content ============ -->
+<div class="wrap layout">
+  <aside class="sidebar">
+    <p class="side-name">Andrea Barduani</p>
+    <p class="side-role">Process Automation Specialist</p>
+    <p class="side-line">Python automation and data dashboards for funded training programs.</p>
+    <nav class="side-nav" aria-label="Sections">
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#ai-assistant">AI</a></li>
+      </ul>
+    </nav>
+    <ul class="side-links">
+      <li><a href="mailto:andrea.barduani@gmail.com">Email</a></li>
+      <li><a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><a href="https://github.com/andreabarduani-ui" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+    <p class="side-cv">CV on request — <a href="mailto:andrea.barduani@gmail.com">email</a></p>
+  </aside>
+  <div class="content">
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>About</h2>
+      <p>Administration of funded vocational training programs — every tool below solves a real, recurring problem from daily work.</p>
+    </div>
+    <div class="about">
+      <div class="reveal">
+        <p>
+          Manual processes that used to take hours now run in seconds,
+          with consistent output that can be verified and audited. The tools
+          operate on Word, Excel and PDF files, which is where training
+          administration actually lives.
+        </p>
+        <p>
+          All tools run locally, process personal data responsibly and never
+          modify the original files they work on.
+        </p>
+      </div>
+      <ul class="principles reveal">
+        <li><b>Source files are sacred</b><span>Every tool works on copies; originals are never modified, and inputs are archived after processing.</span></li>
+        <li><b>Robustness against messy data</b><span>Truncated names, typos, Italian number formats and broken exports are handled by design, not by luck.</span></li>
+        <li><b>Usable by anyone</b><span>The most-used tools ship with double-click launchers, so colleagues without technical skills can run them.</span></li>
+        <li><b>Iterated in the field</b><span>The e-learning monitor reached version 17 through real-world feedback — each version fixing an actual edge case.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE ============ -->
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>Experience</h2>
+      <p>Work in the administration of funded vocational training programs, across automation, data and research.</p>
+    </div>
+    <ol class="exp-list">
+      <li class="exp reveal">
+        <div class="exp-head"><h3>Process Automation Specialist</h3><span>Training administration</span></div>
+        <p>Design, build and maintain 13 Python tools covering program launch, delivery and reporting:
+           Excel, Word and PDF automation, fuzzy matching for inconsistent registries,
+           double-click launchers for non-technical colleagues.
+           Flagship work: the E-Learning Hours Monitor (17 versions, ~1,800 lines),
+           computing each student's real hours by stripping evenings, weekends and daily excess.</p>
+        <div class="exp-links"><a href="#projects-python">Python automations</a> · <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">E-Learning Hours Monitor</a></div>
+      </li>
+      <li class="exp reveal">
+        <div class="exp-head"><h3>Data Analysis &amp; Dashboards</h3><span>Energy &amp; analytics</span></div>
+        <p>CSR Energy &amp; Emissions Intelligence: interactive dashboard on energy use and emissions
+           intensity across 5,000 companies in 260 countries (2015–2018),
+           built with BigQuery, Power BI and Chart.js — plus a Google Data Studio dashboard
+           with connected sources and dynamic filters.</p>
+        <div class="exp-links"><a href="dashboard/">CSR Energy &amp; Emissions Intelligence</a> · <a href="#projects-data">Data projects</a></div>
+      </li>
+      <li class="exp reveal">
+        <div class="exp-head"><h3>Web Concept &amp; Strategy Research</h3><span>University–corporate projects</span></div>
+        <p>Kaidra: UI/UX web concept unifying identity data into one source of truth.
+           Strategy research: NBC Store marketing analysis (Sapienza University, 42 slides)
+           and Future Moves for Milano Sport (group market research, 44 slides).</p>
+        <div class="exp-links"><a href="projects/kaidra/" target="_blank" rel="noopener">Kaidra concept</a> · <a href="#projects-strategy">Strategy projects</a></div>
+      </li>
+    </ol>
+    <p class="out-note reveal">Full CV on request — <a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a> · <a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a></p>
+  </div>
+</section>
 
 <!-- ============ PROJECTS ============ -->
 <section id="projects">
@@ -473,7 +603,7 @@
       <button class="chip" data-filter="web" title="UI/UX Web — interface concept for identity governance" aria-pressed="false">UI/UX Web <span class="chip-sub">identity governance concept</span> <sup>1</sup></button>
       <button class="chip" data-filter="data" title="Data — energy & analytics dashboards" aria-pressed="false">Data <span class="chip-sub">energy &amp; analytics</span> <sup>2</sup></button>
       <button class="chip" data-filter="strategy" title="University-Corporate Strategy — market & strategy research" aria-pressed="false">University-Corporate Strategy <span class="chip-sub">market &amp; strategy research</span> <sup>2</sup></button>
-      <button class="chip" data-filter="ai" title="AI Assistant — ask the portfolio in English ($0 demo)" aria-pressed="false">AI Assistant <span class="chip-sub">ask in English · $0 demo</span> <sup>1</sup></button>
+      <button class="chip" data-filter="ai" title="AI Assistant — ask the portfolio in English" aria-pressed="false">AI Assistant <span class="chip-sub">ask in English</span> <sup>1</sup></button>
     </div>
 
     <!-- Single filtered grid (no section titles): context lives in the chips above. -->
@@ -481,12 +611,12 @@
       <div class="card reveal card-hero" data-phase="ai" data-group="ai">
         <span class="tag ai">New · AI</span>
         <h4>Portfolio AI Assistant</h4>
-        <p>Ask in English about any project, demo, dashboard, CV or contact.
-           Rule-based v0 runs in your browser — $0, no backend, no keys.</p>
-        <div class="tech">Rule-based · English · $0 · zero backend</div>
+        <p>Ask in English about any project, dashboard, CV or contact.
+           Runs in your browser — no keys required.</p>
+        <div class="tech">English · runs in your browser</div>
         <div class="card-foot">
           <a class="code" href="projects/ai-assistant/" aria-label="Open the Portfolio AI assistant">Open the assistant &rarr;</a>
-          <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Demo data &rarr;</a>
+          <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Sample data &rarr;</a>
         </div>
       </div>
       <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="student-import-generator">
@@ -547,7 +677,7 @@
         <div class="tech">Python · pandas · openpyxl · fuzzy matching</div>
         <div class="panel-slot"></div>
         <details class="demo-proof">
-          <summary>Sandbox proof (fictional, WSL2 tmpfs 10s, no secrets)</summary>
+          <summary>Sandbox proof (offline run, no secrets)</summary>
           <pre>parse_durata 4/4: ['2.5000', '1.7583', '0.4194', '3.0000']
 split 18h -&gt; prima=3.20 dopo=0.80
 ELEARNING DEMO OK</pre>
@@ -628,7 +758,7 @@ ELEARNING DEMO OK</pre>
         <div class="tech">Python · requests · BeautifulSoup · pandas</div>
         <div class="panel-slot"></div>
         <details class="demo-proof">
-          <summary>Sandbox proof (fictional, offline, no network)</summary>
+          <summary>Sandbox proof (offline, no network)</summary>
           <pre>threshold 800000 -&gt; 3/4 above threshold
 e_fnc3 FNC3-text: True
 FUNDING DEMO OK</pre>
@@ -647,7 +777,7 @@ FUNDING DEMO OK</pre>
         <div class="tech">Python · pdfplumber</div>
         <div class="panel-slot"></div>
         <details class="demo-proof">
-          <summary>Sandbox proof (fictional, in-memory pages, no PDF)</summary>
+          <summary>Sandbox proof (in-memory pages, no PDF)</summary>
           <pre>costi_ammissibili hits: 2 pages: [2]
 free-search hits: 2 pages: [3]
 REGULATION DEMO OK</pre>
@@ -666,7 +796,8 @@ REGULATION DEMO OK</pre>
            and a duplicate-post registry.</p>
         <div class="tech">Python · Pillow</div>
         <div class="card-foot">
-          <span class="out-note" style="margin-top:0">Demo coming when v1 ships.</span>
+          <span class="out-note" style="margin-top:0">Work in progress — details will be published with v1.</span>
+          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Browse all projects &rarr;</a>
         </div>
       </div>
     <!-- UI/UX Web card continues in the same single grid -->
@@ -770,27 +901,29 @@ REGULATION DEMO OK</pre>
   </div>
 </section>
 
-<!-- ============ AI ASSISTANT (v0 isolated card, EN only) ============ -->
+<!-- ============ AI ASSISTANT (isolated card, EN only) ============ -->
 <section id="ai-assistant">
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>Ask the portfolio assistant</h2>
-      <p>New in v0: a rule-based English assistant that points you to the right project, demo or contact. $0, no backend, no keys — runs entirely in your browser.</p>
+      <p>An English assistant that points you to the right project, dashboard or contact. No keys — runs entirely in your browser.</p>
     </div>
     <div class="cards">
       <div class="card reveal">
-        <span class="tag data">New · v0</span>
+        <span class="tag data">New</span>
         <h4>Portfolio AI assistant</h4>
-        <p>Ask in English about any of the 18 projects, the energy dashboard, the CV or contacts. Try “e-learning hours” or “funding calls”. No data leaves your browser.</p>
-        <div class="tech">Rule-based · English only · Zero backend</div>
+        <p>Ask in English about any of the 18 projects, the energy dashboard, the CV or contacts. Examples: “e-learning hours” or “funding calls”. No data leaves your browser.</p>
+        <div class="tech">English only · runs in your browser</div>
         <div class="card-foot">
           <a class="code" href="projects/ai-assistant/">Open the assistant &rarr;</a>
-          <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Pre-computed demo data &rarr;</a>
+          <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Sample data &rarr;</a>
         </div>
       </div>
     </div>
   </div>
 </section>
+  </div><!-- /.content -->
+</div><!-- /.layout -->
 
 <!-- ============ SKILLS ============ -->
 <section id="skills">
@@ -810,38 +943,6 @@ REGULATION DEMO OK</pre>
   </div>
 </section>
 
-<!-- ============ ABOUT ============ -->
-<section id="about">
-  <div class="wrap about">
-    <div class="reveal">
-      <div class="sec-head" style="margin-bottom:22px">
-        <h2>About this portfolio</h2>
-      </div>
-      <p>
-        I work in the administration of funded vocational training programs.
-        Every tool on this page was built to solve a real, recurring problem in
-        my daily work — not as an exercise.
-      </p>
-      <p>
-        The result: manual processes that used to take hours now run in seconds,
-        with consistent output that can be verified and audited. The tools
-        operate on Word, Excel and PDF files, which is where training
-        administration actually lives.
-      </p>
-      <p>
-        All tools run locally, process personal data responsibly and never
-        modify the original files they work on.
-      </p>
-    </div>
-    <ul class="principles reveal">
-      <li><b>Source files are sacred</b><span>Every tool works on copies; originals are never modified, and inputs are archived after processing.</span></li>
-      <li><b>Robustness against messy data</b><span>Truncated names, typos, Italian number formats and broken exports are handled by design, not by luck.</span></li>
-      <li><b>Usable by anyone</b><span>The most-used tools ship with double-click launchers, so colleagues without technical skills can run them.</span></li>
-      <li><b>Iterated in the field</b><span>The e-learning monitor reached version 17 through real-world feedback — each version fixing an actual edge case.</span></li>
-    </ul>
-  </div>
-</section>
-
 <!-- ============ FOOTER / CONTACT ============ -->
 <footer id="contact">
   <div class="wrap">
@@ -854,7 +955,7 @@ REGULATION DEMO OK</pre>
       <div><span class="label">Email</span><a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a></div>
       <div><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">linkedin.com/in/andrea-barduani</a></div>
       <div><span class="label">GitHub</span><a href="https://github.com/andreabarduani-ui" target="_blank" rel="noopener">github.com/andreabarduani-ui</a></div>
-      <div><span class="label">CV</span><a href="files/Andrea_Barduani_CV.pdf">Download CV (PDF)</a> <span style="color:var(--ink-soft);font-size:.82rem">— add your file at files/Andrea_Barduani_CV.pdf</span></div>
+      <div><span class="label">CV</span><span>CV on request — <a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a> · <a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a></span></div>
       <div><span class="label">Energy</span><a href="dashboard/">CSR Energy &amp; Emissions Intelligence</a></div>
     </div>
     <p style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
@@ -1174,7 +1275,7 @@ REGULATION DEMO OK</pre>
     var foot = mk('p', 'out-note');
     var link = mk('a', null, 'Full sample output on GitHub →');
     link.href = REPO + slug; link.target = '_blank'; link.rel = 'noopener';
-    foot.appendChild(document.createTextNode('Illustrative excerpt, fictional data · '));
+    foot.appendChild(document.createTextNode('Illustrative excerpt · '));
     foot.appendChild(link);
     out.appendChild(foot);
 
@@ -1259,7 +1360,8 @@ REGULATION DEMO OK</pre>
     });
     var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
     cards.forEach(function (card) {
-      var show = card.dataset.phase === f;
+      // AI card stays visible across filters: featured first.
+      var show = card.dataset.phase === f || card.dataset.phase === 'ai';
       if (!REDUCED && !show) { card.classList.add('filtering'); }
       card.hidden = !show;
       if (show) {
@@ -1318,14 +1420,14 @@ REGULATION DEMO OK</pre>
 
   /* ============ Scroll-spy ============ */
   var spy = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) {
-      if (!en.isIntersecting) return;
-      document.querySelectorAll('.nav ul a').forEach(function (a) {
-        a.classList.toggle('active', a.hash === '#' + en.target.id);
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        document.querySelectorAll('.nav ul a, .side-nav a').forEach(function (a) {
+          a.classList.toggle('active', a.hash === '#' + en.target.id);
+        });
       });
-    });
-  }, { rootMargin: '-40% 0px -55% 0px' });
-  ['projects', 'ai-assistant', 'skills', 'about', 'contact'].forEach(function (id) {
+    }, { rootMargin: '-40% 0px -55% 0px' });
+  ['projects', 'ai-assistant', 'skills', 'about', 'contact', 'experience'].forEach(function (id) {
     var s = document.getElementById(id);
     if (s) spy.observe(s);
   });

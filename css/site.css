@@ -33,7 +33,7 @@ body {
   font-size: 16.5px;
   -webkit-font-smoothing: antialiased;
 }
-.wrap { max-width: 960px; margin: 0 auto; padding: 0 22px; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 22px; }
 h1, h2, h3, h4 { font-weight: 700; letter-spacing: -.018em; line-height: 1.25; }
 a { color: var(--accent); }
 a:hover { color: var(--accent-dark); }
@@ -53,7 +53,7 @@ header { border-bottom: 1px solid var(--line); background: var(--bg); position: 
 /* ---------- Hero ---------- */
 .hero { padding: 64px 0 56px; }
 .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 44px; align-items: center; }
-@media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .hero { padding-top: 48px; } }
+@media (max-width: 1100px) { .hero-grid { grid-template-columns: 1fr; } .hero { padding-top: 48px; } }
 .hero .kicker { font-size: .82rem; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-soft); margin-bottom: 18px; }
 .hero h1 { font-size: clamp(1.75rem, 4.3vw, 2.5rem); line-height: 1.2; }
 .hero p.lead { margin-top: 20px; font-size: 1.05rem; color: var(--ink-soft); }
@@ -108,7 +108,7 @@ header { border-bottom: 1px solid var(--line); background: var(--bg); position: 
 
 /* ---------- Sections ---------- */
 section { padding: 60px 0; }
-.sec-head { max-width: 640px; margin-bottom: 34px; }
+.sec-head { max-width: 880px; margin-bottom: 34px; }
 .sec-head h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); }
 .sec-head p { margin-top: 10px; color: var(--ink-soft); }
 
@@ -141,7 +141,7 @@ section { padding: 60px 0; }
 
 /* ---------- Project cards ---------- */
 #projects { background: var(--bg); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
 @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
 .card {
   background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
@@ -249,7 +249,7 @@ a.thumb-link:hover .uni-thumb { transform: scale(1.03); }
 }
 
 /* ---------- Skills ---------- */
-.skills-list { display: flex; flex-wrap: wrap; gap: 8px; max-width: 700px; }
+.skills-list { display: flex; flex-wrap: wrap; gap: 8px; max-width: 960px; }
 .skills-list span {
   white-space: nowrap; font-weight: 600; font-size: .88rem;
   border: 1px solid var(--line); background: var(--paper);
@@ -269,7 +269,7 @@ a.thumb-link:hover .uni-thumb { transform: scale(1.03); }
 /* ---------- Footer ---------- */
 footer { border-top: 2px solid var(--ink); padding: 52px 0 44px; background: var(--bg); }
 footer h2 { font-size: 1.5rem; }
-footer p { max-width: 560px; font-size: .97rem; color: var(--ink-soft); margin-top: 8px; }
+footer p { max-width: 760px; font-size: .97rem; color: var(--ink-soft); margin-top: 8px; }
 footer .links { margin-top: 22px; display: grid; gap: 6px; font-size: .95rem; }
 footer .links a { text-decoration: none; font-weight: 600; }
 footer .links a:hover { text-decoration: underline; }

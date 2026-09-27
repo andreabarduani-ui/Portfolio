@@ -338,7 +338,7 @@
       var foot = mk('p', 'out-note');
       var link = mk('a', null, 'Full sample output on GitHub →');
       link.href = REPO + slug; link.target = '_blank'; link.rel = 'noopener';
-      foot.appendChild(document.createTextNode('Illustrative excerpt, fictional data · '));
+      foot.appendChild(document.createTextNode('Illustrative excerpt · '));
       foot.appendChild(link);
       out.appendChild(foot);
 
@@ -425,7 +425,8 @@
     });
     var cards = Array.prototype.slice.call(document.querySelectorAll('#projects .card'));
     cards.forEach(function (card) {
-      var show = card.dataset.phase === f;
+      // AI card stays visible across filters: featured first.
+      var show = card.dataset.phase === f || card.dataset.phase === 'ai';
       if (!REDUCED && !show) { card.classList.add('filtering'); }
       card.hidden = !show;
       if (show) { card.classList.remove('filtering'); void card.offsetWidth; }
@@ -490,12 +491,12 @@
     var spy = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
-        document.querySelectorAll('.nav ul a').forEach(function (a) {
+        document.querySelectorAll('.nav ul a, .side-nav a').forEach(function (a) {
           a.classList.toggle('active', a.hash === '#' + en.target.id);
         });
       });
     }, { rootMargin: '-40% 0px -55% 0px' });
-    ['projects', 'ai-assistant', 'skills', 'about', 'contact'].forEach(function (id) {
+    ['projects', 'ai-assistant', 'skills', 'about', 'contact', 'experience'].forEach(function (id) {
       var s = document.getElementById(id);
       if (s) spy.observe(s);
     });

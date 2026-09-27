@@ -1,10 +1,18 @@
 /* ============================================================
-   Portfolio AI assistant (v0) — chat-widget.css
-   Minimal styles for projects/ai-assistant/. Reuses the site
-   variables from ../../css/site.css (:root --accent #0d5794,
-   --bg #fdfcf9). No external fetch, no keys, no backend.
+   Portfolio AI assistant — chat-widget.css
+   Big UI: 2-col layout (chat 480px + proof 1fr), input 56px,
+   font 1.05rem, chips 44px, aria-live intact, mobile stacked.
+   Reuses site variables from ../../css/site.css (:root --accent
+   #0d5794, --bg #fdfcf9). No external fetch, no keys.
    CSP: local file only (connect-src 'self' untouched).
    ============================================================ */
+
+.ai-layout {
+  display: grid;
+  grid-template-columns: minmax(480px, 1.1fr) 1fr;
+  gap: 22px;
+  align-items: start;
+}
 
 .ai-chat {
   background: var(--paper, #ffffff);
@@ -15,20 +23,21 @@
 }
 
 .ai-messages {
-  max-height: 380px;
+  max-height: 480px;
+  min-height: 280px;
   overflow-y: auto;
-  padding: 18px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .ai-msg {
   max-width: 85%;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 10px;
-  font-size: 0.9rem;
-  line-height: 1.55;
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
 .ai-msg.bot {
@@ -52,11 +61,25 @@
   margin-top: 8px;
 }
 
+.ai-msg pre.ai-proof-pre {
+  margin-top: 10px;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #faf8f3;
+  border: 1px solid var(--line, #e4e0d8);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--ink, #26231f);
+}
+
 .ai-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 18px 12px;
+  gap: 10px;
+  padding: 0 20px 14px;
 }
 
 .ai-chip {
@@ -64,9 +87,10 @@
   background: transparent;
   color: var(--accent, #0d5794);
   border-radius: 999px;
-  padding: 6px 14px;
+  padding: 10px 18px;
+  min-height: 44px;
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -78,29 +102,31 @@
 
 .ai-form {
   display: flex;
-  gap: 8px;
-  padding: 12px 18px 18px;
+  gap: 10px;
+  padding: 14px 20px 20px;
   border-top: 1px solid var(--line, #e4e0d8);
 }
 
 .ai-form input {
   flex: 1;
   font: inherit;
-  font-size: 0.9rem;
-  padding: 9px 12px;
+  font-size: 1.05rem;
+  padding: 0 14px;
+  height: 56px;
   border: 1px solid var(--line, #e4e0d8);
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
   color: var(--ink, #26231f);
 }
 
 .ai-form button {
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: 600;
-  padding: 9px 18px;
+  padding: 0 22px;
+  height: 56px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--accent, #0d5794);
   color: #fff;
   cursor: pointer;
@@ -110,14 +136,65 @@
   background: var(--accent-dark, #093f6e);
 }
 
+.ai-proof {
+  background: var(--paper, #ffffff);
+  border: 1px solid var(--line, #e4e0d8);
+  border-radius: 10px;
+  padding: 20px 22px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.ai-proof h2 {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+
+.ai-proof p {
+  color: var(--ink-soft, #5c574f);
+  margin-bottom: 12px;
+}
+
+.ai-proof ul {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.ai-proof li {
+  font-size: 0.95rem;
+  border-top: 1px solid var(--line, #e4e0d8);
+  padding-top: 8px;
+}
+
+.ai-proof li span {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--ink-soft, #5c574f);
+}
+
 .ai-note {
   margin-top: 12px;
   font-size: 0.78rem;
   color: var(--ink-soft, #5c574f);
 }
 
+@media (max-width: 1100px) {
+  .ai-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .ai-msg {
     max-width: 95%;
+  }
+  .ai-form {
+    flex-direction: column;
+  }
+  .ai-form button {
+    width: 100%;
   }
 }
