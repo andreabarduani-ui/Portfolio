@@ -519,7 +519,7 @@
       title: "CV",
       keywords: ["cv", "resume", "curriculum", "vitae"],
       reply:
-        'CV on request \u2014 write to <a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a> or see <a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a>. ' +
+        '<a href="https://docs.google.com/document/d/1Ep9fzLmezB8vfBo2t9P-FeNKGO64nIWL/edit?usp=sharing&ouid=101196647938047170540&rtpof=true&sd=true" target="_blank" rel="noopener">Download CV</a>. ' +
         ciBadge() +
         ".",
     },

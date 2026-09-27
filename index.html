@@ -284,10 +284,24 @@
   .about { display: grid; grid-template-columns: 1.35fr 1fr; gap: 44px; align-items: start; }
   @media (max-width: 780px) { .about { grid-template-columns: 1fr; } }
   .about p { color: var(--ink-soft); margin-bottom: 14px; }
-  .principles { list-style: none; }
-  .principles li { padding: 12px 0; border-top: 1px solid var(--line); font-size: .9rem; }
-  .principles li b { display: block; font-size: .95rem; font-weight: 600; }
-  .principles li span { color: var(--ink-soft); }
+  .about-single { grid-template-columns: 1fr; max-width: 760px; }
+  .about-points { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 18px; }
+  .about-points li { padding: 0 0 18px 42px; position: relative; border-top: 1px solid var(--line); padding-top: 14px; }
+  .about-points li:first-child { border-top: none; padding-top: 0; }
+  .about-points li::before { content: counter(about, decimal-leading-zero); counter-increment: about; position: absolute; left: 0; top: 14px; font-size: .78rem; font-weight: 700; color: var(--accent); letter-spacing: .06em; }
+  .about-points li:first-child::before { top: 0; }
+  .about-points { counter-reset: about; }
+  .about-points li h3 { font-size: 1.02rem; margin: 0 0 6px; }
+  .about-points li p { margin: 0 0 6px; font-size: .92rem; line-height: 1.6; }
+  .about-points li p:last-child { margin-bottom: 2px; }
+  .about-cv { margin-top: 14px; font-weight: 600; }
+  .exp-duties { margin: 10px 0 0 18px; display: grid; gap: 4px; font-size: .9rem; color: var(--ink-soft); }
+  .exp-duties li { line-height: 1.55; }
+  .tool-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .tool-list li { border: 1px solid var(--line); border-radius: 8px; background: var(--paper); padding: 10px 14px; display: grid; gap: 2px; }
+  .tool-list a { font-weight: 600; font-size: .92rem; text-decoration: none; }
+  .tool-list a:hover { text-decoration: underline; }
+  .tool-list span { font-size: .85rem; color: var(--ink-soft); }
 
   /* ---------- Footer ---------- */
   footer { border-top: 2px solid var(--ink); padding: 52px 0 44px; background: var(--bg); }
@@ -513,7 +527,7 @@
       <li><a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a></li>
       <li><a href="https://github.com/andreabarduani-ui" target="_blank" rel="noopener">GitHub</a></li>
     </ul>
-    <p class="side-cv">CV on request — <a href="mailto:andrea.barduani@gmail.com">email</a></p>
+    <p class="side-cv"><a href="https://docs.google.com/document/d/1Ep9fzLmezB8vfBo2t9P-FeNKGO64nIWL/edit?usp=sharing&ouid=101196647938047170540&rtpof=true&sd=true" target="_blank" rel="noopener">Download CV</a></p>
   </aside>
   <div class="content">
 
@@ -524,36 +538,33 @@
       <h2>About</h2>
       <p>Administration of funded vocational training programs — every tool below solves a real, recurring problem from daily work.</p>
     </div>
-    <div class="about">
+    <div class="about about-single">
       <div class="reveal">
         <ol class="about-points">
-          <li><b>Marketing education</b><span>Two masters — Communication and Marketing at Sapienza University of Rome, and Business Organization at Il Sole 24 Ore Business School — covering data analysis and digital solutions including CRM and marketing campaigns.</span></li>
-          <li><b>Training Coordinator</b><span>Design of ESF+ training plans, course design, and end-to-end delivery with reporting and accounting.</span></li>
-          <li><b>Automation mindset</b><span>13 Python tools operating on Word, Excel and PDF files; originals are never modified.</span></li>
+          <li>
+            <h3>Marketing education</h3>
+            <p>Two masters: Communication and Marketing at Sapienza University of Rome, and Business Organization at Il Sole 24 Ore Business School.</p>
+            <p>Focus on data analysis and digital solutions, including CRM and marketing campaigns.</p>
+          </li>
+          <li>
+            <h3>Training Coordinator</h3>
+            <p>Design of ESF+ training plans and courses, with end-to-end delivery.</p>
+            <p>Reporting and accounting included.</p>
+          </li>
+          <li>
+            <h3>Automation mindset</h3>
+            <p>13 Python tools operating on Word, Excel and PDF files.</p>
+            <p>Originals are never modified. Manual processes that used to take hours now run in seconds, with consistent and auditable output.</p>
+            <p>All tools run locally and process personal data responsibly.</p>
+          </li>
         </ol>
-        <p>
-          Manual processes that used to take hours now run in seconds,
-          with consistent output that can be verified and audited. The tools
-          operate on Word, Excel and PDF files, which is where training
-          administration actually lives.
-        </p>
-        <p>
-          All tools run locally, process personal data responsibly and never
-          modify the original files they work on.
-        </p>
+        <p class="about-cv"><a href="https://docs.google.com/document/d/1Ep9fzLmezB8vfBo2t9P-FeNKGO64nIWL/edit?usp=sharing&ouid=101196647938047170540&rtpof=true&sd=true" target="_blank" rel="noopener">Download CV</a></p>
       </div>
-      <ul class="principles reveal">
-        <li><b>Source files are sacred</b><span>Every tool works on copies; originals are never modified, and inputs are archived after processing.</span></li>
-        <li><b>Robustness against messy data</b><span>Truncated names, typos, Italian number formats and broken exports are handled by design, not by luck.</span></li>
-        <li><b>Usable by anyone</b><span>The most-used tools ship with double-click launchers, so colleagues without technical skills can run them.</span></li>
-        <li><b>Iterated in the field</b><span>The e-learning monitor reached version 17 through real-world feedback — each version fixing an actual edge case.</span></li>
-      </ul>
     </div>
   </div>
 </section>
 
 <!-- ============ EXPERIENCE ============ -->
-<!-- TODO(experience): confirm exact dates, job titles and duties from CV (files/Andrea_Barduani_CV.pdf is currently missing in repo). Entries below use employer names + one neutral line each; do not publish dates until verified. -->
 <section id="experience">
   <div class="wrap">
     <div class="sec-head reveal">
@@ -562,20 +573,34 @@
     </div>
     <ol class="exp-list">
       <li class="exp reveal">
-        <div class="exp-head"><h3>Accademia Informatica</h3><span>Training programs</span></div>
-        <p>Work in training program delivery and administration.</p>
+        <div class="exp-head"><h3>Accademia Informatica, training company accredited with italian Ministry of labour — Rome, IT</h3><span>Training coordinator – project manager 2025 - Present</span></div>
+        <ul class="exp-duties">
+          <li>Business strategy for corporate courses funded by EU (ESF + FUND)</li>
+          <li>Marketing plan planning for customer acquisition</li>
+          <li>Market analysis of emerging business needs, relationships with company executives, and designing commercial offerings.</li>
+          <li>Advanced reporting with power BI and Excel</li>
+          <li>Accounting and compliance.</li>
+        </ul>
       </li>
       <li class="exp reveal">
-        <div class="exp-head"><h3>ADN Kronos</h3><span>Training programs</span></div>
-        <p>Work in training program delivery and administration.</p>
+        <div class="exp-head"><h3>ADNKRONOS – press agency — Rome, IT</h3><span>Assistant in the business development area 2024</span></div>
+        <ul class="exp-duties">
+          <li>Advertising development strategy</li>
+          <li>Trend study for news using journalistic software</li>
+          <li>Press review</li>
+          <li>Accounting and administration of customer newspaper</li>
+        </ul>
       </li>
       <li class="exp reveal">
-        <div class="exp-head"><h3>SDI Sant'Egidio</h3><span>Training programs</span></div>
-        <p>Training Coordinator: design of ESF+ plans, course design, and end-to-end delivery with reporting and accounting, supported by Python automation on Word, Excel and PDF.</p>
-        <div class="exp-links"><a href="#projects-python">Python automations</a> · <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">E-Learning Hours Monitor</a></div>
+        <div class="exp-head"><h3>Comunità di Sant'Egidio — Rome, IT</h3><span>Volunteer 2016 – 2024</span></div>
+        <ul class="exp-duties">
+          <li>Managed after-school tutoring for disadvantaged youth over 8 years of active community service.</li>
+          <li>Supported operations and assistance programs in homeless shelters.</li>
+          <li>Coordinated logistics for local fundraising campaigns.</li>
+        </ul>
       </li>
     </ol>
-    <p class="out-note reveal">Full CV on request — <a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a> · <a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a></p>
+    <p class="out-note reveal"><a href="https://docs.google.com/document/d/1Ep9fzLmezB8vfBo2t9P-FeNKGO64nIWL/edit?usp=sharing&ouid=101196647938047170540&rtpof=true&sd=true" target="_blank" rel="noopener">Download CV</a> · <a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a> · <a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a></p>
   </div>
 </section>
 
@@ -584,13 +609,8 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>The projects</h2>
-      <p>19 projects in five sections — 13 Python automations, 2 data dashboards, 2 strategy research decks, 1 AI assistant and 1 Web UI/UX concept (Kaidra).
-         Jump to <a href="#projects-python">#projects-python</a>,
-         <a href="#projects-data">#projects-data</a>,
-         <a href="#projects-strategy">#projects-strategy</a>,
-         <a href="#projects-ai">#projects-ai</a>,
-         <a href="#projects-webux">#projects-webux</a> (#projects-web remains as an alias to the Kaidra concept). Full source and sample outputs live in
-         <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">the repository</a>.</p>
+      <p>Smart solutions that lighten my daily work, plus projects from my interests and hobbies such as energy sustainability.</p>
+      <p>19 projects in 5 sections. Full source and sample outputs in <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">the repository</a>.</p>
     </div>
 
     <nav class="proj-index reveal" aria-label="Project sections">
@@ -606,197 +626,29 @@
       <div class="sec-head reveal">
         <p class="proj-kicker">01 — Python automations</p>
         <h3>Launch → delivery → reporting</h3>
-        <p>13 tools covering the full lifecycle of funded training programs: Word, Excel and PDF automation with fuzzy matching for inconsistent registries. Originals are never modified. Expand the list to browse every tool.</p>
+        <p>13 tools covering launch, delivery and reporting for funded training programs.</p>
       </div>
       <details class="proj-details" open>
         <summary>Show all 13 tools</summary>
-        <div class="cards" id="projectsGrid">
-      <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="student-import-generator">
-        <span class="tag launch">Launch</span>
-        <h4>Student Import Generator</h4>
-        <p>Spreadsheet → platform-ready import file, with gender and birth town
-           parsed automatically from each Italian tax ID.</p>
-        <div class="tech">Python · pandas · openpyxl</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/student-import-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="adhesion-letter-compiler">
-        <span class="tag launch">Launch</span>
-        <h4>Adhesion Letter Compiler</h4>
-        <p>One personalized Word adhesion letter per trainee–company pair,
-           filled from Excel with pixel-accurate field alignment.</p>
-        <div class="tech">Python · python-docx · openpyxl</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/adhesion-letter-compiler" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="apprenticeship-quote-generator">
-        <span class="tag launch">Launch</span>
-        <h4>Apprenticeship Quote Generator</h4>
-        <p>Complete economic offers with progressive numbering, rounding rules
-           and course calendars rebuilt into Word tables.</p>
-        <div class="tech">Python · python-docx · openpyxl</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/apprenticeship-quote-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="launch" data-group="python" data-demo="financial-plan-builder">
-        <span class="tag launch">Launch</span>
-        <h4>Financial Plan Builder</h4>
-        <p>Live-formula Excel budgets with traffic-light constraint checks and
-           a gap-closing simulator.</p>
-        <div class="tech">Python · openpyxl · Excel formulas</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/financial-plan-builder" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-    <!-- Delivery (merged into Python Automations grid) -->
-      <div class="card reveal" data-phase="python" data-subphase="delivery" data-group="python" data-demo="elearning-hours-monitor">
-        <span class="tag delivery">Delivery</span>
-        <h4>E-Learning Hours Monitor</h4>
-        <p>~1,800 lines across 17 versions: computes each student's real
-           e-learning hours by stripping evenings, weekends and daily excess.
-           Fuzzy matching for truncated names.</p>
-        <div class="tech">Python · pandas · openpyxl · fuzzy matching</div>
-        <div class="panel-slot"></div>
-        <details class="demo-proof">
-          <summary>Sandbox proof (offline run, no secrets)</summary>
-          <pre>parse_durata 4/4: ['2.5000', '1.7583', '0.4194', '3.0000']
-split 18h -&gt; prima=3.20 dopo=0.80
-ELEARNING DEMO OK</pre>
-          <p class="out-note">Full proof: <a href="projects/elearning-hours-monitor/demo-transcript.txt" download>demo-transcript.txt</a> · fixture <a href="projects/elearning-hours-monitor/demo-fixture.txt" download>demo-fixture.txt</a> · <a href="projects/elearning-hours-monitor/sample-output.md">sample-output.md</a></p>
-        </details>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="delivery" data-group="python" data-demo="tutoring-hours-distributor">
-        <span class="tag delivery">Delivery</span>
-        <h4>Tutoring Hours Distributor</h4>
-        <p>Distributes tutoring hours across internship months, respecting
-           caps, allowed time windows and tutor availability.</p>
-        <div class="tech">Python · openpyxl · fuzzy matching</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/tutoring-hours-distributor" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="delivery" data-group="python" data-demo="attendance-register-filler">
-        <span class="tag delivery">Delivery</span>
-        <h4>Attendance Register Filler</h4>
-        <p>Writes PRESENT/ABSENT into the official PDF register — fuzzy name
-           matching included, ships with a double-click launcher.</p>
-        <div class="tech">Python · pdfplumber · PyMuPDF · openpyxl</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/attendance-register-filler" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-    <!-- Reporting (merged into Python Automations grid) -->
-      <div class="card reveal" data-phase="python" data-subphase="reporting" data-group="python" data-demo="certificate-manager">
-        <span class="tag reporting">Reporting</span>
-        <h4>Certificate Manager</h4>
-        <p>Four-command pipeline: split the bulk-print PDF, read each name,
-           sort into company folders, rebuild cross-edition views.</p>
-        <div class="tech">Python · pypdf · pandas · fuzzy matching</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/certificate-manager" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="reporting" data-group="python" data-demo="transparency-certificates">
-        <span class="tag reporting">Reporting</span>
-        <h4>Transparency Certificates</h4>
-        <p>One "acquired skills" Word certificate per participant, filled from
-           the master Excel — template and institution data untouched.</p>
-        <div class="tech">Python · python-docx · openpyxl</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/transparency-certificates" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="reporting" data-group="python" data-demo="timesheet-generator">
-        <span class="tag reporting">Reporting</span>
-        <h4>Project Timesheet Generator</h4>
-        <p>Official monthly timesheets compiled from intern records and tutor
-           reports — one file per month or one multi-sheet workbook.</p>
-        <div class="tech">Python · openpyxl · PyYAML</div>
-        <div class="panel-slot"></div>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/timesheet-generator" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-    <!-- Utilities (merged into Python Automations grid) -->
-      <div class="card reveal" data-phase="python" data-subphase="utility" data-group="python" data-demo="funding-call-scraper">
-        <span class="tag utility">Utility</span>
-        <h4>Funding Call Scraper</h4>
-        <p>Two-level scraper of nine funding bodies: every open call discovered,
-           budget extracted, above-threshold calls flagged to Excel.</p>
-        <div class="tech">Python · requests · BeautifulSoup · pandas</div>
-        <div class="panel-slot"></div>
-        <details class="demo-proof">
-          <summary>Sandbox proof (offline, no network)</summary>
-          <pre>threshold 800000 -&gt; 3/4 above threshold
-e_fnc3 FNC3-text: True
-FUNDING DEMO OK</pre>
-          <p class="out-note">Full proof: <a href="projects/funding-call-scraper/demo-transcript.txt" download>demo-transcript.txt</a> · fixture <a href="projects/funding-call-scraper/demo-fixture.txt" download>demo-fixture.txt</a> · <a href="projects/funding-call-scraper/sample-output.md">sample-output.md</a></p>
-        </details>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="utility" data-group="python" data-demo="regulation-search">
-        <span class="tag utility">Utility</span>
-        <h4>Regulation Search Engine</h4>
-        <p>Search inside funding manuals and calls by category or free text —
-           every answer cites the page number and its context.</p>
-        <div class="tech">Python · pdfplumber</div>
-        <div class="panel-slot"></div>
-        <details class="demo-proof">
-          <summary>Sandbox proof (in-memory pages, no PDF)</summary>
-          <pre>eligible-costs hits: 2 pages: [2]
-free-search hits: 2 pages: [3]
-REGULATION DEMO OK</pre>
-          <p class="out-note">Full proof: <a href="projects/regulation-search/demo-transcript.txt" download>demo-transcript.txt</a> · fixture <a href="projects/regulation-search/demo-fixture.txt" download>demo-fixture.txt</a> · <a href="projects/regulation-search/sample-output.md">sample-output.md</a></p>
-        </details>
-        <div class="card-foot">
-          <button class="run" aria-expanded="false"><span class="lbl">See it run</span><span class="arr">▸</span></button>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search" target="_blank" rel="noopener">Source &amp; output &rarr;</a>
-        </div>
-      </div>
-      <div class="card reveal" data-phase="python" data-subphase="utility" data-group="python">
-        <span class="tag utility">Utility</span>
-        <h4>Social Graphics Pipeline <span class="wip">work in progress</span></h4>
-        <p>LinkedIn cards and carousels generated programmatically from a
-           centralized brand kit, with automatic platform format adaptation
-           and a duplicate-post registry.</p>
-        <div class="tech">Python · Pillow</div>
-        <div class="card-foot">
-          <span class="out-note" style="margin-top:0">Work in progress — details will be published with v1.</span>
-          <a class="code" href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Browse all projects &rarr;</a>
-        </div>
-      </div>
-      </div>
+        <ul class="tool-list">
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/student-import-generator" target="_blank" rel="noopener">Student Import Generator</a><span>Spreadsheet to platform-ready import, with tax ID parsing.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/adhesion-letter-compiler" target="_blank" rel="noopener">Adhesion Letter Compiler</a><span>Personalized Word letters per trainee-company pair.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/apprenticeship-quote-generator" target="_blank" rel="noopener">Apprenticeship Quote Generator</a><span>Economic offers with progressive numbering and calendar.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/financial-plan-builder" target="_blank" rel="noopener">Financial Plan Builder</a><span>Live-formula Excel budgets with constraint checks.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/elearning-hours-monitor" target="_blank" rel="noopener">E-Learning Hours Monitor</a><span>Real e-learning hours from messy logs and caps.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/tutoring-hours-distributor" target="_blank" rel="noopener">Tutoring Hours Distributor</a><span>Tutoring hours across months within caps and windows.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/attendance-register-filler" target="_blank" rel="noopener">Attendance Register Filler</a><span>PRESENT/ABSENT into the official PDF register.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/certificate-manager" target="_blank" rel="noopener">Certificate Manager</a><span>Split, read and sort bulk certificates by company.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/transparency-certificates" target="_blank" rel="noopener">Transparency Certificates</a><span>One acquired-skills certificate per participant.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/timesheet-generator" target="_blank" rel="noopener">Project Timesheet Generator</a><span>Official monthly timesheets from intern records.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/funding-call-scraper" target="_blank" rel="noopener">Funding Call Scraper</a><span>Open calls from nine funding bodies flagged to Excel.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/regulation-search" target="_blank" rel="noopener">Regulation Search Engine</a><span>Search manuals by category or text with page cites.</span></li>
+          <li><a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects" target="_blank" rel="noopener">Social Graphics Pipeline</a><span>Programmatic LinkedIn cards from a brand kit (work in progress).</span></li>
+        </ul>
       </details>
     </section>
 
-    <!-- 02 · Data -->
+    <!-- 02 · Data -->    <!-- 02 · Data -->
     <section id="projects-data" class="proj-block" aria-label="Data projects">
       <div class="sec-head reveal">
         <p class="proj-kicker">02 — Data</p>
@@ -901,19 +753,7 @@ REGULATION DEMO OK</pre>
         <p class="proj-kicker">04 — AI assistant</p>
         <h3>Ask the portfolio</h3>
         <p>An English assistant that explains each tool with its real command, sample input and pre-computed output. It runs entirely in the browser — no keys, no uploads.</p>
-      </div>
-      <div class="cards">
-        <div class="card reveal card-hero" data-phase="ai" data-group="ai">
-          <span class="tag ai">New · AI</span>
-          <h4>Portfolio AI Assistant</h4>
-          <p>Ask in English about any project, dashboard, CV or contact.
-             Runs in your browser — no keys required. Try the input → output examples for e-learning monitoring, funding calls and regulation search.</p>
-          <div class="tech">English · runs in your browser</div>
-          <div class="card-foot">
-            <a class="code" href="projects/ai-assistant/" aria-label="Open the Portfolio AI assistant">Ask the AI Assistant &rarr;</a>
-            <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Sample data &rarr;</a>
-          </div>
-        </div>
+        <p><a href="projects/ai-assistant/" aria-label="Open the Portfolio AI assistant">Open the AI Assistant &rarr;</a></p>
       </div>
     </section>
 
@@ -1001,7 +841,7 @@ REGULATION DEMO OK</pre>
       <div><span class="label">Email</span><a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a></div>
       <div><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">linkedin.com/in/andrea-barduani</a></div>
       <div><span class="label">GitHub</span><a href="https://github.com/andreabarduani-ui" target="_blank" rel="noopener">github.com/andreabarduani-ui</a></div>
-      <div><span class="label">CV</span><span>CV on request — <a href="mailto:andrea.barduani@gmail.com">andrea.barduani@gmail.com</a> · <a href="https://www.linkedin.com/in/andrea-barduani-b76a7719a/" target="_blank" rel="noopener">LinkedIn</a></span></div>
+      <div><span class="label">CV</span><a href="https://docs.google.com/document/d/1Ep9fzLmezB8vfBo2t9P-FeNKGO64nIWL/edit?usp=sharing&ouid=101196647938047170540&rtpof=true&sd=true" target="_blank" rel="noopener">Download CV</a></div>
       <div><span class="label">Energy</span><a href="dashboard/">CSR Energy &amp; Emissions Intelligence</a></div>
     </div>
     <p style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
