@@ -1,40 +1,7 @@
-/* ============================================================
-   Portfolio — site.js
-   Extracted from index.html (same functions, zero dependencies).
-   DEMOS + playTerm + panels + heroLoop + chips + countUp +
-   scroll-spy + reveal + toTop preserved verbatim.
-   Addition: light/dark [data-theme] toggle (persisted).
-   Works from file:// and Netlify. No npm needed.
-   ============================================================ */
 (function () {
   'use strict';
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var REPO = 'https://github.com/andreabarduani-ui/Portfolio/tree/main/projects/';
-
-  /* ---------- Theme toggle (new, non-breaking) ---------- */
-  function initTheme() {
-    var KEY = 'portfolio-theme';
-    var root = document.documentElement;
-    var btn = document.getElementById('themeToggle');
-    var saved = null;
-    try { saved = localStorage.getItem(KEY); } catch (e) {}
-    if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
-    else if (!root.getAttribute('data-theme')) root.setAttribute('data-theme', 'light');
-    if (btn) {
-      var sync = function () {
-        var dark = root.getAttribute('data-theme') === 'dark';
-        btn.textContent = dark ? '☀ Light' : '◐ Dark';
-        btn.setAttribute('aria-pressed', String(dark));
-      };
-      sync();
-      btn.addEventListener('click', function () {
-        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        root.setAttribute('data-theme', next);
-        try { localStorage.setItem(KEY, next); } catch (e) {}
-        sync();
-      });
-    }
-  }
 
   function mk(tag, cls, text) {
     var e = document.createElement(tag);
@@ -302,86 +269,83 @@
   }
 
   /* ============ Build expandable panels ============ */
-  function initPanels() {
-    document.querySelectorAll('[data-demo]').forEach(function (card) {
-      var slug = card.dataset.demo;
-      var demo = DEMOS[slug];
-      if (!demo) return;
-      var slot = card.querySelector('.panel-slot');
-      var runBtn = card.querySelector('.run');
-      if (!slot) return;
+  document.querySelectorAll('[data-demo]').forEach(function (card) {
+    var slug = card.dataset.demo;
+    var demo = DEMOS[slug];
+    if (!demo) return;
+    var slot = card.querySelector('.panel-slot');
+    var runBtn = card.querySelector('.run');
 
-      var panel = mk('div', 'panel');
-      panel.id = 'panel-' + slug;
-      panel.hidden = true;
+    var panel = mk('div', 'panel');
+    panel.id = 'panel-' + slug;
+    panel.hidden = true;
 
-      var tabs = mk('div', 'tabs');
-      var tTerm = mk('button', 'tab active', 'Terminal');
-      var tOut = mk('button', 'tab', 'Output');
-      tTerm.type = tOut.type = 'button';
-      tTerm.dataset.tab = 'term'; tOut.dataset.tab = 'out';
-      tabs.appendChild(tTerm); tabs.appendChild(tOut);
+    var tabs = mk('div', 'tabs');
+    var tTerm = mk('button', 'tab active', 'Terminal');
+    var tOut = mk('button', 'tab', 'Output');
+    tTerm.type = tOut.type = 'button';
+    tTerm.dataset.tab = 'term'; tOut.dataset.tab = 'out';
+    tabs.appendChild(tTerm); tabs.appendChild(tOut);
 
-      var term = mk('div', 'term');
-      var bar = mk('div', 'term-bar');
-      bar.appendChild(mk('span', 'dot r'));
-      bar.appendChild(mk('span', 'dot y'));
-      bar.appendChild(mk('span', 'dot g'));
-      var title = mk('span', 'term-title', demo.file);
-      bar.appendChild(title);
-      var tbody = mk('div', 'term-body');
-      term.appendChild(bar); term.appendChild(tbody);
+    var term = mk('div', 'term');
+    var bar = mk('div', 'term-bar');
+    bar.appendChild(mk('span', 'dot r'));
+    bar.appendChild(mk('span', 'dot y'));
+    bar.appendChild(mk('span', 'dot g'));
+    var title = mk('span', 'term-title', demo.file);
+    bar.appendChild(title);
+    var tbody = mk('div', 'term-body');
+    term.appendChild(bar); term.appendChild(tbody);
 
-      var out = mk('div', 'out');
-      out.hidden = true;
-      out.innerHTML = demo.out;
-      var foot = mk('p', 'out-note');
-      var link = mk('a', null, 'Full sample output on GitHub →');
-      link.href = REPO + slug; link.target = '_blank'; link.rel = 'noopener';
-      foot.appendChild(document.createTextNode('Illustrative excerpt · '));
-      foot.appendChild(link);
-      out.appendChild(foot);
+    var out = mk('div', 'out');
+    out.hidden = true;
+    out.innerHTML = demo.out;
+    var foot = mk('p', 'out-note');
+    var link = mk('a', null, 'Full sample output on GitHub →');
+    link.href = REPO + slug; link.target = '_blank'; link.rel = 'noopener';
+    foot.appendChild(document.createTextNode('Illustrative excerpt · '));
+    foot.appendChild(link);
+    out.appendChild(foot);
 
-      panel.appendChild(tabs); panel.appendChild(term); panel.appendChild(out);
-      slot.appendChild(panel);
-      if (runBtn) runBtn.setAttribute('aria-controls', panel.id);
+    panel.appendChild(tabs); panel.appendChild(term); panel.appendChild(out);
+    slot.appendChild(panel);
+    if (runBtn) runBtn.setAttribute('aria-controls', panel.id);
 
-      var token = { alive: false };
+    var token = { alive: false };
 
-      function selectTab(which) {
-        tTerm.classList.toggle('active', which === 'term');
-        tOut.classList.toggle('active', which === 'out');
-        term.hidden = which !== 'term';
-        out.hidden = which !== 'out';
+    function selectTab(which) {
+      tTerm.classList.toggle('active', which === 'term');
+      tOut.classList.toggle('active', which === 'out');
+      term.hidden = which !== 'term';
+      out.hidden = which !== 'out';
+    }
+    tTerm.addEventListener('click', function () { selectTab('term'); });
+    tOut.addEventListener('click', function () { selectTab('out'); });
+
+    if (runBtn) runBtn.addEventListener('click', function () {
+      var open = panel.hidden;
+      panel.hidden = !open;
+      runBtn.setAttribute('aria-expanded', String(open));
+      runBtn.classList.toggle('open', open);
+      runBtn.querySelector('.lbl').textContent = open ? 'Hide' : 'See it run';
+      if (open) {
+        token.alive = false;
+        token = { alive: true };
+        playTerm(tbody, demo, token);
+      } else {
+        token.alive = false;
       }
-      tTerm.addEventListener('click', function () { selectTab('term'); });
-      tOut.addEventListener('click', function () { selectTab('out'); });
-
-      if (runBtn) runBtn.addEventListener('click', function () {
-        var open = panel.hidden;
-        panel.hidden = !open;
-        runBtn.setAttribute('aria-expanded', String(open));
-        runBtn.classList.toggle('open', open);
-        runBtn.querySelector('.lbl').textContent = open ? 'Hide' : 'See it run';
-        if (open) {
-          token.alive = false;
-          token = { alive: true };
-          playTerm(tbody, demo, token);
-        } else {
-          token.alive = false;
-        }
-      });
     });
-  }
+  });
 
   /* ============ Hero terminal loop ============ */
-  function initHero() {
-    var HERO = [
-      { file: 'elearning_hours_monitor.py', lines: DEMOS['elearning-hours-monitor'].lines },
-      { file: 'attendance_register_filler.py', lines: DEMOS['attendance-register-filler'].lines },
-      { file: 'funding_calls_scraper.py', lines: DEMOS['funding-call-scraper'].lines },
-      { file: 'student_import_generator.py', lines: DEMOS['student-import-generator'].lines }
-    ];
+  var HERO = [
+    { file: 'elearning_hours_monitor.py', lines: DEMOS['elearning-hours-monitor'].lines },
+    { file: 'attendance_register_filler.py', lines: DEMOS['attendance-register-filler'].lines },
+    { file: 'funding_calls_scraper.py', lines: DEMOS['funding-call-scraper'].lines },
+    { file: 'student_import_generator.py', lines: DEMOS['student-import-generator'].lines }
+  ];
+  (function heroLoop() {
     var heroTerm = document.querySelector('.hero-term');
     var body = document.querySelector('.hero-term .term-body');
     var title = document.querySelector('.hero-term .term-title');
@@ -393,9 +357,7 @@
       return;
     }
     var visible = true;
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(heroTerm);
-    }
+    new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(heroTerm);
 
     var i = 0;
     (function next() {
@@ -410,18 +372,22 @@
         }, 3000);
       });
     })();
-  }
+  })();
 
   /* ============ Project sections (vertical, no filtering) + legacy deep-link aliases ============ */
+  var chips = document.querySelectorAll('#projects .chip');
   function normFilter(f) {
-    return (f === 'python' || f === 'webux' || f === 'web' || f === 'data' || f === 'strategy' || f === 'ai') ? f : 'python';
+    return (f === 'python' || f === 'webux' || f === 'web' || f === 'data' || f === 'strategy') ? f : 'python';
   }
   function aliasTarget(f) {
+    // Legacy #projects-web is an alias to the Kaidra card inside the Web UI/UX block (#projects-webux).
     if (f === 'web' || f === 'webux') return document.getElementById('projects-webux');
     return document.getElementById('projects-' + f);
   }
-  function applyFilter(chips, f, pushHash) {
+  function applyFilter(f, pushHash) {
     f = normFilter(f);
+    // New layout: all sections stay visible; chips removed. Keep legacy behavior
+    // only if chips exist (old pages); otherwise just ensure cards are visible.
     if (chips && chips.length) {
       chips.forEach(function (c) {
         var on = c.dataset.filter === f;
@@ -433,7 +399,10 @@
         var show = card.dataset.phase === f || card.dataset.phase === 'ai';
         if (!REDUCED && !show) { card.classList.add('filtering'); }
         card.hidden = !show;
-        if (show) { card.classList.remove('filtering'); void card.offsetWidth; }
+        if (show) {
+          card.classList.remove('filtering');
+          void card.offsetWidth;
+        }
       });
       var i = 0;
       cards.forEach(function (card) {
@@ -444,6 +413,7 @@
       }
       return;
     }
+    // Vertical layout: never hide; deep-links scroll natively via anchor ids.
     Array.prototype.forEach.call(document.querySelectorAll('#projects .card'), function (card) {
       card.hidden = false;
       card.classList.remove('filtering');
@@ -453,18 +423,18 @@
       if (t && t.scrollIntoView) { try { t.scrollIntoView(); } catch (e) {} }
     }
   }
-  function initChips() {
-    var chips = document.querySelectorAll('#projects .chip');
-    chips.forEach(function (chip) {
-      chip.addEventListener('click', function () { applyFilter(chips, chip.dataset.filter, true); });
-    });
-    var m = (location.hash || '').match(/^#projects(?:-(python|webux|web|data|strategy|ai))?$/);
-    if (m) { applyFilter(chips, m[1] || 'python', false); }
-    window.addEventListener('hashchange', function () {
-      var mm = (location.hash || '').match(/^#projects(?:-(python|webux|web|data|strategy|ai))?$/);
-      if (mm) { applyFilter(chips, mm[1] || 'python', false); }
-    });
-  }
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () { applyFilter(chip.dataset.filter, true); });
+  });
+  // deep-link aliases: #projects-python|webux|web|data|strategy all resolve; bare #projects shows everything
+  (function deepLink() {
+    var m = (location.hash || '').match(/^#projects(?:-(python|webux|web|data|strategy))?$/);
+    if (m) { applyFilter(m[1] || 'python', false); }
+  })();
+  window.addEventListener('hashchange', function () {
+    var m = (location.hash || '').match(/^#projects(?:-(python|webux|web|data|strategy))?$/);
+    if (m) { applyFilter(m[1] || 'python', false); }
+  });
 
   /* ============ Stats count-up ============ */
   function countUp(el) {
@@ -479,29 +449,21 @@
     }
     requestAnimationFrame(step);
   }
-  function initStats() {
-    var statsDone = false;
-    if (!('IntersectionObserver' in window)) {
-      document.querySelectorAll('.stat b').forEach(countUp);
-      return;
+  var statsDone = false;
+  var statsIo = new IntersectionObserver(function (en) {
+    if (en[0].isIntersecting && !statsDone) {
+      statsDone = true;
+      document.querySelectorAll('.stat b').forEach(function (el, i) {
+        setTimeout(function () { countUp(el); }, i * 130);
+      });
+      statsIo.disconnect();
     }
-    var statsIo = new IntersectionObserver(function (en) {
-      if (en[0].isIntersecting && !statsDone) {
-        statsDone = true;
-        document.querySelectorAll('.stat b').forEach(function (el, i) {
-          setTimeout(function () { countUp(el); }, i * 130);
-        });
-        statsIo.disconnect();
-      }
-    });
-    var statsEl = document.querySelector('.stats');
-    if (statsEl) statsIo.observe(statsEl);
-  }
+  });
+  var statsEl = document.querySelector('.stats');
+  if (statsEl) statsIo.observe(statsEl);
 
   /* ============ Scroll-spy ============ */
-  function initSpy() {
-    if (!('IntersectionObserver' in window)) return;
-    var spy = new IntersectionObserver(function (entries) {
+  var spy = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
         document.querySelectorAll('.nav ul a, .side-nav a').forEach(function (a) {
@@ -509,95 +471,76 @@
         });
       });
     }, { rootMargin: '-40% 0px -55% 0px' });
-    ['projects', 'ai-assistant', 'skills', 'about', 'contact', 'experience'].forEach(function (id) {
-      var s = document.getElementById(id);
-      if (s) spy.observe(s);
-    });
-  }
+  ['projects', 'ai-assistant', 'skills', 'about', 'contact', 'experience'].forEach(function (id) {
+    var s = document.getElementById(id);
+    if (s) spy.observe(s);
+  });
 
-  /* ============ Reveal + stagger + AOS (CDN, offline fallback) ============ */
-  function initReveal() {
-    document.querySelectorAll('#projects .card').forEach(function (card, idx) {
-      card.style.setProperty('--i', String(idx % 6));
+  /* ============ Reveal on scroll + stagger + AOS progressive enhancement ============ */
+  document.querySelectorAll('#projects .card').forEach(function (card, idx) {
+    card.style.setProperty('--i', String(idx % 6));
+  });
+  var ro = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); }
     });
-    if (!('IntersectionObserver' in window) || REDUCED) {
-      document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
-      return;
-    }
-    var ro = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); }
-      });
-    }, { threshold: 0.06 });
-    document.querySelectorAll('.reveal').forEach(function (el) { ro.observe(el); });
-    // AOS pattern from references/animations/aos — once, offset 80
-    var boot = function () {
-      if (REDUCED) return;
-      var s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js';
-      s.defer = true;
-      s.onload = function () {
-        try { if (window.AOS) { window.AOS.init({ once: true, offset: 80, duration: 600 }); } } catch (e) {}
-      };
-      document.head.appendChild(s);
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(function (el) { ro.observe(el); });
+  // AOS via CDN (patterns from references/animations/aos): once, offset 80, disabled on reduced-motion.
+  // CSS-only .reveal above is the offline fallback — page works without this script.
+  function initAOS() {
+    if (REDUCED) return;
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js';
+    s.defer = true;
+    s.onload = function () {
+      try {
+        if (window.AOS) { window.AOS.init({ once: true, offset: 80, duration: 600, disable: function () { return REDUCED; } }); }
+      } catch (e) {}
     };
-    if ('requestIdleCallback' in window) { requestIdleCallback(boot); }
-    else { setTimeout(boot, 1200); }
+    document.head.appendChild(s);
   }
+  if ('requestIdleCallback' in window) { requestIdleCallback(initAOS); }
+  else { setTimeout(initAOS, 1200); }
 
-  /* ============ Tilt (pointer:fine) + scroll progress ============ */
-  function initMotion() {
-    if (!REDUCED && window.matchMedia('(pointer: fine)').matches) {
-      document.querySelectorAll('#projects .card').forEach(function (card) {
-        var raf = null;
-        card.addEventListener('pointermove', function (ev) {
-          if (raf) return;
-          raf = requestAnimationFrame(function () {
-            var r = card.getBoundingClientRect();
-            var px = (ev.clientX - r.left) / r.width - 0.5;
-            var py = (ev.clientY - r.top) / r.height - 0.5;
-            card.style.setProperty('--ry', (px * 5).toFixed(2) + 'deg');
-            card.style.setProperty('--rx', (-py * 5).toFixed(2) + 'deg');
-            card.classList.add('tilt');
-            raf = null;
-          });
-        });
-        card.addEventListener('pointerleave', function () {
-          card.classList.remove('tilt');
-          card.style.setProperty('--rx', '0deg');
-          card.style.setProperty('--ry', '0deg');
+  /* ============ Card tilt (pointer:fine only, sober) ============ */
+  if (!REDUCED && window.matchMedia('(pointer: fine)').matches) {
+    document.querySelectorAll('#projects .card').forEach(function (card) {
+      var raf = null;
+      card.addEventListener('pointermove', function (ev) {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          var r = card.getBoundingClientRect();
+          var px = (ev.clientX - r.left) / r.width - 0.5;
+          var py = (ev.clientY - r.top) / r.height - 0.5;
+          card.style.setProperty('--ry', (px * 5).toFixed(2) + 'deg');
+          card.style.setProperty('--rx', (-py * 5).toFixed(2) + 'deg');
+          card.classList.add('tilt');
+          raf = null;
         });
       });
-    }
-  }
-
-  /* ============ Progress bar + Back to top ============ */
-  function initToTop() {
-    var toTop = document.getElementById('toTop');
-    if (!toTop) return;
-    var prog = document.getElementById('scrollProgress');
-    var onScroll = function () {
-      toTop.classList.toggle('show', window.scrollY > 700);
-      if (prog && !REDUCED) {
-        var h = document.documentElement.scrollHeight - window.innerHeight;
-        var p = h > 0 ? Math.min(1, window.scrollY / h) : 0;
-        prog.style.transform = 'scaleX(' + p.toFixed(4) + ')';
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    toTop.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+      card.addEventListener('pointerleave', function () {
+        card.classList.remove('tilt');
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+      });
     });
   }
 
-  initTheme();
-  initPanels();
-  initHero();
-  initChips();
-  initStats();
-  initSpy();
-  initReveal();
-  initMotion();
-  initToTop();
+  /* ============ Scroll progress + Back to top ============ */
+  var toTop = document.getElementById('toTop');
+  var prog = document.getElementById('scrollProgress');
+  function onScroll() {
+    toTop.classList.toggle('show', window.scrollY > 700);
+    if (prog && !REDUCED) {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      var p = h > 0 ? Math.min(1, window.scrollY / h) : 0;
+      prog.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+  });
 })();
