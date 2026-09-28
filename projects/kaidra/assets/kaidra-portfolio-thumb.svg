@@ -21,7 +21,7 @@
   <text x="930" y="108" fill="#66819d" font-family="Arial,sans-serif" font-size="16">IDENTITY VISIBILITY</text>
   <rect x="112" y="176" width="976" height="72" rx="14" fill="#173453"/>
   <text x="144" y="206" fill="#9af0d8" font-family="Arial,sans-serif" font-size="15" font-weight="700">ACCESS CONSOLE</text>
-  <text x="144" y="229" fill="#ffffff" font-family="Arial,sans-serif" font-size="21" font-weight="700">See what matters. Act with confidence.</text>
+  <text x="144" y="229" fill="#5ea3d8" font-family="Arial,sans-serif" font-size="21" font-weight="700">See what matters. Act with confidence.</text>
   <rect x="112" y="278" width="300" height="132" rx="14" fill="#eef7f5"/>
   <rect x="434" y="278" width="300" height="132" rx="14" fill="#edf3fc"/>
   <rect x="756" y="278" width="332" height="132" rx="14" fill="#f4f0fb"/>
