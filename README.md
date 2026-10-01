@@ -3,8 +3,8 @@
 [![CI](https://github.com/andreabarduani-ui/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/andreabarduani-ui/Portfolio/actions/workflows/ci.yml)
 
 Personal portfolio website focused on digital marketing and communication,
-supported by market research, data storytelling, web concepts and 13 Python
-automation tools covering the full lifecycle of funded training programs
+supported by market research, data storytelling, web concepts and automation
+and content tools covering the lifecycle of funded training programs
 (launch → delivery → reporting).
 
 **Live site:** https://andreabarduani-ui.github.io/Portfolio/

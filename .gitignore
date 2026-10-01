@@ -10,3 +10,8 @@ Desktop.ini
 # Python
 __pycache__/
 *.pyc
+
+# Local secrets and environment settings
+.env
+.env.*
+!.env.example
