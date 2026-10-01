@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Crea una bozza LinkedIn sull'apprendistato, un prompt visuale e una grafica esportabile."
+    />
+    <meta name="theme-color" content="#f3f5f8" />
+    <title>Apprendistato Studio — LinkedIn Content Utility</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Apprendistato Studio, home">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>APPRENDISTATO <b>STUDIO</b></span>
+      </a>
+      <span class="local-badge"><span aria-hidden="true"></span> Elaborazione locale · nessuna API</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">LINKEDIN CONTENT UTILITY <span>·</span> V1</p>
+        <h1 id="page-title">Dai forma alla prossima idea.</h1>
+        <p class="intro-copy">
+          Prepara una bozza LinkedIn sull’apprendistato, crea un prompt visuale e
+          scarica una grafica pronta da rivedere. I dati restano in questo browser.
+        </p>
+      </section>
+
+      <form id="content-form" class="workspace">
+        <section class="panel editor" aria-labelledby="brief-title">
+          <div class="panel-heading">
+            <div>
+              <p class="step">01 <span>BRIEF</span></p>
+              <h2 id="brief-title">Costruiamo il messaggio</h2>
+            </div>
+            <span class="required-note">* obbligatorio</span>
+          </div>
+
+          <label for="topic">Argomento del post <span>*</span></label>
+          <input
+            id="topic"
+            name="topic"
+            maxlength="100"
+            placeholder="Es. apprendistato professionalizzante"
+            required
+          />
+
+          <div class="field-row">
+            <div>
+              <label for="audience">A chi parliamo?</label>
+              <select id="audience" name="audience">
+                <option value="le imprese">Imprese</option>
+                <option value="gli apprendisti">Apprendisti</option>
+                <option value="chi si occupa di risorse umane">HR e consulenti</option>
+                <option value="gli enti di formazione">Enti di formazione</option>
+              </select>
+            </div>
+            <div>
+              <label for="tone">Tono</label>
+              <select id="tone" name="tone">
+                <option value="chiaro e professionale">Chiaro e professionale</option>
+                <option value="diretto e concreto">Diretto e concreto</option>
+                <option value="caldo e ispirazionale">Caldo e ispirazionale</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="message">Messaggio chiave <span>*</span></label>
+          <textarea
+            id="message"
+            name="message"
+            rows="4"
+            maxlength="500"
+            placeholder="Qual è l'idea principale che vuoi lasciare a chi legge?"
+            required
+          ></textarea>
+          <p class="field-hint">Inserisci solo informazioni che puoi confermare.</p>
+
+          <label for="proof">Dettagli o informazioni verificabili <span class="optional">(facoltativo)</span></label>
+          <textarea
+            id="proof"
+            name="proof"
+            rows="3"
+            maxlength="300"
+            placeholder="Es. durata del percorso, una testimonianza autorizzata, un dato verificato"
+          ></textarea>
+
+          <label for="cta">Invito all’azione <span class="optional">(facoltativo)</span></label>
+          <input
+            id="cta"
+            name="cta"
+            maxlength="120"
+            placeholder="Es. Scrivici per saperne di più."
+          />
+
+          <label for="visual-style">Stile del visual</label>
+          <select id="visual-style" name="visualStyle">
+            <option value="editoriale e geometrico">Editoriale e geometrico</option>
+            <option value="fotografia naturale e luminosa">Fotografia naturale e luminosa</option>
+            <option value="illustrazione contemporanea">Illustrazione contemporanea</option>
+          </select>
+
+          <button class="button button-primary generate-button" type="submit">
+            Genera bozza e visual <span aria-hidden="true">→</span>
+          </button>
+          <p class="privacy-note">
+            Nessun testo viene inviato a un servizio esterno. La generazione AI
+            potrà essere aggiunta in seguito, senza esporre chiavi API nel sito.
+          </p>
+        </section>
+
+        <section class="results" aria-label="Contenuti generati">
+          <article class="panel output-panel" aria-labelledby="copy-title">
+            <div class="panel-heading">
+              <div>
+                <p class="step">02 <span>BOZZA</span></p>
+                <h2 id="copy-title">Copy LinkedIn</h2>
+              </div>
+              <button class="button button-quiet" id="copy-button" type="button" disabled>
+                Copia testo
+              </button>
+            </div>
+            <textarea
+              id="copy-output"
+              class="generated-copy"
+              rows="10"
+              aria-label="Bozza del copy LinkedIn, modificabile"
+              placeholder="Compila il brief e genera una bozza. Potrai modificarla qui."
+              maxlength="1800"
+            ></textarea>
+            <p class="output-hint">Bozza modificabile · verifica i dettagli prima di pubblicare.</p>
+          </article>
+
+          <article class="panel output-panel" aria-labelledby="prompt-title">
+            <div class="panel-heading">
+              <div>
+                <p class="step">03 <span>VISUAL</span></p>
+                <h2 id="prompt-title">Prompt per un’AI visuale</h2>
+              </div>
+              <button class="button button-quiet" id="prompt-copy-button" type="button" disabled>
+                Copia prompt
+              </button>
+            </div>
+            <textarea
+              id="prompt-output"
+              class="generated-prompt"
+              rows="6"
+              aria-label="Prompt visuale, modificabile"
+              placeholder="Il prompt visuale apparirà qui."
+              readonly
+            ></textarea>
+            <p class="output-hint">Da usare con il generatore di immagini che preferisci.</p>
+          </article>
+
+          <article class="panel visual-panel" aria-labelledby="visual-title">
+            <div class="panel-heading">
+              <div>
+                <p class="step">04 <span>GRAFICA</span></p>
+                <h2 id="visual-title">Anteprima del post</h2>
+              </div>
+              <span class="format-tag">1080 × 1350</span>
+            </div>
+            <div class="graphic-stage">
+              <div id="graphic-preview" class="graphic-preview" aria-label="Anteprima grafica LinkedIn" role="img">
+                <div class="graphic-orbit orbit-one" aria-hidden="true"></div>
+                <div class="graphic-orbit orbit-two" aria-hidden="true"></div>
+                <span class="graphic-kicker">APPRENDISTATO · IDEE IN PRATICA</span>
+                <strong class="graphic-title">La tua prossima<br />idea prende forma.</strong>
+                <span class="graphic-rule" aria-hidden="true"></span>
+                <span class="graphic-message">Il tuo messaggio chiave apparirà qui.</span>
+                <span class="graphic-footer">FORMAZIONE <i>·</i> COMPETENZE <i>·</i> FUTURO</span>
+              </div>
+            </div>
+            <div class="export-actions">
+              <button class="button button-secondary" id="download-png" type="button" disabled>
+                Scarica PNG
+              </button>
+              <button class="button button-quiet" id="download-svg" type="button" disabled>
+                Scarica SVG
+              </button>
+            </div>
+            <p class="output-hint">Grafica vettoriale locale con testo sempre leggibile, senza immagini AI.</p>
+          </article>
+        </section>
+      </form>
+
+      <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
+    </main>
+
+    <footer class="footer">
+      <span>Apprendistato Studio</span>
+      <span>Locale, leggero, senza dipendenze.</span>
+    </footer>
+  </body>
+</html>

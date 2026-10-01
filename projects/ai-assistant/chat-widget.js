@@ -421,8 +421,9 @@
     },
     {
       id: "social-graphics-pipeline",
-      title: "Social Graphics Pipeline",
+      title: "Apprendistato Studio",
       keywords: [
+        "apprendistato",
         "social",
         "linkedin",
         "graphics",
@@ -432,7 +433,7 @@
         "pipeline",
       ],
       reply:
-        'The Social Graphics Pipeline (work in progress) generates LinkedIn cards and carousels programmatically from a centralized brand kit. Details will be published with v1 \u2014 see the <a href="https://github.com/andreabarduani-ui/Portfolio/tree/main/projects">projects folder</a> for the rest. ' +
+        'Apprendistato Studio is a local-first utility for drafting LinkedIn copy, preparing an image-generation prompt and exporting a branded 1080 \u00d7 1350 graphic. It runs without API keys or external requests; see the <a href="https://andreabarduani-ui.github.io/Portfolio/projects/social-graphics-pipeline/">app and project notes</a>. ' +
         ciBadge() +
         ".",
     },

@@ -1,6 +1,6 @@
 # Automation Projects — Source Code
 
-Python source code for the 13 automation tools shown on the
+Source code for the automation and content tools shown on the
 [portfolio website](https://andreabarduani-ui.github.io/Portfolio/).
 Each tool solves a real, recurring problem in the administration of funded
 vocational training programs.
@@ -39,8 +39,9 @@ vocational training programs.
 |---|---|
 | [funding-call-scraper](funding-call-scraper/) | Two-level scraper of 9 interprofessional funding bodies, Excel report of calls above threshold |
 | [regulation-search](regulation-search/) | Interactive search inside funding manuals: predefined categories + free text, with page numbers |
+| [social-graphics-pipeline](social-graphics-pipeline/) | Local-first LinkedIn copy, visual prompt and exportable branded graphic for apprenticeship content |
 
 ## Tech stack
 
-Python · pandas · openpyxl · python-docx · pdfplumber · PyMuPDF · pypdf ·
-requests · BeautifulSoup · Pillow · PyYAML
+Python · HTML · CSS · JavaScript · pandas · openpyxl · python-docx · pdfplumber ·
+PyMuPDF · pypdf · requests · BeautifulSoup · Pillow · PyYAML
