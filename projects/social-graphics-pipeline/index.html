@@ -18,16 +18,17 @@
         <span class="brand-mark" aria-hidden="true">A</span>
         <span>APPRENDISTATO <b>STUDIO</b></span>
       </a>
-      <span class="local-badge"><span aria-hidden="true"></span> Elaborazione locale · nessuna API</span>
+      <span class="local-badge"><span aria-hidden="true"></span> Locale · chat Hermes opzionale</span>
     </header>
 
     <main>
       <section class="intro" aria-labelledby="page-title">
-        <p class="eyebrow">LINKEDIN CONTENT UTILITY <span>·</span> V1</p>
+        <p class="eyebrow">LINKEDIN CONTENT UTILITY <span>·</span> HERMES CHAT</p>
         <h1 id="page-title">Dai forma alla prossima idea.</h1>
         <p class="intro-copy">
           Prepara una bozza LinkedIn sull’apprendistato, crea un prompt visuale e
-          scarica una grafica pronta da rivedere. I dati restano in questo browser.
+          scarica una grafica pronta da rivedere. Se avvii il relay locale, puoi
+          anche confrontarti con il tuo agente Hermes.
         </p>
       </section>
 
@@ -109,8 +110,8 @@
             Genera bozza e visual <span aria-hidden="true">→</span>
           </button>
           <p class="privacy-note">
-            Nessun testo viene inviato a un servizio esterno. La generazione AI
-            potrà essere aggiunta in seguito, senza esporre chiavi API nel sito.
+            La generazione della bozza resta locale. Il brief viene condiviso
+            con Hermes solo se lo inserisci nella chat e invii il messaggio.
           </p>
         </section>
 
@@ -189,12 +190,66 @@
         </section>
       </form>
 
+      <section class="panel agent-panel" aria-labelledby="agent-title">
+        <div class="panel-heading">
+          <div>
+            <p class="step">05 <span>CONFRONTO</span></p>
+            <h2 id="agent-title">Il tuo agente digitale</h2>
+          </div>
+          <span id="agent-status" class="agent-status" data-state="checking" role="status">
+            Verifica del relay…
+          </span>
+        </div>
+        <p class="agent-intro">
+          Chiedi al tuo agente un confronto su front-end e comunicazione digitale.
+          La conversazione viene inviata solo quando premi “Invia”.
+        </p>
+        <div id="chat-transcript" class="chat-transcript" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversazione con Hermes">
+          <p class="chat-empty">La conversazione apparirà qui. Le chat non vengono salvate dopo aver chiuso o ricaricato la pagina.</p>
+        </div>
+        <form id="chat-form" class="chat-form">
+          <label class="visually-hidden" for="chat-input">Messaggio per l’agente</label>
+          <textarea
+            id="chat-input"
+            name="message"
+            rows="3"
+            maxlength="4000"
+            placeholder="Scrivi una domanda su front-end, UX o comunicazione digitale…"
+            required
+          ></textarea>
+          <div class="chat-actions">
+            <p id="chat-status" class="chat-status" role="status" aria-live="polite">
+              Il relay locale serve per collegare questa pagina in modo sicuro a Hermes.
+            </p>
+            <div class="chat-buttons">
+              <button class="button button-quiet" id="share-brief-button" type="button">
+                Inserisci il brief
+              </button>
+              <button class="button button-quiet" id="check-agent-button" type="button" disabled>
+                Verifica connessione
+              </button>
+              <button class="button button-primary" id="send-chat-button" type="submit" disabled>
+                Invia <span aria-hidden="true">→</span>
+              </button>
+              <button class="button button-quiet" id="new-chat-button" type="button" disabled>
+                Nuova chat
+              </button>
+            </div>
+          </div>
+        </form>
+        <p class="agent-privacy">
+          Il relay custodisce la chiave API sul PC che lo esegue. Non inserire nella chat
+          dati personali o riservati; i messaggi inviati raggiungono Hermes e possono
+          seguire le impostazioni di conservazione del server o del provider.
+        </p>
+      </section>
+
       <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
     </main>
 
     <footer class="footer">
       <span>Apprendistato Studio</span>
-      <span>Locale, leggero, senza dipendenze.</span>
+      <span>Generazione locale · relay Hermes opzionale.</span>
     </footer>
   </body>
 </html>

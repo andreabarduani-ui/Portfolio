@@ -39,7 +39,7 @@ vocational training programs.
 |---|---|
 | [funding-call-scraper](funding-call-scraper/) | Two-level scraper of 9 interprofessional funding bodies, Excel report of calls above threshold |
 | [regulation-search](regulation-search/) | Interactive search inside funding manuals: predefined categories + free text, with page numbers |
-| [social-graphics-pipeline](social-graphics-pipeline/) | Local-first LinkedIn copy, visual prompt and exportable branded graphic for apprenticeship content |
+| [social-graphics-pipeline](social-graphics-pipeline/) | Local-first LinkedIn content and branded graphics, with an optional private Hermes chat relay |
 
 ## Tech stack
 

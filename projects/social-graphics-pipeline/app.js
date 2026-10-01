@@ -7,6 +7,20 @@ const downloadPngButton = document.querySelector("#download-png");
 const downloadSvgButton = document.querySelector("#download-svg");
 const graphicPreview = document.querySelector("#graphic-preview");
 const statusMessage = document.querySelector("#status-message");
+const chatForm = document.querySelector("#chat-form");
+const chatInput = document.querySelector("#chat-input");
+const chatTranscript = document.querySelector("#chat-transcript");
+const chatStatus = document.querySelector("#chat-status");
+const agentStatus = document.querySelector("#agent-status");
+const sendChatButton = document.querySelector("#send-chat-button");
+const checkAgentButton = document.querySelector("#check-agent-button");
+const shareBriefButton = document.querySelector("#share-brief-button");
+const newChatButton = document.querySelector("#new-chat-button");
+
+const chatHistory = [];
+let agentConfigured = false;
+let chatPending = false;
+let connectionCheckPending = false;
 
 const graphic = {
   title: "La tua prossima idea prende forma.",
@@ -206,6 +220,203 @@ form.addEventListener("submit", (event) => {
 
 copyButton.addEventListener("click", () => copyText(copyOutput.value, "Copy"));
 promptCopyButton.addEventListener("click", () => copyText(promptOutput.value, "Prompt"));
+
+function setAgentStatus(message, state) {
+  agentStatus.textContent = message;
+  agentStatus.dataset.state = state;
+}
+
+function updateChatControls() {
+  sendChatButton.disabled = !agentConfigured || chatPending || chatHistory.length >= 24;
+  chatInput.disabled = !agentConfigured || chatPending || chatHistory.length >= 24;
+  checkAgentButton.disabled = !agentConfigured || connectionCheckPending || chatPending;
+  newChatButton.disabled = chatPending || chatHistory.length === 0;
+}
+
+function setChatStatus(message, state = "") {
+  chatStatus.textContent = message;
+  chatStatus.dataset.state = state;
+}
+
+async function readApiResponse(response) {
+  let payload;
+  try {
+    payload = await response.json();
+  } catch {
+    throw new Error("Risposta non valida dal relay locale.");
+  }
+  if (!response.ok) {
+    throw new Error(payload.error || `Richiesta non riuscita (HTTP ${response.status}).`);
+  }
+  return payload;
+}
+
+async function loadAgentStatus() {
+  if (!["localhost", "127.0.0.1"].includes(window.location.hostname)) {
+    agentConfigured = false;
+    setAgentStatus("Relay locale richiesto", "error");
+    setChatStatus("La chat è disponibile servendo questa app dal relay locale descritto nel README.", "error");
+    updateChatControls();
+    return;
+  }
+  try {
+    const response = await fetch("/api/status", { headers: { Accept: "application/json" } });
+    const payload = await readApiResponse(response);
+    agentConfigured = payload.configured === true;
+    if (agentConfigured) {
+      setAgentStatus("Relay configurato", "ready");
+      setChatStatus("Relay pronto. Verifica la connessione a Hermes prima di inviare il primo messaggio.");
+    } else {
+      setAgentStatus("Da configurare", "error");
+      setChatStatus("Configura HERMES_API_URL e HERMES_API_KEY nel file .env del relay locale.", "error");
+    }
+  } catch {
+    agentConfigured = false;
+    setAgentStatus("Relay non attivo", "error");
+    setChatStatus("Per usare la chat, avvia il relay locale seguendo le istruzioni nel README.", "error");
+  }
+  updateChatControls();
+}
+
+function appendChatMessage(role, content) {
+  const article = document.createElement("article");
+  article.className = `chat-message chat-message-${role}`;
+  const label = document.createElement("p");
+  label.className = "chat-message-label";
+  label.textContent = role === "user" ? "Tu" : "Hermes";
+  const message = document.createElement("p");
+  message.className = "chat-message-content";
+  message.textContent = content;
+  article.append(label, message);
+  chatTranscript.append(article);
+  chatTranscript.scrollTop = chatTranscript.scrollHeight;
+}
+
+function renderChatHistory() {
+  chatTranscript.replaceChildren();
+  if (chatHistory.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "chat-empty";
+    empty.textContent = "La conversazione apparirà qui. Le chat non vengono salvate dopo aver chiuso o ricaricato la pagina.";
+    chatTranscript.append(empty);
+    return;
+  }
+  for (const message of chatHistory) {
+    appendChatMessage(message.role, message.content);
+  }
+}
+
+function extractAssistantText(payload) {
+  const content = payload?.choices?.[0]?.message?.content;
+  if (typeof content === "string") {
+    return content.trim();
+  }
+  if (Array.isArray(content)) {
+    return content
+      .filter((part) => part && typeof part.text === "string")
+      .map((part) => part.text)
+      .join("\n")
+      .trim();
+  }
+  return "";
+}
+
+checkAgentButton.addEventListener("click", async () => {
+  if (!agentConfigured || connectionCheckPending) {
+    return;
+  }
+  connectionCheckPending = true;
+  checkAgentButton.textContent = "Verifica…";
+  setChatStatus("Verifica della connessione a Hermes in corso…");
+  updateChatControls();
+  try {
+    const response = await fetch("/api/check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: "{}",
+    });
+    await readApiResponse(response);
+    setAgentStatus("Hermes raggiungibile", "ready");
+    setChatStatus("Connessione verificata. Nessun contenuto della chat è stato inviato.");
+  } catch (error) {
+    setAgentStatus("Hermes non raggiungibile", "error");
+    setChatStatus(error.message, "error");
+  } finally {
+    connectionCheckPending = false;
+    checkAgentButton.textContent = "Verifica connessione";
+    updateChatControls();
+  }
+});
+
+shareBriefButton.addEventListener("click", () => {
+  const brief = readBrief();
+  if (!brief.topic && !brief.message) {
+    setChatStatus("Compila almeno l’argomento o il messaggio chiave prima di inserire il brief.", "error");
+    return;
+  }
+  chatInput.value = [
+    "Vorrei un confronto su questo brief per un contenuto LinkedIn:",
+    `Argomento: ${brief.topic || "non specificato"}`,
+    `Pubblico: ${brief.audience}`,
+    `Tono: ${brief.tone}`,
+    `Messaggio chiave: ${brief.message || "non specificato"}`,
+    brief.proof ? `Dettagli verificati: ${brief.proof}` : "",
+    brief.cta ? `Invito all’azione: ${brief.cta}` : "",
+    `Stile visuale: ${brief.visualStyle}`,
+  ].filter(Boolean).join("\n");
+  chatInput.focus();
+  setChatStatus("Brief inserito nel campo: verrà condiviso solo dopo aver premuto “Invia”.");
+});
+
+newChatButton.addEventListener("click", () => {
+  chatHistory.length = 0;
+  renderChatHistory();
+  setChatStatus("Nuova conversazione pronta. La cronologia precedente è stata rimossa da questa pagina.");
+  updateChatControls();
+});
+
+chatForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const content = chatInput.value.trim();
+  if (!agentConfigured || chatPending || !content) {
+    return;
+  }
+  if (chatHistory.length >= 24) {
+    setChatStatus("Questa chat ha raggiunto 12 scambi. Avvia una nuova chat per continuare.", "error");
+    return;
+  }
+
+  chatPending = true;
+  setChatStatus("Hermes sta preparando una risposta…");
+  updateChatControls();
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ messages: [...chatHistory, { role: "user", content }] }),
+    });
+    const payload = await readApiResponse(response);
+    const assistantContent = extractAssistantText(payload);
+    if (!assistantContent) {
+      throw new Error("Hermes ha restituito una risposta vuota o in un formato non supportato.");
+    }
+    chatHistory.push({ role: "user", content }, { role: "assistant", content: assistantContent });
+    renderChatHistory();
+    chatInput.value = "";
+    if (chatHistory.length >= 24) {
+      setChatStatus("Hai raggiunto 12 scambi. Avvia una nuova chat per continuare.");
+    } else {
+      setChatStatus("Risposta ricevuta. La cronologia resta solo in questa scheda del browser.");
+    }
+  } catch (error) {
+    setChatStatus(error.message, "error");
+  } finally {
+    chatPending = false;
+    updateChatControls();
+  }
+});
+
+void loadAgentStatus();
 
 downloadSvgButton.addEventListener("click", () => {
   const svg = createGraphicSvg(graphic.title, graphic.message);

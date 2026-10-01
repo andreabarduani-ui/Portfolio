@@ -433,7 +433,7 @@
         "pipeline",
       ],
       reply:
-        'Apprendistato Studio is a local-first utility for drafting LinkedIn copy, preparing an image-generation prompt and exporting a branded 1080 \u00d7 1350 graphic. It runs without API keys or external requests; see the <a href="https://andreabarduani-ui.github.io/Portfolio/projects/social-graphics-pipeline/">app and project notes</a>. ' +
+        'Apprendistato Studio is a local-first utility for drafting LinkedIn copy, preparing an image-generation prompt and exporting a branded 1080 \u00d7 1350 graphic. These features need no API keys or external requests; an optional Hermes chat uses a private local relay and sends messages only when submitted. See the <a href="https://andreabarduani-ui.github.io/Portfolio/projects/social-graphics-pipeline/">app and project notes</a>. ' +
         ciBadge() +
         ".",
     },
