@@ -38,6 +38,7 @@ vocational training programs.
 | Project | What it does |
 |---|---|
 | [funding-call-scraper](funding-call-scraper/) | Two-level scraper of 9 interprofessional funding bodies, Excel report of calls above threshold |
+| [fnc-email-reminder](fnc-email-reminder/) | Previews and sends personalized FNC 3 course-completion reminders by email |
 | [regulation-search](regulation-search/) | Interactive search inside funding manuals: predefined categories + free text, with page numbers |
 | [social-graphics-pipeline](social-graphics-pipeline/) | Local-first LinkedIn copy, visual prompt and exportable branded graphic for apprenticeship content |
 
