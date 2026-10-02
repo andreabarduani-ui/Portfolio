@@ -15,6 +15,29 @@ from pathlib import Path
 SUPPORT_EMAIL = "a.barduani@accademiainformatica.com"
 SUBJECT = "Progetto FNC 3 – contenuti formativi da completare"
 VADEMECUM_URL = "https://emooc.it/docs/Vademecum_discenti_FNC.pdf"
+COMPANY_NAME = "Accademia Informatica s.r.l."
+COMPANY_WEBSITE = "http://www.accademiainformatica.com"
+ITALIAN_CONFIDENTIALITY = (
+    "Questo messaggio di posta elettronica contiene informazioni di carattere "
+    "confidenziale rivolte esclusivamente al destinatario sopra indicato. La diffusione, "
+    "distribuzione e/o copiatura del documento trasmesso da parte di qualsiasi soggetto "
+    "diverso dal destinatario è proibita, sia ai sensi dell’art. 616 c.p., che ai sensi "
+    "del Regolamento UE 2016/679. Nel caso aveste ricevuto questo messaggio di posta "
+    "elettronica per errore, siete pregati di segnalarlo immediatamente a mezzo e-mail: "
+    "gdpr@accademiainformatica.com e di distruggere quanto ricevuto (compresi i files "
+    "allegati), senza farne copia. Ringraziamo anticipatamente per la vostra preziosa "
+    "collaborazione."
+)
+ENGLISH_CONFIDENTIALITY = (
+    "This e-mail message contains confidential information intended recipient only "
+    "indicated above. Dissemination, distribution and / or copying of the document "
+    "forwarded by any person other than the recipient is prohibited, pursuant to "
+    "art. 616 of the Criminal Code, that pursuant to GDPR 2016/679. If you have received "
+    "this email in error, please notify us immediately by e-mail: "
+    "gdpr@accademiainformatica.com and destroy what has been received (including "
+    "attached files), without making a copy. thank you in advance for your precious "
+    "collaboration."
+)
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 ALIASES = {
     "name": ("nome", "name", "allievo", "nome allievo"),
@@ -160,10 +183,22 @@ Per ulteriori dettagli, può consultare il Vademecum dei Discenti:
 
 Per necessità o richieste di supporto, può contattarci all'indirizzo {SUPPORT_EMAIL}.
 
-Confidando nella sua collaborazione e nel completamento delle attività entro i tempi previsti, la ringraziamo anticipatamente.
+Ringraziandola per la collaborazione, porgiamo cordiali saluti.
 
-Cordiali saluti,
-Accademia Informatica
+Team Accademia Informatica
+{SUPPORT_EMAIL}
+
+{COMPANY_NAME}
+
+Viale F. Tommaso Marinetti, 221 - 00143 Roma
+Tel: 351 7669357 - 06 39746618 | Fax: 06 97749271
+{COMPANY_WEBSITE}
+
+{ITALIAN_CONFIDENTIALITY}
+
+*************
+
+{ENGLISH_CONFIDENTIALITY}
 """
     )
     message.add_alternative(
@@ -182,8 +217,17 @@ Accademia Informatica
 <a href="{VADEMECUM_URL}">{VADEMECUM_URL}</a></p>
 <p>Per necessità o richieste di supporto, può contattarci all'indirizzo
 <a href="mailto:{SUPPORT_EMAIL}">{SUPPORT_EMAIL}</a>.</p>
-<p>Confidando nella sua collaborazione e nel completamento delle attività entro i tempi previsti, la ringraziamo anticipatamente.</p>
-<p>Cordiali saluti,<br>Accademia Informatica</p>
+<hr>
+<p>Ringraziandola per la collaborazione, porgiamo cordiali saluti.</p>
+<p>Team Accademia Informatica<br>
+<a href="mailto:{SUPPORT_EMAIL}">{SUPPORT_EMAIL}</a></p>
+<p><strong>{COMPANY_NAME}</strong><br>
+Viale F. Tommaso Marinetti, 221 - 00143 Roma<br>
+Tel: 351 7669357 - 06 39746618 | Fax: 06 97749271<br>
+<a href="{COMPANY_WEBSITE}">www.accademiainformatica.com</a></p>
+<p><small>{ITALIAN_CONFIDENTIALITY.replace("gdpr@accademiainformatica.com", '<a href="mailto:gdpr@accademiainformatica.com">gdpr@accademiainformatica.com</a>')}</small></p>
+<p>*************</p>
+<p><small>{ENGLISH_CONFIDENTIALITY.replace("gdpr@accademiainformatica.com", '<a href="mailto:gdpr@accademiainformatica.com">gdpr@accademiainformatica.com</a>')}</small></p>
 </body></html>""",
         subtype="html",
     )

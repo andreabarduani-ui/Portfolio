@@ -1,6 +1,8 @@
 # FNC 3 Email Reminder Automation
 
-Generates a personalized reminder for each participant and sends it through an SMTP server. The message lists the participant's outstanding courses and includes the learner handbook and support contact.
+Generates a personalized reminder for each participant and sends it through an SMTP server. The message lists the participant's outstanding courses and includes the learner handbook, the company signature, and bilingual confidentiality notices.
+
+The repository does not include the company's signature images. The email currently uses the supplied text signature; provide the approved image files to add them inline.
 
 ## Input
 

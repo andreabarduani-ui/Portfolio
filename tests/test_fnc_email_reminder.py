@@ -36,6 +36,25 @@ def test_load_csv_and_build_personalized_message(tmp_path):
     assert reminder.VADEMECUM_URL in message.get_body(("plain",)).get_content()
 
 
+def test_business_signature_and_bilingual_notice_are_in_both_bodies():
+    participant = reminder.Participant("Mario Rossi", "mario@example.com", ("Corso A",))
+    message = reminder.build_message(participant, "sender@example.com")
+    plain = message.get_body(("plain",)).get_content()
+    rich = message.get_body(("html",)).get_content()
+
+    for content in (plain, rich):
+        assert "Ringraziandola per la collaborazione, porgiamo cordiali saluti." in content
+        assert "Team Accademia Informatica" in content
+        assert reminder.COMPANY_NAME in content
+        assert "Viale F. Tommaso Marinetti, 221 - 00143 Roma" in content
+        assert "351 7669357 - 06 39746618" in content
+        assert "gdpr@accademiainformatica.com" in content
+        assert "This e-mail message contains confidential information" in content
+
+    assert "Accademia Informatica</p>" not in rich
+    assert 'href="mailto:gdpr@accademiainformatica.com"' in rich
+
+
 @pytest.mark.parametrize(
     ("row", "expected"),
     [
