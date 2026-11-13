@@ -1,0 +1,375 @@
+diff --git a/css/site.css b/css/site.css
+index bb89f69..addcab9 100644
+--- a/css/site.css
++++ b/css/site.css
+@@ -307,7 +307,7 @@
+ 
+   /* ---------- Back to top ---------- */
+   #toTop {
+-    position: fixed; right: 22px; bottom: 22px; z-index: 60;
++    position: fixed; right: 22px; bottom: 96px; z-index: 60;
+     width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line);
+     background: var(--paper); color: var(--ink); font-size: 1rem; cursor: pointer;
+     box-shadow: 0 6px 18px rgba(38,35,31,.14);
+diff --git a/index.html b/index.html
+index 18fab5f..8371d55 100644
+--- a/index.html
++++ b/index.html
+@@ -35,6 +35,7 @@
+ <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"></noscript>
+ <script>document.documentElement.classList.add('js')</script>
+ <link rel="stylesheet" href="css/site.css">
++<link rel="stylesheet" href="projects/ai-assistant/chat-widget.css">
+ </head>
+ <body>
+ <div id="scrollProgress" aria-hidden="true"></div>
+@@ -47,7 +48,7 @@
+       <li><a href="#about">About</a></li>
+       <li><a href="#experience">Experience</a></li>
+       <li><a href="#projects">Projects</a></li>
+-      <li><a href="projects/ai-assistant/" aria-label="Open the AI Assistant">AI Assistant</a></li>
++      <li><a href="projects/ai-assistant/" data-ai-open aria-label="Open the AI Assistant">AI Assistant</a></li>
+     </ul>
+   </div>
+ </header>
+@@ -65,7 +66,7 @@
+         analysis and web experiences.
+       </p>
+       <div class="ctas hero-enter d3">
+-        <a class="btn primary large" href="projects/ai-assistant/">Ask the AI Assistant</a>
++        <a class="btn primary large" href="projects/ai-assistant/" data-ai-open>Ask the AI Assistant</a>
+         <a class="btn ghost" href="#projects">View projects</a>
+         <a class="btn ghost" href="mailto:andrea.barduani@gmail.com">Email</a>
+       </div>
+@@ -94,7 +95,7 @@
+         <li><a href="#about">About</a></li>
+         <li><a href="#experience">Experience</a></li>
+         <li><a href="#projects">Projects</a></li>
+-        <li><a href="#ai-assistant">AI Assistant</a></li>
++        <li><a href="#ai-assistant" data-ai-open>AI Assistant</a></li>
+       </ul>
+     </nav>
+     <ul class="side-links">
+@@ -380,28 +381,6 @@
+   </div>
+ </section>
+ 
+-<!-- ============ AI ASSISTANT (isolated card, EN only) ============ -->
+-<section id="ai-assistant">
+-  <div class="wrap">
+-    <div class="sec-head reveal">
+-      <h2>Ask the portfolio assistant</h2>
+-      <p>An English assistant that points you to the right project, dashboard or contact. No keys — it runs entirely in your browser.</p>
+-    </div>
+-    <div class="cards">
+-      <div class="card reveal">
+-        <span class="tag data">New</span>
+-        <h4>Portfolio AI assistant</h4>
+-        <p>Ask in English about any of the 19 projects, the energy dashboard, the CV or contacts. Examples: “e-learning hours” or “funding calls”. No data leaves your browser.</p>
+-        <div class="tech">English only · runs in your browser</div>
+-        <div class="card-foot">
+-          <a class="code" href="projects/ai-assistant/">Ask the AI Assistant &rarr;</a>
+-          <a class="code" href="projects/ai-assistant/demo-data/elearning-hours-monitor.json">Sample data &rarr;</a>
+-          <a class="code" href="mailto:andrea.barduani@gmail.com">Contact via email &rarr;</a>
+-        </div>
+-      </div>
+-    </div>
+-  </div>
+-</section>
+   </div><!-- /.content -->
+ </div><!-- /.layout -->
+ 
+@@ -449,7 +428,34 @@
+ 
+ <button id="toTop" aria-label="Back to top">↑</button>
+ 
++<!-- ============ AI ASSISTANT: floating help button + chat panel ============ -->
++<button id="aiHelpFab" class="ai-fab" type="button" aria-label="Open the AI assistant (help)" aria-expanded="false" aria-controls="ai-assistant" title="AI assistant — ask about the projects">
++  <span aria-hidden="true">?</span>
++</button>
++
++<div class="ai-panel" id="ai-assistant" role="dialog" aria-label="Portfolio AI assistant" hidden>
++  <div class="ai-panel-head">
++    <h2>Portfolio AI assistant</h2>
++    <a href="projects/ai-assistant/">Full page &rarr;</a>
++    <button type="button" class="ai-panel-close" id="ai-panel-close" aria-label="Close the assistant">&times;</button>
++  </div>
++  <div class="ai-chat">
++    <div class="ai-messages" id="ai-messages" role="log" aria-live="polite" aria-label="Assistant messages"></div>
++    <div class="ai-chips" role="group" aria-label="Suggested questions">
++      <button class="ai-chip" type="button" data-ai-chip="E-learning hours">E-learning hours</button>
++      <button class="ai-chip" type="button" data-ai-chip="How do you automate?">How do you automate?</button>
++      <button class="ai-chip" type="button" data-ai-chip="Contact">Contact</button>
++      <button class="ai-chip ai-chip--random" type="button" id="ai-random">Surprise me: random automation</button>
++    </div>
++    <form class="ai-form" id="ai-form">
++      <input id="ai-input" type="text" name="q" autocomplete="off" placeholder='Ask about "e-learning hours" or "funding calls"' aria-label="Ask the assistant" />
++      <button type="submit">Send</button>
++    </form>
++  </div>
++</div>
++
+ <script src="js/site.js" defer></script>
++<script src="projects/ai-assistant/chat-widget.js" defer></script>
+ 
+ </body
+ </html>
+diff --git a/projects/ai-assistant/chat-widget.css b/projects/ai-assistant/chat-widget.css
+index 8c9a52b..37b8e6c 100644
+--- a/projects/ai-assistant/chat-widget.css
++++ b/projects/ai-assistant/chat-widget.css
+@@ -416,3 +416,137 @@
+ #contact-form button:hover {
+   background: var(--accent-dark, #093f6e);
+ }
++
++/* ---------- Floating help button + panel (widget embedded on site pages) ----------
++   Used by index.html: #aiHelpFab toggles the #ai-assistant panel that wraps
++   the same .ai-chat markup as the standalone assistant page. On the
++   assistant page itself neither element exists, so these rules are inert. */
++.ai-fab {
++  position: fixed;
++  right: 22px;
++  bottom: 22px;
++  z-index: 70;
++  width: 58px;
++  height: 58px;
++  border-radius: 50%;
++  border: none;
++  background: var(--accent, #0d5794);
++  color: #fff;
++  font: inherit;
++  font-size: 1.6rem;
++  font-weight: 700;
++  line-height: 1;
++  cursor: pointer;
++  box-shadow: 0 10px 26px rgba(13, 87, 148, 0.4);
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  transition: transform 0.2s, background 0.2s;
++}
++.ai-fab:hover {
++  background: var(--accent-dark, #093f6e);
++  transform: translateY(-2px);
++}
++.ai-fab.open {
++  background: var(--ink, #26231f);
++}
++
++.ai-panel {
++  position: fixed;
++  right: 22px;
++  bottom: 92px;
++  z-index: 75;
++  width: min(400px, calc(100vw - 32px));
++  max-height: min(620px, calc(100vh - 130px));
++  display: flex;
++  flex-direction: column;
++  background: var(--paper, #ffffff);
++  border: 1px solid var(--line, #e4e0d8);
++  border-radius: 12px;
++  box-shadow: 0 18px 48px rgba(38, 35, 31, 0.24);
++  overflow: hidden;
++}
++.ai-panel[hidden] {
++  display: none;
++}
++.ai-panel-head {
++  display: flex;
++  align-items: center;
++  gap: 10px;
++  padding: 10px 14px;
++  background: var(--accent, #0d5794);
++  color: #fff;
++}
++.ai-panel-head h2 {
++  flex: 1;
++  font-size: 0.95rem;
++  margin: 0;
++}
++.ai-panel-head a {
++  color: #fff;
++  font-size: 0.8rem;
++  font-weight: 600;
++  white-space: nowrap;
++}
++.ai-panel-close {
++  border: none;
++  background: transparent;
++  color: #fff;
++  font-size: 1.25rem;
++  line-height: 1;
++  cursor: pointer;
++  padding: 4px 8px;
++}
++.ai-panel-close:hover {
++  opacity: 0.8;
++}
++.ai-panel .ai-chat {
++  border: none;
++  border-radius: 0;
++  box-shadow: none;
++  display: flex;
++  flex-direction: column;
++  min-height: 0;
++  overflow: hidden;
++}
++.ai-panel .ai-messages {
++  flex: 1 1 auto;
++  min-height: 200px;
++  max-height: none;
++  padding: 14px;
++  gap: 10px;
++}
++.ai-panel .ai-msg {
++  font-size: 0.95rem;
++  padding: 10px 14px;
++}
++.ai-panel .ai-chips {
++  padding: 10px 14px;
++  gap: 8px;
++}
++.ai-panel .ai-chip {
++  min-height: 40px;
++  padding: 8px 16px;
++  font-size: 0.9rem;
++}
++.ai-panel .ai-form {
++  padding: 10px 14px 14px;
++}
++.ai-panel .ai-form input,
++.ai-panel .ai-form button {
++  height: 44px;
++  font-size: 0.95rem;
++}
++
++@media (max-width: 640px) {
++  .ai-fab {
++    right: 16px;
++    bottom: 16px;
++  }
++  .ai-panel {
++    right: 12px;
++    left: 12px;
++    bottom: 84px;
++    width: auto;
++  }
++}
+diff --git a/projects/ai-assistant/chat-widget.js b/projects/ai-assistant/chat-widget.js
+index 27acc9e..d6136a1 100644
+--- a/projects/ai-assistant/chat-widget.js
++++ b/projects/ai-assistant/chat-widget.js
+@@ -34,6 +34,24 @@
+   var CONTACT_EMAIL = "andrea.barduani@gmail.com";
+   var FALLBACK_TEXT = "I don't know \u2014 write to " + CONTACT_EMAIL;
+ 
++  /* Folder that contains this script (and demo-data/). Lets the same
++     widget run embedded on the site root (index.html) and on its own
++     page (projects/ai-assistant/) with correct relative asset paths. */
++  var SCRIPT_BASE = (function () {
++    try {
++      var s =
++        document.currentScript ||
++        document.querySelector('script[src*="chat-widget.js"]');
++      if (!s) return "";
++      var a = document.createElement("a");
++      a.href = s.getAttribute("src") || "";
++      var h = a.href;
++      return h.slice(0, h.lastIndexOf("/") + 1);
++    } catch (e) {
++      return "";
++    }
++  })();
++
+   function ciBadge() {
+     return (
+       'CI: <a href="' + CI_URL + '" target="_blank" rel="noopener">passing</a>'
+@@ -1072,7 +1090,7 @@
+         window.__portfolioDemoData = {};
+       }
+       EXAMPLE_IDS.forEach(function (id) {
+-        fetch("demo-data/" + id + ".json", { cache: "force-cache" })
++        fetch(SCRIPT_BASE + "demo-data/" + id + ".json", { cache: "force-cache" })
+           .then(function (res) {
+             if (!res || !res.ok) return null;
+             return res.json();
+@@ -1121,9 +1139,9 @@
+ 
+   function examplePaths(id) {
+     return {
+-      fixture: "../" + id + "/demo-fixture.txt",
+-      transcriptPage: "../" + id + "/demo-transcript.txt",
+-      outputFile: "../" + id + "/sample-output.md",
++      fixture: SCRIPT_BASE + "../" + id + "/demo-fixture.txt",
++      transcriptPage: SCRIPT_BASE + "../" + id + "/demo-transcript.txt",
++      outputFile: SCRIPT_BASE + "../" + id + "/sample-output.md",
+     };
+   }
+ 
+@@ -1379,10 +1397,64 @@
+     });
+   }
+ 
++  /* ---------- Floating help button + panel (site pages that embed the widget) ----------
++     On pages that include #aiHelpFab and #ai-assistant (the chat panel),
++     the FAB toggles the panel; any [data-ai-open] link opens it too.
++     On the standalone assistant page neither element exists: no-op. */
++  function initLauncher() {
++    var fab = document.getElementById("aiHelpFab");
++    var panel = document.getElementById("ai-assistant");
++    if (!fab || !panel) return;
++    var closeBtn = document.getElementById("ai-panel-close");
++
++    function openPanel() {
++      panel.hidden = false;
++      fab.setAttribute("aria-expanded", "true");
++      fab.classList.add("open");
++      var input = document.getElementById("ai-input");
++      if (input && input.focus) input.focus();
++    }
++    function closePanel(focusBack) {
++      panel.hidden = true;
++      fab.setAttribute("aria-expanded", "false");
++      fab.classList.remove("open");
++      if (focusBack && fab.focus) fab.focus();
++    }
++
++    fab.addEventListener("click", function () {
++      if (panel.hidden) openPanel();
++      else closePanel(false);
++    });
++    if (closeBtn) {
++      closeBtn.addEventListener("click", function () {
++        closePanel(true);
++      });
++    }
++    document.addEventListener("keydown", function (ev) {
++      if (ev && ev.key === "Escape" && !panel.hidden) closePanel(true);
++    });
++    Array.prototype.forEach.call(
++      document.querySelectorAll("[data-ai-open]"),
++      function (el) {
++        el.addEventListener("click", function (ev) {
++          if (ev && ev.preventDefault) ev.preventDefault();
++          openPanel();
++          try {
++            if (history.replaceState) history.replaceState(null, "", "#ai-assistant");
++          } catch (e) {}
++        });
++      },
++    );
++  }
++
+   if (document.readyState === "loading") {
+-    document.addEventListener("DOMContentLoaded", init);
++    document.addEventListener("DOMContentLoaded", function () {
++      init();
++      initLauncher();
++    });
+   } else {
+     init();
++    initLauncher();
+   }
+ 
+   /* Exposed for smoke tests (no backend involved). */
